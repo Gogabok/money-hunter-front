@@ -15,7 +15,16 @@
           :text="`Товаров в отслеживании: ${progress} / ${maxTrackingProducts}`"
         />
       </div>
-      <TrackingTable v-if="loaded && tablePositions && progress > 0" :headers="tableHeaders" :items="tablePositions" :order="orderType" :order-handler="$orderHandler"/>
+      <TrackingTable 
+            v-if="loaded && tablePositions && progress > 0" 
+            :headers="tableHeaders" 
+            :items="tablePositions" 
+            :order="orderType" 
+            :order-handler="$orderHandler"
+            :select-all="true"
+            @show-modal="showModalDeleteFromGroup"
+            :after-selecting-title="`Удалить из отслеживания`"
+      />
       <div v-else class="loading-table">
         <img ondragstart="return false" src="../../assets/img/loading.svg" alt="">
       </div>
@@ -125,6 +134,16 @@
       }
     },
     methods: {
+      showModalDeleteFromGroup(data) {
+        const _data = {
+          articul: data?.articul,
+          groupName: this.$route.params.name
+        }
+        this.$store.commit(`modal/${SHOW_MODAL_MUTATION}`, {
+          component: DeleteProductFromTracking, 
+          data: {..._data, callback: () => this.loadGoods()}
+        })
+      },
       map_name(item) {
         return {
           content: ProductContent,
@@ -185,7 +204,7 @@
         const groupName = this.$route.params.name;
         this.$store.commit(`modal/${SHOW_MODAL_MUTATION}`, {
           component: DeleteProductFromTracking,
-          data: {articul, groupName, callback: () => this.loadGoods()},
+          data: {articul: [articul], groupName, callback: () => this.loadGoods()},
         });
       }
     },

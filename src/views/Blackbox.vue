@@ -17,7 +17,9 @@
                      :order="orderType"
                      :order-handler="$orderHandler"
                      :subheaders="subheaders"
-                     :select-all="true"/>
+                     :select-all="true"
+                     @show-modal="showModalAddToGroup"
+                     :after-selecting-title="`Добавить на отслеживание`"/>
       <div v-else-if="isLoading || isLoadingAgregated" class="loading-table">
         <img ondragstart="return false" src="../assets/img/loading.svg" alt="">
       </div>
@@ -125,6 +127,9 @@
       }
     },
     methods: {
+      showModalAddToGroup(data) {
+        this.$store.commit(`modal/${SHOW_MODAL_MUTATION}`, {component: AddToGroup, data})
+      },
       daysChange(days) {
         this.days = days
       },

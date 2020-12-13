@@ -115,7 +115,6 @@
         this.$router.push({name: 'trackingPositions.group', params: {name: articul}});
       },
       selectItemsEmit() {
-        console.log(11111111111111111111)
         this.$emit("selectItemsMethod", this.index)
       }
     },
