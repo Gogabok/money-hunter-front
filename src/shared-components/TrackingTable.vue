@@ -21,7 +21,7 @@
           <polyline points="1 9 7 14 15 4"></polyline>
         </svg>
       </label>
-      <Btn @click="selectItems" style="max-width: 200px; margin: 5px;" :label="!isSelecting ? 'Выбрать товары' : 'Добавить на отслеживание'"/>
+      <Btn @click="selectItems" style="max-width: 200px; margin: 5px;" :label="!isSelecting ? 'Выбрать товары' : afterSelectingTitle"/>
     </div>
     <table class="tracking-table tracking-table_sticky">
       <tbody class="tracking-table-tbody">
@@ -79,6 +79,9 @@
       },
       selectAll: {
         type: Boolean
+      },
+      afterSelectingTitle: {
+        type: String
       }
     },
     data() {
@@ -115,9 +118,10 @@
           if(this.selectedItems.length > 0) {
             const selectedArticules = []
             this.selectedItems.forEach(item => {
-              selectedArticules.push(this.items[item].articul.content)
+              const content = this.items[item].articul?.content || this.items[item].nested?.articul
+              selectedArticules.push(content)
             })
-            this.$store.commit(`modal/${SHOW_MODAL_MUTATION}`, {component: AddToGroup, data: {articul: selectedArticules}})
+            this.$emit('show-modal', {articul: selectedArticules})
           } else {
             this.isSelecting = false
           }
@@ -489,5 +493,6 @@
   .selectAll-folder {
     display: flex;
     align-items: center;
+    position: relative;
   }
 </style>

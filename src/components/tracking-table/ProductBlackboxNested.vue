@@ -29,7 +29,7 @@
       },
       days: {
         type: Number,
-        required: true,
+        required: false,
         default: 7
       }
     },
@@ -247,7 +247,7 @@
     },
     async created() {
       const blackboxService = new BlackboxService();
-      const productData = await blackboxService.getChartData(this.articul, this.days);
+      const productData = await blackboxService.getChartData(this.articul, this.days? this.days : undefined);
       // const productData = [
       //   {"date": "2020-07-16", "orders": 10},
       //   {"date": "2020-07-17", "orders": 15},

@@ -1,5 +1,5 @@
 <template>
-  <Modal title='Удаление отслеживаемого тоара' closable @next="deleteHandler">
+  <Modal title='Удаление отслеживаемого товара' closable @next="deleteHandler">
     <template v-slot:default>
 
       <form action="" class="modal-form" @submit.prevent>
@@ -38,7 +38,7 @@
         required: true,
       },
       articul: {
-        type: String,
+        type: Array,
         required: true,
       },
       callback: {
@@ -50,7 +50,7 @@
       async deleteHandler() {
 
         const service = new TrackingService();
-        const result = await service.deleteProductFromTracking(this.groupName, this.articul);
+        const result = await service.deleteProductFromTracking(this.groupName, [...this.articul]);
 
         if (typeof result === 'boolean' && result) {
           this.callback();
