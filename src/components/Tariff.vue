@@ -11,7 +11,7 @@
       </div>
     </div>
     <template v-if="isBuyable">
-      <div class="tarif-price">{{price}} ₽</div>
+      <div class="tarif-price"><strike>{{oldPrice}}</strike> {{price}} ₽</div>
       <Btn label="Купить" :isDisabled="!termsReaded" @click="handleBuyBtn"/>
     </template>
     <template v-if="isBuyable">
@@ -46,6 +46,10 @@
       name: {
         type: String,
         required: true,
+      },
+      oldPrice: {
+        type: Number,
+        required: true
       },
       price: {
         type: Number,
@@ -201,5 +205,10 @@
     font-size: 1.71rem;
     font-weight: bold;
     letter-spacing: .3px;
+
+    strike {
+      text-decoration: line-through;
+      color: #ccc;
+    }
   }
 </style>
