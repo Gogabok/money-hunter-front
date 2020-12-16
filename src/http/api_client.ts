@@ -5,7 +5,7 @@ export class ApiClient {
   static API_VERSION_EMPTY = '';
   static API_VERSION_V1 = 'v1/';
 
-  private baseUrl = 'https://lk.moneyhunter.pro/api/';
+  private baseUrl = 'http://213.139.211.239:8082/api/';
 
   private generateUrl(url: string, apiVersion = ApiClient.API_VERSION_V1) {
     return (apiVersion ? apiVersion : '') + url;
