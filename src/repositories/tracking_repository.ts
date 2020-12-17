@@ -12,6 +12,7 @@ export class TrackingRepository {
   private getProductInfoByArticulUrl = 'wb/tracking/product/info/{articul}/';
   private getGroupInfoFileUrl = 'wb/tracking/user/groups/{groupName}/download/';
   private getGroupSortFileUrl = 'wb/tracking/user/groups/{groupName}/{days}/autosort/';
+  private groupNotificationUrl = 'wb/tracking/group/notification/{pk}/';
 
   getBrands() {
     return this.client.sendGet(this.getBrandsUrl);
@@ -27,6 +28,11 @@ export class TrackingRepository {
 
   getGroupGoods(groupName: string, orderType: string) {
     const url = queryStringBuilder(this.groupDataUrl, { groupName, orderType });
+    return this.client.sendGet(url);
+  }
+
+  getGroupNotification(pk: number) {
+    const url = queryStringBuilder(this.groupNotificationUrl, { pk });
     return this.client.sendGet(url);
   }
 

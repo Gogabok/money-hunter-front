@@ -5,6 +5,9 @@
         <div class="tracking-add-product">
           <AddGoodsBtn/>
         </div>
+        <div class="tracking-add-notification">
+          <AddNotificationBtn/>
+        </div>
         <div class="tracking-actions">
           <RowWithIcon :list="trackingActionList"/>
         </div>
@@ -59,10 +62,11 @@
 
   import progressBar from "@/shared-components/progressBar"
   import {UserService} from "@/services/user_service";
+  import AddNotificationBtn from "@/components/tracking/AddNotificationBtn";
 
   export default {
     name: "Group",
-    components: {AddGoodsBtn, RowWithIcon, TrackingTable, Fragment, progressBar},
+    components: {AddNotificationBtn, AddGoodsBtn, RowWithIcon, TrackingTable, Fragment, progressBar},
     mixins: [tableMixins, orderHandler],
     data() {
       return {
@@ -283,6 +287,10 @@
 
   .tracking-add-product {
     width: 11.85rem;
+  }
+  .tracking-add-notification {
+    width: 15.5rem;
+    padding-left: 1.5rem;
   }
 
   .tracking-actions {

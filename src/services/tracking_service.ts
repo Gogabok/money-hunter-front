@@ -134,4 +134,19 @@ export class TrackingService {
       console.log('Cannot download file', e);
     }
   }
+
+  async getGroupNotification(groupPk: number) {
+    try {
+      const response = await this.authService.refreshWrapper(this.repo.getGroupNotification.bind(this.repo, groupPk));
+      if (response.status === 200) {
+        return response.data;
+      } else if(response.status === 403) {
+        return response.data.detail.toString();
+      } else {
+        return "Произошла ошибка";
+      }
+    } catch (e) {
+      return "Произошла ошибка";
+    }
+  }
 }
