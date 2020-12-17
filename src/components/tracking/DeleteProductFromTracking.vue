@@ -50,14 +50,25 @@
       async deleteHandler() {
 
         const service = new TrackingService();
-        const result = await service.deleteProductFromTracking(this.groupName, [...this.articul]);
-
+        let result = false
+        await Promise.all(this.articul.map(async (articul) => {
+          result = await service.deleteProductFromTracking(this.groupName, articul);
+        }));
         if (typeof result === 'boolean' && result) {
           this.callback();
+          if(this.articul.length === 1) {
+            this.$store.commit('notifications/ADD_NOTIFICATION', {text: `Товар ${this.articul[0]} удален`, status: 'success'})
+          } else {
+            this.$store.commit('notifications/ADD_NOTIFICATION', {text: `Товары удалены`, status: 'success'})
+          }
           await this.$store.dispatch(`tracking/${LOAD_GROUPS_ACTION}`);
           this.$store.commit(`modal/${HIDE_MODAL_MUTATION}`);
         } else {
-          // alert(result);
+          if(this.articul.length === 1) {
+            this.$store.commit('notifications/ADD_NOTIFICATION', {text: `Товар ${this.articul[0]} не был удален`, status: 'error'})
+          } else {
+            this.$store.commit('notifications/ADD_NOTIFICATION', {text: `Товары не были удалены`, status: 'error'})
+          }
         }
       },
       async cancelHandler() {

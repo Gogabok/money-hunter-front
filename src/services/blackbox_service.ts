@@ -126,7 +126,7 @@ export class BlackboxService {
       const pk = await this.findSearchIDByName(name);
       const response = await this.service.refreshWrapper(pk ?
           this.repo.updateSearch.bind(this.repo, pk, name, _data) : this.repo.addSearch.bind(this.repo, name, _data));
-      return response.status === 201 || 'Произошла ошибка';
+      return response.status === 201 || response.status === 200 || 'Произошла ошибка';
     } catch (e) {
       if (e.response?.status === 400) {
         return 'Такое имя уже используется'
