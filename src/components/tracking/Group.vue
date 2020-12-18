@@ -18,7 +18,7 @@
           :text="`Товаров в отслеживании: ${progress} / ${maxTrackingProducts}`"
         />
       </div>
-      <TrackingTable 
+      <TrackingTable
             v-if="loaded && tablePositions && progress > 0" 
             :headers="tableHeaders" 
             :items="tablePositions" 
@@ -252,12 +252,7 @@
           const userService = new UserService();
           userService.getSubscription().then(res => {
             this.maxTrackingProducts = res.maxTrackingProducts
-            const progressValue = res.trackingProductsCount
-            if(progressValue <= 100 && progressValue >= 0) {
-              this.progress = progressValue
-            } else {
-              this.progress =  false
-            }
+            this.progress = res.trackingProductsCount;
             this.isLoaded = true
           })
         },
