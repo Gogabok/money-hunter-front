@@ -12,7 +12,7 @@ export class TrackingRepository {
   private getProductInfoByArticulUrl = 'wb/tracking/product/info/{articul}/';
   private getGroupInfoFileUrl = 'wb/tracking/user/groups/{groupName}/download/';
   private getGroupSortFileUrl = 'wb/tracking/user/groups/{groupName}/{days}/autosort/';
-  private groupNotificationUrl = 'wb/tracking/group/notification/{pk}/';
+  private groupNotificationUrl = 'wb/tracking/group/notification/{notificationId}/';
 
   getBrands() {
     return this.client.sendGet(this.getBrandsUrl);
@@ -31,9 +31,14 @@ export class TrackingRepository {
     return this.client.sendGet(url);
   }
 
-  getGroupNotification(pk: number) {
-    const url = queryStringBuilder(this.groupNotificationUrl, { pk });
+  getGroupNotification(notificationId: number) {
+    const url = queryStringBuilder(this.groupNotificationUrl, { notificationId });
     return this.client.sendGet(url);
+  }
+
+  putGroupNotification(notificationId: number, data: { new_feedback: boolean, stocks_gain: boolean, price_change: number, min_quantity: number }) {
+    const url = queryStringBuilder(this.groupNotificationUrl, { notificationId });
+    return this.client.sendPut(url, data);
   }
 
   updateGroupName(groupName: string, newName: string) {

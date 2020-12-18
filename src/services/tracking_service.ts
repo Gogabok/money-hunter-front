@@ -135,9 +135,9 @@ export class TrackingService {
     }
   }
 
-  async getGroupNotification(groupPk: number) {
+  async getGroupNotification(notificationId: number) {
     try {
-      const response = await this.authService.refreshWrapper(this.repo.getGroupNotification.bind(this.repo, groupPk));
+      const response = await this.authService.refreshWrapper(this.repo.getGroupNotification.bind(this.repo, notificationId));
       if (response.status === 200) {
         return response.data;
       } else if(response.status === 403) {
@@ -146,6 +146,14 @@ export class TrackingService {
         return "Произошла ошибка";
       }
     } catch (e) {
+      return "Произошла ошибка";
+    }
+  }
+
+  async putGroupNotification(notificationId: number, data) {
+    try {
+      await this.authService.refreshWrapper(this.repo.putGroupNotification.bind(this.repo, notificationId, data));
+     } catch (e) {
       return "Произошла ошибка";
     }
   }

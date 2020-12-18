@@ -15,21 +15,21 @@
     methods: {
       async addNotificationBtnHandler() {
         try {
-          const groupPk = await this.getGroupPk();
+          const groupNotificationId = await this.getGroupNotificationId();
           const service = new TrackingService();
-          const notification = await service.getGroupNotification(groupPk);
+          const notification = await service.getGroupNotification(groupNotificationId);
           if(typeof notification === 'string') {
             this.$store.commit('notifications/ADD_NOTIFICATION', {text: notification, status: 'error'})
           } else {
             if(!this.isDisabled) {
-              this[SHOW_MODAL_MUTATION]({component: AddNotification, nested: notification});
+              this[SHOW_MODAL_MUTATION]({component: AddNotification, data: {...notification, notification_id: groupNotificationId}});
             }
           }
         } catch(e) {
           this.$store.commit('notifications/ADD_NOTIFICATION', {text: "Произошла ошибка", status: 'error'});
         }
       },
-      async getGroupPk() {
+      async getGroupNotificationId() {
         try {
           const service = new TrackingService();
           const groups = await service.getUserGroups();
@@ -41,11 +41,7 @@
       ...mapMutations('modal', [SHOW_MODAL_MUTATION]),
     },
     computed: {
-      getSubscription() {
-        return this.$store.getters['user/getSubscription']
-      },
       isDisabled() {
-        // return this.getSubscription.maxTrackingProducts <= 0
         return false
       }
     }
