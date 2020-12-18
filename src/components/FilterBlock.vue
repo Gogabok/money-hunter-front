@@ -53,15 +53,17 @@
                       :normalizer="node=>({...node, label: node.name})"
                       v-model="days"
                       :clearable="false"
+                      :title="userSubscription !== 'BUSINESS' ? 'Не доступно на вашем тарифе':''"
+                      :disabled="userSubscription !== 'BUSINESS'"
                       :options="daysOptions"/>
           </div>
         </div>
         <div class="filter-form__column column-fields-custom">
           <div class="filter-form__column-item">
-            <InputField label="Сумма заказов в неделю" range v-model="revenueRange" :min="0" :max="900000"/>
+            <InputField :label="revenueRangeLabel" range v-model="revenueRange" :min="0" :max="900000"/>
           </div>
           <div class="filter-form__column-item">
-            <InputField label="Заказы в неделю" range v-model="ordersRange" :min="0" :max="900000"/>
+            <InputField :label="ordersRangeLabel" range v-model="ordersRange" :min="0" :max="900000"/>
           </div>
         </div>
         <!-- <div class="filter-form__column">
@@ -207,6 +209,22 @@
       userSubscription() {
         return this.$store.state.user.subscription?.subscriptionType;
       },
+      revenueRangeLabel() {
+        switch (this.days) {
+          case 7: return "Сумма заказов в неделю";
+          case 14: return "Сумма заказов за две недели";
+          case 30: return "Сумма заказов в месяц";
+        }
+        return "Сумма заказов за " + this.days + " дней";
+      },
+      ordersRangeLabel() {
+        switch (this.days) {
+          case 7: return "Заказы в неделю";
+          case 14: return "Заказы за две недели";
+          case 30: return "Заказы в месяц";
+        }
+        return "Заказы за " + this.days + " дней";
+      }
     },
     beforeDestroy() {
       if(this.categories.find(item => item === 0) === 0 || this.categories.length === 0) {

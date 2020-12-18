@@ -134,4 +134,27 @@ export class TrackingService {
       console.log('Cannot download file', e);
     }
   }
+
+  async getGroupNotification(notificationId: number) {
+    try {
+      const response = await this.authService.refreshWrapper(this.repo.getGroupNotification.bind(this.repo, notificationId));
+      if (response.status === 200) {
+        return response.data;
+      } else if(response.status === 403) {
+        return response.data.detail.toString();
+      } else {
+        return "Произошла ошибка";
+      }
+    } catch (e) {
+      return "Произошла ошибка";
+    }
+  }
+
+  async putGroupNotification(notificationId: number, data) {
+    try {
+      await this.authService.refreshWrapper(this.repo.putGroupNotification.bind(this.repo, notificationId, data));
+     } catch (e) {
+      return "Произошла ошибка";
+    }
+  }
 }
