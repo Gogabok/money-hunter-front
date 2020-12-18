@@ -61,7 +61,7 @@ export class BlackboxService {
 
   async findSearchIDByName(name: string) {
     try {
-      return (await this.service.refreshWrapper(this.repo.getSavedSearches.bind(this.repo))).data.find((s: { data: { name: string; }; }) => s.data.name === name)['pk'];
+      return (await this.service.refreshWrapper(this.repo.findSearchIDByName.bind(this.repo, name))).data;
     } catch (e) {
       return false;
     }
@@ -101,20 +101,11 @@ export class BlackboxService {
     }
   }
 
-  async getSavedSearchByPk(pk: number) {
+  async deleteSearch(name: any) {
     try {
-      return (await this.service.refreshWrapper(this.repo.getSavedSearches.bind(this.repo))).data.find((s: { pk: number; }) => s.pk === pk);
+      return (await this.service.refreshWrapper(this.repo.deleteSearch.bind(this.repo, name))).data;
     } catch (e) {
-      return {};
-    }
-  }
-
-  async deleteSearch(pk: number) {
-    try {
-      const response = (await this.service.refreshWrapper(this.repo.deleteSearch.bind(this.repo, pk)));
-      return response.status === 204 || 'Произошла ошибка';
-    } catch (e) {
-      return 'Произошла ошибка';
+      return { userSavedSearched: [] };
     }
   }
 
@@ -123,9 +114,8 @@ export class BlackboxService {
       const _data = this.normalizeFilterData(data);
       AmplitudeService.blackBoxSearchSave(_data, name);
 
-      const pk = await this.findSearchIDByName(name);
-      const response = await this.service.refreshWrapper(pk ?
-          this.repo.updateSearch.bind(this.repo, pk, name, _data) : this.repo.addSearch.bind(this.repo, name, _data));
+      const response = await this.service.refreshWrapper(this.repo.saveSearch.bind(this.repo, name, _data));
+
       return response.status === 201 || 'Произошла ошибка';
     } catch (e) {
       if (e.response?.status === 400) {
