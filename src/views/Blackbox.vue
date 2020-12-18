@@ -67,19 +67,6 @@
       return {
         list: [],
 
-        tableHeaders: [
-          {name: 'name', label: 'Товар', clazz: 'width30 mw300', sortable: false},
-          {name: 'articul', label: 'Артикул', clazz: 'width9 mw100', isOnlyAscSorting: true},
-          {name: 'currentPrice', label: 'Цена', clazz: 'width5 mw100'},
-          {name: 'currentQty', label: 'Остаток', clazz: 'width9 mw100'},
-          {name: 'avOrdersSpeed', label: 'Заказов в неделю', clazz: 'width9 mw100'},
-          {name: 'avRevenue', label: 'Сумма заказов в неделю', clazz: 'width9 mw150'},
-          // {name: 'selesCount', label: 'Продажи', clazz: 'width5 mw100'},
-          // {name: 'salesRevenue', label: 'Сумма продаж', clazz: 'width9 mw100'},
-          {name: 'currentRating', label: 'Рейтинг', clazz: 'tracking-table__header-item_align-right width23 mw150'},
-          {name: 'currentFeedBackCount', label: 'Кол-во отзывов', clazz: 'width9 mw100'},
-          {name: 'add', label: 'Добавить в мои товары', sortable: false, clazz: 'width9 mw150'},
-        ],
         orderType: DEFAULT_ORDER_TYPE,
 
         debounceLoadGoods: debounce(this.loadGoods, 200),
@@ -105,6 +92,24 @@
           ...this.$mapItemListToTableItem(item),
           nested: {content: ProductBlackboxNested, articul: item.articul, clazz: 'tracking-table-dropdown__item-chart', days: this.days}
         }));
+      },
+      tableHeaders() {
+        const avOrdersSpeedLabel = this.days === 7 ? 'Заказов в неделю' : this.days === 14 ? 'Заказов за две недели' : 'Заказов в месяц';
+        const avRevenueLabel = this.days === 7 ? 'Сумма заказов за неделю' : this.days === 14 ? 'Сумма заказов за две недели' : 'Сумма заказов за месяц';
+
+        return [
+          {name: 'name', label: 'Товар', clazz: 'width30 mw300', sortable: false},
+          {name: 'articul', label: 'Артикул', clazz: 'width9 mw100', isOnlyAscSorting: true},
+          {name: 'currentPrice', label: 'Цена', clazz: 'width5 mw100'},
+          {name: 'currentQty', label: 'Остаток', clazz: 'width9 mw100'},
+          {name: 'avOrdersSpeed', label: avOrdersSpeedLabel, clazz: 'width9 mw100'},
+          {name: 'avRevenue', label: avRevenueLabel, clazz: 'width9 mw150'},
+          // {name: 'selesCount', label: 'Продажи', clazz: 'width5 mw100'},
+          // {name: 'salesRevenue', label: 'Сумма продаж', clazz: 'width9 mw100'},
+          {name: 'currentRating', label: 'Рейтинг', clazz: 'tracking-table__header-item_align-right width23 mw150'},
+          {name: 'currentFeedBackCount', label: 'Кол-во отзывов', clazz: 'width9 mw100'},
+          {name: 'add', label: 'Добавить в мои товары', sortable: false, clazz: 'width9 mw150'}
+        ]
       },
       columnsItems() {
         const columnsItems = []

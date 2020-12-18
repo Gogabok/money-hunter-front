@@ -4,15 +4,15 @@
       <p>Цена при оплате за 3 месяца - скидка 10%, за 6 месяцев - скидка 15%.</p>
     </div>
     <div class="tarifes-tabs">
-      <button class="tarifes-tabs__btn active">Ежемесячно</button>
-      <button class="tarifes-tabs__btn">На 3 месяца</button>
-      <button class="tarifes-tabs__btn">На 6 месяцев</button>
+      <button class="tarifes-tabs__btn" :class="{active: discount === 0}" @click="discount = 0">Ежемесячно</button>
+      <button class="tarifes-tabs__btn" :class="{active: discount === 10}" @click="discount = 10">На 3 месяца</button>
+      <button class="tarifes-tabs__btn" :class="{active: discount === 15}" @click="discount = 15">На 6 месяцев</button>
     </div>
     <Tariff
       v-for="item in tariffs"
       :key="item.name"
       :old-price="item.oldPrice"
-      :price="item.price"
+      :price="Math.floor(item.price * (100 - discount)) / 100"
       :clazz="item.clazz"
       :name="item.name"
       :list="item.list"
@@ -31,6 +31,7 @@
     components: {Tariff},
     data() {
       return {
+        discount: 0,
         tariffs: [
           {
             name: "FREE",
