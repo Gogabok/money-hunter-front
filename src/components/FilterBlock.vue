@@ -437,7 +437,8 @@
         this.categories_list = categories.categories_list
         
         const isCategoriesUpdated = JSON.parse(localStorage.getItem('isCategoriesUpdated'))
-        if(!isCategoriesUpdated) {
+        
+        if(!isCategoriesUpdated || !categories?.categories || !categories?.categories_list) {
           this.isCategoriesLoading = true
           await this.loadUpdatedCategories()
           this.$nextTick(() => {
@@ -460,7 +461,7 @@
         this.categories_list = loadedCategories.categories_list
 
         localStorage.setItem("categories", JSON.stringify({categories: loadedCategories.categories, categories_list: loadedCategories.categories_list, timestamp: new Date().getTime().toString()}))
-
+        
         this.isCategoriesLoading = true
         this.$nextTick(() => {
           this.isCategoriesLoading = false
