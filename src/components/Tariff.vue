@@ -11,7 +11,7 @@
       </div>
     </div>
     <template v-if="isBuyable">
-      <div class="tarif-price"><strike>{{oldPrice}}</strike> {{price}} ₽</div>
+      <div class="tarif-price"><strike v-if="oldPrice > 0">{{oldPrice}}</strike> {{price}} ₽</div>
       <Btn label="Купить" :isDisabled="!termsReaded" @click="handleBuyBtn"/>
     </template>
     <template v-if="isBuyable">
@@ -106,6 +106,7 @@
     box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
     border-radius: 20px;
     padding: 1.78rem 2.14rem 2.14rem;
+    margin: 30px 0px 0px 0px;
 
     &:not(:first-child) {
       margin-left: 2rem;

@@ -11,7 +11,7 @@
     <Tariff
       v-for="item in tariffs"
       :key="item.name"
-      :old-price="item.oldPrice"
+      :old-price="item.oldPrice ? item.oldPrice : 0"
       :price="Math.floor(item.price * (100 - discount)) / 100"
       :clazz="item.clazz"
       :name="item.name"
@@ -114,7 +114,7 @@
     &-tabs {
       flex: 0 0 100%;
       max-width: 100%;
-      margin: 0 0 50px 0;
+      margin: 0 0 10px 0;
       justify-content: center;
       display: flex;
 

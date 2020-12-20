@@ -150,7 +150,7 @@ export class TrackingService {
     }
   }
 
-  async putGroupNotification(notificationId: number, data) {
+  async putGroupNotification(notificationId: number, data: { new_feedback: boolean, stocks_gain: boolean, price_change: number, min_quantity: number }) {
     try {
       await this.authService.refreshWrapper(this.repo.putGroupNotification.bind(this.repo, notificationId, data));
      } catch (e) {

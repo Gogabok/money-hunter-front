@@ -10,6 +10,8 @@ import Register from '../components/auth/Register.vue';
 import RecoverRequest from '../components/auth/RecoverRequest.vue';
 import RecoverConfirm from '../components/auth/RecoverConfirm.vue';
 
+import UserRegistrationViaTelegramModal from "../components/telegram-notifications/UserRegistrationViaTelegramModal.vue"
+
 import GroupList from '../components/tracking/GroupList.vue';
 
 import PositionsList from '../components/trackingPositions/PositionsList.vue';
@@ -46,7 +48,13 @@ const routes: Array<RouteConfig> = [
     component: Profile,
     meta: {
       title: 'Профиль'
-    }
+    },
+    children: [
+      { path: 'notificationsViaTelegram', 
+        name: 'profile.telegramNotifications', 
+        component: UserRegistrationViaTelegramModal,
+      },
+    ]
   },
   {
     path: '/tracking',
