@@ -37,16 +37,16 @@ export default {
         },
     },
     created() {
-        // if(!localStorage.getItem('isRegisteredViaTelegram')) {
+        if(!localStorage.getItem('isRegisteredViaTelegram')) {
             axios.get(`http://45.90.34.172:8081/api/isUserRegistered?email=${this.user.data.email}`).then(isRegistered => {
                 this.isRegistered = isRegistered
                 localStorage.setItem('isRegisteredViaTelegram', true)
             }).catch(erorr => {
                 this.isRegistered = false
             })
-        // } else {
-        //     this.isRegistered = true
-        // }
+        } else {
+            this.isRegistered = true
+        }
     },
 }
 </script>
