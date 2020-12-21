@@ -12,7 +12,7 @@
       v-for="item in tariffs"
       :key="item.name"
       :old-price="item.oldPrice ? item.oldPrice : 0"
-      :price="Math.floor(item.price * (100 - discount)) / 100"
+      :price="Math.round(Math.floor(item.price * (100 - discount)) / 100)"
       :clazz="item.clazz"
       :name="item.name"
       :list="item.list"
