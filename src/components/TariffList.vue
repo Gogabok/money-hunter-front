@@ -1,12 +1,9 @@
 <template>
   <div class="tarifes block_container">
-    <div class="tarifes__desc">
-      <p>Цена при оплате за 3 месяца - скидка 10%, за 6 месяцев - скидка 15%.</p>
-    </div>
     <div class="tarifes-tabs">
       <button class="tarifes-tabs__btn" :class="{active: discount === 0}" @click="discount = 0">Ежемесячно</button>
-      <button class="tarifes-tabs__btn" :class="{active: discount === 10}" @click="discount = 10">На 3 месяца</button>
-      <button class="tarifes-tabs__btn" :class="{active: discount === 15}" @click="discount = 15">На 6 месяцев</button>
+      <button class="tarifes-tabs__btn" :class="{active: discount === 10}" @click="discount = 10">На 3 месяца <span>Скидка 10%</span></button>
+      <button class="tarifes-tabs__btn" :class="{active: discount === 15}" @click="discount = 15">На 6 месяцев <span>Скидка 15%</span></button>
     </div>
     <Tariff
       v-for="item in tariffs"
@@ -121,7 +118,7 @@
       &__btn {
         background: none;
         margin-right: 30px;
-        padding: 10px 20px;
+        padding: 10px 20px 5px 20px;
         font-size: 16px;
         color: #C5C7D2;
         text-transform: uppercase;
@@ -136,6 +133,14 @@
 
         &:last-child {
           margin-right: 0;
+        }
+
+        & span {
+          display: block;
+          text-align: center;
+          font-size: 14px;
+          text-transform: none;
+          font-weight: 400;
         }
       }
     }
