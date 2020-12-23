@@ -8,13 +8,12 @@
             :rangeData="range"
             @changeValue="changeValue"
         />
-
-        <Btn
-            class="modal-form-save"
-            label="Сохранить"
-            @click="saveNotifications"
-        />
       </form>
+      <Btn
+        class="modal-form-save"
+        label="Сохранить"
+        @click="saveNotifications"
+      />
     </template>
   </Modal>
 </template>
@@ -147,10 +146,12 @@ export default {
     margin: 10px;
     display: flex;
     flex-direction: column;
+    overflow-y: auto;
     &-save {
       max-width: 150px;
       margin: 0px auto;
       margin-top: 20px;
+      min-height: 40px;
     }
   }
   .modal-form__input-item {
