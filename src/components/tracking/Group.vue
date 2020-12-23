@@ -8,7 +8,10 @@
           />
         </div>
         <div class="tracking-add-notification">
-          <AddNotificationBtn/>
+          <AddNotificationBtn
+            :disabled="mySubscription !== 'BUSINESS'"
+            :class="mySubscription !== 'BUSINESS' ? 'disabled' : ''"
+          />
         </div>
         <div class="tracking-actions">
           <RowWithIcon :list="trackingActionList"/>
@@ -307,6 +310,33 @@
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+  .tracking-add-notification {
+    & .disabled {
+      position: relative;
+      &::before {
+        position: absolute;
+        bottom: -3px;
+        padding: 5px 10px;
+        background: rgba(0, 0, 0, .8);
+        display: block;
+        color: #fff;
+        z-index: 78;
+        left: 50%;
+        transform: translate(-50%, 100%);
+        border-radius: 4px;
+        content: "Не доступно на вашем тарифе";
+        width: 250px;
+        text-align: center;
+        opacity: 0;
+        transition-duration: .2s;
+      }
+    }
+    & .disabled:hover {
+      &::before {
+        opacity: 1;
+      }
+    }
   }
   @media screen and (max-width: 1030px){
     .tracking-info {

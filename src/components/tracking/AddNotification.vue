@@ -9,20 +9,6 @@
             @changeValue="changeValue"
         />
 
-        <div class="modal-form__input-item">
-          <label class="" for="new_feedback">
-            <input v-model="local_new_feedback" id="new_feedback" type="checkbox">
-            Уведомлять при новых отзывах
-          </label>
-        </div>
-
-        <div class="modal-form__input-item">
-          <label class="" for="stocks_gain">
-            <input v-model="local_stocks_gain" id="stocks_gain" type="checkbox">
-            Уведомлять при новых остатках
-          </label>
-        </div>
-
         <Btn
             class="modal-form-save"
             label="Сохранить"
@@ -73,32 +59,40 @@ export default {
     return {
       ranges: [
         {
-            title: "Остаток",
-            range: [1, 1000],
-            desc: "Оповещение, когда остаток достигнет:",
-            value: 1,
-            currency: "шт.",
-            isActive: true
+          title: "Остаток",
+          range: [1, 1000],
+          desc: "Оповещение, когда остаток достигнет:",
+          value: 1,
+          currency: "шт.",
+          isActive: true
         },
         {
-            title: "Цена",
-            range: [1, 10000],
-            desc: "Оповещения, когда цена товара изменится на",
-            value: 1,
-            currency: "₽",
-            isActive: true
+          title: "Цена",
+          range: [1, 10000],
+          desc: "Оповещения, когда цена товара изменится на",
+          value: 1,
+          currency: "₽",
+          isActive: true
+        },
+        {
+          title: "Уведомлять при новых отзывах",
+          range: [],
+          isActive: true
+        },
+        {
+          title: "Уведомлять при новых остатках",
+          range: [],
+          isActive: true
         },
       ],
-      local_stocks_gain: this.stocks_gain,
-      local_new_feedback: this.new_feedback,
     }
   },
   methods: {
     async saveNotifications() {
         const service = new TrackingService();
         const notificationsData = {
-          new_feedback: this.local_new_feedback,
-          stocks_gain: this.local_stocks_gain
+          new_feedback: this.ranges.find(range => range.title === 'Уведомлять при новых отзывах').isActive,
+          stocks_gain: this.ranges.find(range => range.title === 'Уведомлять при новых остатках').isActive
         }
 
         notificationsData["min_quantity"] = this.ranges.find(range => range.title === 'Остаток').isActive 
@@ -141,6 +135,9 @@ export default {
     } else {
       this.ranges.find(range => range.title === 'Цена').isActive = false
     }
+
+    this.ranges.find(range => range.title === 'Уведомлять при новых остатках').isActive = this.stocks_gain
+    this.ranges.find(range => range.title === 'Уведомлять при новых отзывах').isActive = this.new_feedback
   },
 }
 </script>
@@ -153,10 +150,7 @@ export default {
     &-save {
       max-width: 150px;
       margin: 0px auto;
-      position: absolute;
-      bottom: 20px;
-      left: 50%;
-      transform: translate(-50%, 0);
+      margin-top: 20px;
     }
   }
   .modal-form__input-item {

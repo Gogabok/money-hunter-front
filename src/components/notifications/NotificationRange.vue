@@ -8,7 +8,7 @@
             </label>
         </div>
         <transition name="toggleDown" mode="out-in">
-            <div v-show="isRangeVissible" class="notificationRange-isVissibleRange">
+            <div v-if="rangeData.range.length > 0" v-show="isRangeVissible" class="notificationRange-isVissibleRange">
                 <span class="notificationRange-desc">{{ rangeData.desc }} <b>{{ value }}{{ rangeData.currency }}</b></span>
                 <vue-range-slider
                     v-model="value"
