@@ -41,7 +41,6 @@ export default {
                     this.$store.commit('notifications/ADD_NOTIFICATION', {text: 'Бот подключен, проверьте telegram', status: 'success'});
                     this.$router.push({name: 'profile'});
                 }).catch(error => {
-                    console.log(error)
                     this.isLoading = false;
                     this.error = 'Проверочный код неверный';
                 })

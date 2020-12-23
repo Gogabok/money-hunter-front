@@ -53,7 +53,7 @@
                       :normalizer="node=>({...node, label: node.name})"
                       v-model="days"
                       :clearable="false"
-                      :title="userSubscription !== 'BUSINESS' ? 'Не доступно на вашем тарифе':''"
+                      :class="userSubscription !== 'BUSINESS' ? 'disabled' : ''"
                       :disabled="userSubscription !== 'BUSINESS'"
                       :options="daysOptions"/>
           </div>
@@ -66,14 +66,6 @@
             <InputField :label="ordersRangeLabel" range v-model="ordersRange" :min="0" :max="900000"/>
           </div>
         </div>
-        <!-- <div class="filter-form__column">
-          <div class="filter-form__column-item">
-            <TreeSelect label="Кол-во дней"
-                      :normalizer="node=>({...node, label: node.name})"
-                      v-model="daysAmount"
-                      :options="daysAmountOptions"/>
-          </div>
-        </div> -->
       </div>
       <div class="filter-form__actions">
         <div class="filter-form__searchs" v-if="userSubscription==='FREE'">
@@ -641,6 +633,34 @@
             }
           }
         }
+      }
+    }
+  }
+
+  .filter-form__column-item {
+    & .disabled {
+      position: relative;
+      &::before {
+        position: absolute;
+        bottom: -3px;
+        padding: 5px 10px;
+        background: rgba(0, 0, 0, .8);
+        display: block;
+        color: #fff;
+        z-index: 78;
+        left: 50%;
+        transform: translate(-50%, 100%);
+        border-radius: 4px;
+        content: "Не доступно на вашем тарифе";
+        width: 250px;
+        text-align: center;
+        opacity: 0;
+        transition-duration: .2s;
+      }
+    }
+    & .disabled:hover {
+      &::before {
+        opacity: 1;
       }
     }
   }

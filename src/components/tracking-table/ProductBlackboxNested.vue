@@ -261,7 +261,6 @@
       //   {"date": "2020-07-25", "orders": 22},
       //   {"date": "2020-07-26", "orders": 17},
       // ];
-      console.log(productData)
       const labels = productData.map(item => item.date);
       const orders = productData.map(item => item.orders);
       const qty = productData.map(item => item.qty);
@@ -273,7 +272,6 @@
         labels,
         datasets: [
           {yAxisID: 'y-axis-1', data: orders, fill: false, borderColor: "#7E57C2", lineTension: 0, label: 'Заказы'},
-          // {yAxisID: 'y-axis-2', data: qty, fill: false, borderColor: "#ff3f3f", lineTension: 0, label: 'Остаток на складе'}
         ]
       }
       this.chartData.qty = {
