@@ -72,13 +72,22 @@
       id: {
         type: Number, 
         default: 2
+      },
+      perPeriod: {
+        type: Number
       }
     },
     methods: {
       async handleBuyBtn() {
         AmplitudeService.subscription(this.name);
 
-        const results = await this[GET_PAYMENT_LINK_ACTION](this.id)
+        let tariffID = this.id;
+
+        if(this.perPeriod > 0) {
+          tariffID = this.id + this.perPeriod
+        }
+
+        const results = await this[GET_PAYMENT_LINK_ACTION](tariffID)
         const response = results.response
 
         if(response) {

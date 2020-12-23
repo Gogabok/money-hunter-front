@@ -10,6 +10,8 @@
       :key="item.name"
       :old-price="item.oldPrice ? item.oldPrice : 0"
       :price="Math.round(Math.floor(item.price * (100 - discount)) / 100)"
+      :perPeriod="(discount / 5) - 1"
+      :id="item.id ? item.id : 0"
       :clazz="item.clazz"
       :name="item.name"
       :list="item.list"
@@ -51,6 +53,7 @@
             price: 990,
             clazz: "tarif__item_fourth",
             isBuyable: true,
+            id: 2,
             list: [
               {text: "150 товаров на отслеживании", success: true},
               {text: "Безлимит анализов по категориям", success: true},
@@ -68,6 +71,7 @@
             price: 3990,
             clazz: "tarif__item_fourth",
             isBuyable: true,
+            id: 5,
             list: [
               {text: "500 товаров на отслеживании", success: true},
               {text: "Безлимит анализов по категориям", success: true},

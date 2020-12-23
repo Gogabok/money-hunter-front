@@ -8,9 +8,9 @@
       </div>
       <div class="notifications" >
         <img src="../assets/img/ikons/notification.svg" alt="">
-        <transition name="fade-notifications" mode="out-in">
+        <!-- <transition name="fade-notifications" mode="out-in">
           <div v-if="notification" class="notifications__circle"><span></span></div>
-        </transition>
+        </transition> -->
       </div>
       <transition name="fade-notifications" mode="out-in">
         <div v-if="notification" class="alert" :class="notification.status">

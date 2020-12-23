@@ -2,16 +2,12 @@
   <Modal title="Добавить оповещение" closable>
     <template v-slot:default>
       <form action="" class="modal-form" @submit.prevent>
-
-
-        <div class="modal-form__input-item">
-          <InputField label="Уведомлять при изменении цены" v-model="local_price_change"></InputField>
-        </div>
-
-
-        <div class="modal-form__input-item">
-          <InputField label="Уведомлять при снижении остатка меньше заданного" v-model="local_min_quantity"></InputField>
-        </div>
+        <notification-range
+            v-for="range in ranges"
+            :key="range.title"
+            :rangeData="range"
+            @changeValue="changeValue"
+        />
 
         <div class="modal-form__input-item">
           <label class="" for="new_feedback">
@@ -26,6 +22,12 @@
             Уведомлять при новых остатках
           </label>
         </div>
+
+        <Btn
+            class="modal-form-save"
+            label="Сохранить"
+            @click="saveNotifications"
+        />
       </form>
     </template>
   </Modal>
@@ -33,11 +35,18 @@
 
 <script>
 import Modal from "../Modal.vue";
-import InputField from "@/shared-components/InputField";
 import {TrackingService} from '../../services/tracking_service';
+import NotificationRange from "@/components/notifications/NotificationRange.vue"
+import {HIDE_MODAL_MUTATION} from "@/store/modules/modal/constants";
+import Btn from "@/shared-components/Btn"
 
 export default {
   name: "AddNotification",
+  components: {
+    Modal,
+    Btn,
+    NotificationRange
+  },
   props: {
     notification_id: {
       type: Number,
@@ -62,46 +71,95 @@ export default {
   },
   data() {
     return {
-
+      ranges: [
+        {
+            title: "Остаток",
+            range: [1, 1000],
+            desc: "Оповещение, когда остаток достигнет:",
+            value: 1,
+            currency: "шт.",
+            isActive: true
+        },
+        {
+            title: "Цена",
+            range: [1, 10000],
+            desc: "Оповещения, когда цена товара изменится на",
+            value: 1,
+            currency: "₽",
+            isActive: true
+        },
+      ],
+      local_stocks_gain: this.stocks_gain,
+      local_new_feedback: this.new_feedback,
     }
   },
-  computed: {
-    local_price_change: {
-      get: function () { return this.price_change; },
-      set: function (v) {
+  methods: {
+    async saveNotifications() {
         const service = new TrackingService();
-        service.putGroupNotification(this.notification_id, {price_change: v});
-      }
+        const notificationsData = {
+          new_feedback: this.local_new_feedback,
+          stocks_gain: this.local_stocks_gain
+        }
+
+        notificationsData["min_quantity"] = this.ranges.find(range => range.title === 'Остаток').isActive 
+          ? this.ranges.find(range => range.title === 'Остаток').value
+          : 0;
+
+        notificationsData["price_change"] = this.ranges.find(range => range.title === 'Цена').isActive 
+          ? this.ranges.find(range => range.title === 'Цена').value
+          : 0;
+
+        const result = await service.putGroupNotification(this.notification_id, {...notificationsData});
+
+        if(result.status === 200) {
+          this.$store.commit('notifications/ADD_NOTIFICATION', {text: 'Оповещения сохранены', status: 'success'})
+          await this.$store.commit(`modal/${HIDE_MODAL_MUTATION}`);
+        } else {
+          this.$store.commit('notifications/ADD_NOTIFICATION', {text: 'Произошла ошибка', status: 'error'})
+          await this.$store.commit(`modal/${HIDE_MODAL_MUTATION}`);
+        }
+
     },
-    local_stocks_gain: {
-      get: function () { return this.stocks_gain; },
-      set: function (v) {
-        const service = new TrackingService();
-        service.putGroupNotification(this.notification_id, {stocks_gain: v});
-      }
-    },
-    local_min_quantity: {
-      get: function () { return this.min_quantity; },
-      set: function (v) {
-        const service = new TrackingService();
-        service.putGroupNotification(this.notification_id, {min_quantity: v});
-      }
-    },
-    local_new_feedback: {
-      get: function () { return this.new_feedback; },
-      set: function (v) {
-        const service = new TrackingService();
-        service.putGroupNotification(this.notification_id, {new_feedback: v});
-      }
-    },
+    changeValue(range) {
+        if(range.value !== false) {
+            this.ranges.find(item => item.title === range.title).value = range.value
+            this.ranges.find(item => item.title === range.title).isActive = true
+        } else {
+            this.ranges.find(item => item.title === range.title).isActive = false
+        }
+    }
   },
-  components: {
-    InputField,
-    Modal
-  }
+  created() {
+    if(this.min_quantity > 0) {
+      this.ranges.find(range => range.title === 'Остаток').value = this.min_quantity;
+    } else {
+      this.ranges.find(range => range.title === 'Остаток').isActive = false
+    }
+
+    if(this.price_change > 0) {
+      this.ranges.find(range => range.title === 'Цена').value = this.price_change;
+    } else {
+      this.ranges.find(range => range.title === 'Цена').isActive = false
+    }
+  },
 }
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+  .modal-form {
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+    &-save {
+      max-width: 150px;
+      margin: 0px auto;
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translate(-50%, 0);
+    }
+  }
+  .modal-form__input-item {
+    margin: .42rem auto .42rem auto;
+  }
 </style>
