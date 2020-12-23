@@ -256,6 +256,7 @@
             formatting: true
           }
         }
+        this.subheaders = {}
         Object.keys(renamedHeaders).forEach(header => {
           // this.tableHeaders.find(item => item.name === renamedHeaders[header].label)["subheader"] = renamedHeaders[header].title
           this.subheaders[header] = {}
@@ -342,17 +343,19 @@
       },
       agregatedData: {
         handler: function () {
-          const result = this.agregatedData
-          const mainInfo = ['onPage', 'products', "countAll"]
-          const potentialHeaders = []
-          Object.keys(result).forEach(resultItem => {
-            if(!mainInfo.find(resultPotentialItem => resultPotentialItem === resultItem)) {
-              potentialHeaders.push({label: resultItem, value: result[resultItem]})
+          this.$nextTick(() => {
+            const result = this.agregatedData
+            const mainInfo = ['onPage', 'products', "countAll"]
+            const potentialHeaders = []
+            Object.keys(result).forEach(resultItem => {
+              if(!mainInfo.find(resultPotentialItem => resultPotentialItem === resultItem)) {
+                potentialHeaders.push({label: resultItem, value: result[resultItem]})
+              }
+            })
+            if(potentialHeaders.length > 0) {
+              this.insertHeaders(potentialHeaders)
             }
           })
-          if(potentialHeaders.length > 0) {
-            this.insertHeaders(potentialHeaders)
-          }
         },
         deep: true
       },

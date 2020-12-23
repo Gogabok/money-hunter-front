@@ -11,7 +11,6 @@
     <LineChart v-show="currentType === 'price'" v-if="chartData[`price`]" :chart-data="chartData['price']" :chart-options="options['price']"/>
     <LineChart v-show="currentType === 'rating'" v-if="chartData[`rating`]" :chart-data="chartData['rating']" :chart-options="options['rating']"/>
     <LineChart v-show="currentType === 'feedBackCount'" v-if="chartData[`feedBackCount`]" :chart-data="chartData['feedBackCount']" :chart-options="options['feedBackCount']"/>
-    <!-- <LineChart v-show="currentType === 'todaySales'" v-if="chartData[`todaySales`]" :chart-data="chartData['todaySales']" :chart-options="options['todaySales']"/> -->
   </div>
 </template>
 
@@ -68,11 +67,6 @@
             icon: "feedback-icon",
             class: "feedBackCount"
           },
-          // todaySales: {
-          //   label: "Количество продаж",
-          //   icon: "todaySales-icon",
-          //   class: "todaySales"
-          // },
         },
         options: {
           orders: {
@@ -210,35 +204,13 @@
               ]
             }
           },
-          // todaySales: {
-          //   scales: {
-          //     xAxes: [{
-          //       ticks: {
-          //         callback(value) {
-          //           return value.substr(5);
-          //         }
-          //       }
-          //     }],
-          //     yAxes: [
-          //     {
-          //       position: 'left',
-          //       id: 'y-axis-1',
-          //       ticks: {
-          //         beginAtZero: true,
-          //         callback: function(value, index, values) {
-          //             return value % 1 ? '' : value + ''
-          //         }
-          //       },
-          //       scaleLabel: {
-          //         display: true,
-          //         labelString: 'Количество продаж'
-          //       }
-          //     }, 
-          //     ]
-          //   }
-          // }
         }
       }
+    },
+    computed: {
+      userSubscription() {
+        return this.$store.state.user.subscription?.subscriptionType;
+      },
     },
     methods: {
       changeType(label) {
@@ -246,8 +218,12 @@
       }
     },
     async created() {
+      let days = false
+      if(this.$route.name === 'tracking.group' && this.userSubscription === 'BUSINESS') {
+        days = 30
+      }
       const blackboxService = new BlackboxService();
-      const productData = await blackboxService.getChartData(this.articul, this.days? this.days : undefined);
+      const productData = await blackboxService.getChartData(this.articul, days ? days : this.days);
 
       const labels = productData.map(item => item.date);
       const orders = productData.map(item => item.orders);
