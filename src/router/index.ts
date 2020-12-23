@@ -44,7 +44,7 @@ const routes: Array<RouteConfig> = [
     component: Profile,
     meta: {
       title: 'Профиль'
-    }
+    },
   },
   {
     path: '/tracking',

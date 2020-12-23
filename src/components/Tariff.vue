@@ -11,7 +11,13 @@
       </div>
     </div>
     <template v-if="isBuyable">
-      <div class="tarif-price">{{price}} ₽ / мес</div>
+      <div class="tariff-price"> 
+        <span class='tariff-price-actual'>{{price}} ₽</span>
+        <div class="tariff-price-desc">
+          <span class="tariff-price-desc-oldPrice" v-if="oldPrice > 0">{{ oldPrice }} ₽</span>
+          <div class="tariff-price-desc-at">в месяц</div>
+        </div>
+      </div>
       <Btn label="Купить" :isDisabled="!termsReaded" @click="handleBuyBtn"/>
     </template>
     <template v-if="isBuyable">
@@ -50,6 +56,10 @@
         type: String,
         required: true,
       },
+      oldPrice: {
+        type: Number,
+        required: true
+      },
       price: {
         type: Number,
         required: true
@@ -65,13 +75,22 @@
       id: {
         type: Number, 
         default: 2
+      },
+      perPeriod: {
+        type: Number
       }
     },
     methods: {
       async handleBuyBtn() {
         AmplitudeService.subscription(this.name);
 
-        const results = await this[GET_PAYMENT_LINK_ACTION](this.id)
+        let tariffID = this.id;
+
+        if(this.perPeriod > 0) {
+          tariffID = this.id + this.perPeriod
+        }
+
+        const results = await this[GET_PAYMENT_LINK_ACTION](tariffID)
         const response = results.response
 
         if(response) {
@@ -105,6 +124,7 @@
     box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
     border-radius: 20px;
     padding: 1.78rem 2.14rem 2.14rem;
+    margin: 30px 0px 0px 0px;
 
     &:not(:first-child) {
       margin-left: 2rem;
@@ -206,12 +226,40 @@
     background: url("../assets/img/ikons/plus.svg") no-repeat;
   }
 
-  .tarif-price {
-    text-align: center;
-    color: $blue;
-    margin: 1.21rem 0;
-    font-size: 1.71rem;
-    font-weight: bold;
-    letter-spacing: .3px;
+  .tariff-price {
+    display: flex;
+    // justify-content: center;
+    margin: 1.61rem 0;
+    &-actual {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      color: $blue;
+      font-size: 2.1rem;
+      font-weight: bold;
+      letter-spacing: .3px;
+      line-height: 1;
+    }
+    &-desc {
+      margin-left: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      &-oldPrice {
+        text-decoration: line-through;
+        text-decoration-color: #000;
+        color: #ccc;
+        font-weight: bold;
+        display: block;
+        line-height: 1;
+        font-size: 16px;
+      }
+      &-at {
+        font-size: 14px;
+        display: block;
+        color: #ccc;
+        line-height: 1;
+      }
+    }
   }
 </style>

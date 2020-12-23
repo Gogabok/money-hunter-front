@@ -32,7 +32,7 @@
     components: {Modal, Btn, SelectGroupModal, ValidationProvider},
     props: {
       articul: {
-        type: String,
+        type: [String, Array],
         required: true
       }
     },
@@ -54,7 +54,7 @@
         const service = new TrackingService();
         const result = await service.createUpdateGroup(
           this.selectedGroup,
-          [this.articul],
+          typeof this.articul === 'string' ? [this.articul] : [...this.articul],
           false
         );
 

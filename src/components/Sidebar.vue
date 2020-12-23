@@ -1,21 +1,36 @@
 <template>
-  <div class="sidebar">
-    <div class="sidebar-header">
-      <img src="../assets/img/logo.svg" alt="">
-      <div class="sidebar-header__company-name">Moneyhunter</div>
+  <div class="sidebar-folder">
+    <div class="sidebar" :class="burgerMenuShowen ? 'active-sidebar' : ''">
+      <div class="sidebar-header">
+        <img src="../assets/img/logo.svg" alt="">
+        <div class="sidebar-header__company-name">Moneyhunter</div>
+      </div>
+      <div class="sidebar-navigation">
+        <nav>
+          <ul>
+            <li class="sidebar-navigation-item"
+                :class="{'sidebar-navigation-item_active': isActive(item.systemName)}"
+                v-for="item in links"
+                @click="linkTo(item.systemName)"
+                :key="item.name">
+              <span class="sidebar-navigation-item__text">{{item.name}}</span>
+            </li>
+          </ul>
+        </nav>
+      </div>
     </div>
-    <div class="sidebar-navigation">
-      <nav>
-        <ul>
-          <li class="sidebar-navigation-item"
-              :class="{'sidebar-navigation-item_active': isActive(item.systemName)}"
-              v-for="item in links"
-              @click="$router.push({name: item.systemName})"
-              :key="item.name">
-            <span class="sidebar-navigation-item__text">{{item.name}}</span>
-          </li>
-        </ul>
-      </nav>
+    <div class="mobile-sidebar">
+      <svg @click="burgerMenuShowen = !burgerMenuShowen" class="ham hamRotate ham1" :class="burgerMenuShowen ? 'active' : ''" viewBox="0 0 100 100" width="60">
+        <path
+              class="line top"
+              d="m 30,33 h 40 c 0,0 9.044436,-0.654587 9.044436,-8.508902 0,-7.854315 -8.024349,-11.958003 -14.89975,-10.85914 -6.875401,1.098863 -13.637059,4.171617 -13.637059,16.368042 v 40" />
+        <path
+              class="line middle"
+              d="m 30,50 h 40" />
+        <path
+              class="line bottom"
+              d="m 30,67 h 40 c 12.796276,0 15.357889,-11.717785 15.357889,-26.851538 0,-15.133752 -4.786586,-27.274118 -16.667516,-27.274118 -11.88093,0 -18.499247,6.994427 -18.435284,17.125656 l 0.252538,40" />
+      </svg>
     </div>
   </div>
 </template>
@@ -29,12 +44,17 @@
           {name: 'Отслеживание', systemName: 'tracking'},
           {name: 'Поиск товаров', systemName: 'blackbox'},
           {name: 'Профиль', systemName: 'profile'},
-        ]
+        ],
+        burgerMenuShowen: false
       }
     },
     methods: {
       isActive(name) {
         return this.$route.matched.find(item => item.name === name) !== undefined
+      },
+      linkTo(path) {
+        this.$router.push({name: path})
+        this.burgerMenuShowen = false
       }
     }
   }
@@ -152,5 +172,81 @@
     opacity: 0;
     transition: all ease-in .2s;
     white-space: nowrap;
+  }
+
+  .mobile-sidebar {
+    display: none;
+  }
+
+  .ham {
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 400ms;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    margin-left: 12px;
+  }
+  .hamRotate.active {
+    transform: rotate(45deg);
+  }
+  .hamRotate180.active {
+    transform: rotate(180deg);
+  }
+  .line {
+    fill:none;
+    transition: stroke-dasharray 400ms, stroke-dashoffset 400ms;
+    stroke: #FFC700;
+    stroke-width:5.5;
+    stroke-linecap:round;
+  }
+  .ham1 .top {
+    stroke-dasharray: 40 139;
+  }
+  .ham1 .bottom {
+    stroke-dasharray: 40 180;
+  }
+  .ham1.active .top {
+    stroke-dashoffset: -98px;
+  }
+  .ham1.active .bottom {
+    stroke-dashoffset: -138px;
+  }
+
+
+  @media screen and (max-width: 568px) {
+    .sidebar {
+      display: none;
+      &.active-sidebar {
+        display: block;
+        width: 100%;
+        .sidebar-header__company-name {
+          opacity: 1;
+        }
+
+        .sidebar-navigation-item__text {
+          opacity: 1;
+        }
+        .sidebar-header {
+          height: 60px;
+          padding-top: 0px;
+          padding-bottom: 0px;
+          margin-top: 60px;
+        }
+      }
+    }
+    .mobile-sidebar {
+      display: block;
+      background-color: $black;
+      height: 60px;
+      width: 100%;
+      position: fixed;
+      z-index: 99;
+      top: 0px;
+      left: 0px;
+      display: flex;
+      align-items: center;
+    }
   }
 </style>

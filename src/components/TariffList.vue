@@ -1,9 +1,17 @@
 <template>
   <div class="tarifes block_container">
+    <div class="tarifes-tabs">
+      <button class="tarifes-tabs__btn" :class="{active: discount === 0}" @click="discount = 0">Ежемесячно</button>
+      <button class="tarifes-tabs__btn" :class="{active: discount === 10}" @click="discount = 10">На 3 месяца <span>Скидка 10%</span></button>
+      <button class="tarifes-tabs__btn" :class="{active: discount === 15}" @click="discount = 15">На 6 месяцев <span>Скидка 15%</span></button>
+    </div>
     <Tariff
       v-for="item in tariffs"
       :key="item.name"
-      :price="item.price"
+      :old-price="item.oldPrice ? item.oldPrice : 0"
+      :price="Math.round(Math.floor(item.price * (100 - discount)) / 100)"
+      :perPeriod="(discount / 5) - 1"
+      :id="item.id ? item.id : 0"
       :clazz="item.clazz"
       :name="item.name"
       :list="item.list"
@@ -22,6 +30,7 @@
     components: {Tariff},
     data() {
       return {
+        discount: 0,
         tariffs: [
           {
             name: "FREE",
@@ -32,7 +41,11 @@
               {text: "10 товаров на отслеживании", success: true},
               {text: "20 анализов по категориям", success: true},
               {text: "Скачивание отчётов", error: true},
-              {text: "Автоподсорт", error: true}
+              {text: "Автоподсорт", error: true},
+              {text: "Экспорт поисковой выдачи в XLS", error: true},
+              {text: "Возможность выбрать период 7,14,30", error: true},
+              {text: "Оповещения об изменениях остатков, цены, отзывов по email", error: true},
+              {text: "Ранний доступ к новому функционалу", error: true}
             ]
           },
           {
@@ -40,11 +53,34 @@
             price: 990,
             clazz: "tarif__item_fourth",
             isBuyable: true,
+            id: 2,
             list: [
               {text: "150 товаров на отслеживании", success: true},
               {text: "Безлимит анализов по категориям", success: true},
               {text: "Скачивание отчётов", success: true},
-              {text: "Автоподсорт", success: true}
+              {text: "Автоподсорт", success: true},
+              {text: "Экспорт поисковой выдачи в XLS", success: true},
+              {text: "Возможность выбрать период 7 дней", success: true},
+              {text: "Оповещения об изменениях остатков, цены, отзывов по email", error: true},
+              {text: "Ранний доступ к новому функционалу", error: true}
+            ]
+          },
+          {
+            name: "BUSINESS",
+            oldPrice: 5000,
+            price: 3990,
+            clazz: "tarif__item_fourth",
+            isBuyable: true,
+            id: 5,
+            list: [
+              {text: "500 товаров на отслеживании", success: true},
+              {text: "Безлимит анализов по категориям", success: true},
+              {text: "Скачивание отчетов", success: true},
+              {text: "Автоподсорт", success: true},
+              {text: "Экспорт поисковой выдачи в XLS", success: true},
+              {text: "Возможность выбрать период 7, 14, 30 дней", success: true},
+              {text: "Оповещения об изменениях остатков, цены, отзывов по email", success: true},
+              {text: "Ранний доступ к новому функционалу", success: true},
             ]
           },
         ],
@@ -58,7 +94,54 @@
   .tarifes {
     margin-top: 2.5rem;
     display: flex;
-    justify-content: flex-start;
+    justify-content: center;
+    flex-wrap: wrap;
+
+    &-tabs {
+      flex: 0 0 100%;
+      max-width: 100%;
+      margin: 0 0 10px 0;
+      justify-content: center;
+      display: flex;
+
+      &__btn {
+        background: none;
+        margin-right: 30px;
+        padding: 10px 20px 5px 20px;
+        font-size: 16px;
+        color: #C5C7D2;
+        text-transform: uppercase;
+        font-weight: 500;
+        cursor: pointer;
+        border-bottom: 3px solid rgba(255, 200, 0, 0);
+
+        &.active {
+          color: #000;
+          border-color:#FFC700;
+        }
+
+        &:last-child {
+          margin-right: 0;
+        }
+
+        & span {
+          display: block;
+          text-align: center;
+          font-size: 14px;
+          text-transform: none;
+          font-weight: 400;
+        }
+      }
+    }
+
+    &__desc {
+      flex: 0 0 100%;
+      max-width: 100%;
+      text-align: center;
+      margin: 30px 0;
+      font-size: 20px;
+    }
+
     @media screen and (max-width: 1300px) {
       justify-content: center;
     }

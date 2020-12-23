@@ -3,7 +3,15 @@
     <div class="tracking-body">
       <div class="tracking-info" :style="progress > 0 ? 'border-bottom: 1px solid #DFE0EB;' : ''">
         <div class="tracking-add-product">
-          <AddGoodsBtn/>
+          <AddGoodsBtn
+            :disabled="progress >= maxTrackingProducts"
+          />
+        </div>
+        <div class="tracking-add-notification">
+          <AddNotificationBtn
+            :disabled="mySubscription !== 'BUSINESS'"
+            :class="mySubscription !== 'BUSINESS' ? 'disabled' : ''"
+          />
         </div>
         <div class="tracking-actions">
           <RowWithIcon :list="trackingActionList"/>
@@ -15,7 +23,16 @@
           :text="`Товаров в отслеживании: ${progress} / ${maxTrackingProducts}`"
         />
       </div>
-      <TrackingTable v-if="loaded && tablePositions && progress > 0" :headers="tableHeaders" :items="tablePositions" :order="orderType" :order-handler="$orderHandler"/>
+      <TrackingTable
+            v-if="loaded && tablePositions && progress > 0" 
+            :headers="tableHeaders" 
+            :items="tablePositions" 
+            :order="orderType" 
+            :order-handler="$orderHandler"
+            :select-all="true"
+            @show-modal="showModalDeleteFromGroup"
+            :after-selecting-title="`Удалить из отслеживания`"
+      />
       <div v-else class="loading-table">
         <img ondragstart="return false" src="../../assets/img/loading.svg" alt="">
       </div>
@@ -50,10 +67,11 @@
 
   import progressBar from "@/shared-components/progressBar"
   import {UserService} from "@/services/user_service";
+  import AddNotificationBtn from "@/components/tracking/AddNotificationBtn";
 
   export default {
     name: "Group",
-    components: {AddGoodsBtn, RowWithIcon, TrackingTable, Fragment, progressBar},
+    components: {AddNotificationBtn, AddGoodsBtn, RowWithIcon, TrackingTable, Fragment, progressBar},
     mixins: [tableMixins, orderHandler],
     data() {
       return {
@@ -98,7 +116,9 @@
 
         progress: 0,
 
-        isLoaded: false
+        isLoaded: false,
+
+        maxTrackingProducts: 0
       }
     },
     computed: {
@@ -125,10 +145,20 @@
       }
     },
     methods: {
+      showModalDeleteFromGroup(data) {
+        const _data = {
+          articul: data?.articul,
+          groupName: this.$route.params.name
+        }
+        this.$store.commit(`modal/${SHOW_MODAL_MUTATION}`, {
+          component: DeleteProductFromTracking, 
+          data: {..._data, callback: () => this.loadGoods()}
+        })
+      },
       map_name(item) {
         return {
           content: ProductContent,
-          clazz: 'width23',
+          clazz: 'width23 itemWidthImage',
           component_data: {goodsName: item.name, articul: item.articul, brand: item.brand, link: item.link}
         };
       },
@@ -185,7 +215,7 @@
         const groupName = this.$route.params.name;
         this.$store.commit(`modal/${SHOW_MODAL_MUTATION}`, {
           component: DeleteProductFromTracking,
-          data: {articul, groupName, callback: () => this.loadGoods()},
+          data: {articul: [articul], groupName, callback: () => this.loadGoods()},
         });
       }
     },
@@ -229,12 +259,7 @@
           const userService = new UserService();
           userService.getSubscription().then(res => {
             this.maxTrackingProducts = res.maxTrackingProducts
-            const progressValue = res.trackingProductsCount
-            if(progressValue <= 100 && progressValue >= 0) {
-              this.progress = progressValue
-            } else {
-              this.progress =  false
-            }
+            this.progress = res.trackingProductsCount;
             this.isLoaded = true
           })
         },
@@ -265,6 +290,10 @@
   .tracking-add-product {
     width: 11.85rem;
   }
+  .tracking-add-notification {
+    width: 15.5rem;
+    padding-left: 1.5rem;
+  }
 
   .tracking-actions {
     flex: 1 0 auto;
@@ -281,6 +310,33 @@
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+  .tracking-add-notification {
+    & .disabled {
+      position: relative;
+      &::before {
+        position: absolute;
+        bottom: -3px;
+        padding: 5px 10px;
+        background: rgba(0, 0, 0, .8);
+        display: block;
+        color: #fff;
+        z-index: 78;
+        left: 50%;
+        transform: translate(-50%, 100%);
+        border-radius: 4px;
+        content: "Не доступно на вашем тарифе";
+        width: 250px;
+        text-align: center;
+        opacity: 0;
+        transition-duration: .2s;
+      }
+    }
+    & .disabled:hover {
+      &::before {
+        opacity: 1;
+      }
+    }
   }
   @media screen and (max-width: 1030px){
     .tracking-info {

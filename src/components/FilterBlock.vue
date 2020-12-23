@@ -48,17 +48,22 @@
           <div class="filter-form__column-item">
             <InputField label="Отзывы" range v-model="feedbackRange" :min="0" :max="900000"/>
           </div>
-          <div v-if="false" class="filter-form__column-item">
+          <div class="filter-form__column-item">
             <TreeSelect label="Кол-во дней"
                       :normalizer="node=>({...node, label: node.name})"
                       v-model="days"
                       :clearable="false"
+                      :class="userSubscription !== 'BUSINESS' ? 'disabled' : ''"
+                      :disabled="userSubscription !== 'BUSINESS'"
                       :options="daysOptions"/>
           </div>
         </div>
         <div class="filter-form__column column-fields-custom">
           <div class="filter-form__column-item">
-            <InputField label="Сумма заказов в неделю" range v-model="revenueRange" :min="0" :max="900000"/>
+            <InputField :label="revenueRangeLabel" range v-model="revenueRange" :min="0" :max="900000"/>
+          </div>
+          <div class="filter-form__column-item">
+            <InputField :label="ordersRangeLabel" range v-model="ordersRange" :min="0" :max="900000"/>
           </div>
           <div class="filter-form__column-item">
             <InputField label="Заказы в неделю" range v-model="ordersRange" :min="0" :max="900000"/>
@@ -121,7 +126,7 @@
   import {mapMutations} from "vuex";
   import SaveProject from "@/components/blackbox/SaveProject";
   import LoadProject from "@/components/blackbox/LoadProject";
-  import {CHECK_SEARCH_ID_ACTION, GET_AGREGATED_DATA, DOWNLOAD_SEARCH_RESULT} from "@/store/modules/blackbox/constants";
+  import {CHECK_SEARCH_ID_ACTION, GET_AGREGATED_DATA} from "@/store/modules/blackbox/constants";
   import TreeSelect from "@/shared-components/TreeSelect";
   import {BlackboxService} from "../services/blackbox_service";
   import {ValidationProvider} from 'vee-validate';
@@ -207,6 +212,22 @@
       userSubscription() {
         return this.$store.state.user.subscription?.subscriptionType;
       },
+      revenueRangeLabel() {
+        switch (this.days) {
+          case 7: return "Сумма заказов в неделю";
+          case 14: return "Сумма заказов за две недели";
+          case 30: return "Сумма заказов в месяц";
+        }
+        return "Сумма заказов за " + this.days + " дней";
+      },
+      ordersRangeLabel() {
+        switch (this.days) {
+          case 7: return "Заказы в неделю";
+          case 14: return "Заказы за две недели";
+          case 30: return "Заказы в месяц";
+        }
+        return "Заказы за " + this.days + " дней";
+      }
     },
     beforeDestroy() {
       if(this.categories.find(item => item === 0) === 0 || this.categories.length === 0) {
@@ -225,7 +246,7 @@
         this.foundedBrands = brands
       } 
       ,
-      searchChange(searchQuery, instanceId) {
+      searchChange(searchQuery) {
         this.categories.forEach((item, idx) => {
           if(item === 0) {
             this.categories.splice(idx, 1)
@@ -640,6 +661,34 @@
             }
           }
         }
+      }
+    }
+  }
+
+  .filter-form__column-item {
+    & .disabled {
+      position: relative;
+      &::before {
+        position: absolute;
+        bottom: -3px;
+        padding: 5px 10px;
+        background: rgba(0, 0, 0, .8);
+        display: block;
+        color: #fff;
+        z-index: 78;
+        left: 50%;
+        transform: translate(-50%, 100%);
+        border-radius: 4px;
+        content: "Не доступно на вашем тарифе";
+        width: 250px;
+        text-align: center;
+        opacity: 0;
+        transition-duration: .2s;
+      }
+    }
+    & .disabled:hover {
+      &::before {
+        opacity: 1;
       }
     }
   }

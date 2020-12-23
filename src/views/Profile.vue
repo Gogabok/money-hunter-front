@@ -2,6 +2,7 @@
   <Fragment>
     <UserData/>
     <TariffList/>
+    <router-view :key="$route.fullPath"/>
   </Fragment>
 </template>
 

@@ -9,7 +9,6 @@
                     v-model="columns"
                     :multiple="true"
                     :options="columnsItems"
-                    v-if="false"
                     class="column-selector"/>
     <div class="blackbox">
       <TrackingTable v-if="!isLoading && tablePositions.length > 0 && !isLoadingAgregated"
@@ -17,7 +16,10 @@
                      :items="tablePositions"
                      :order="orderType"
                      :order-handler="$orderHandler"
-                     :subheaders="subheaders"/>
+                     :subheaders="subheaders"
+                     :select-all="true"
+                     @show-modal="showModalAddToGroup"
+                     :after-selecting-title="`Добавить на отслеживание`"/>
       <div v-else-if="isLoading || isLoadingAgregated" class="loading-table">
         <img ondragstart="return false" src="../assets/img/loading.svg" alt="">
       </div>
@@ -127,6 +129,9 @@
       }
     },
     methods: {
+      showModalAddToGroup(data) {
+        this.$store.commit(`modal/${SHOW_MODAL_MUTATION}`, {component: AddToGroup, data})
+      },
       daysChange(days) {
         this.days = days
       },
@@ -134,7 +139,7 @@
         this.isLoading = true
         this.paginationData.page = 1;
         this.orderType = DEFAULT_ORDER_TYPE;
-        await this.debounceLoadGoods();
+        this.debounceLoadGoods();
       },
       perPageHandler(value) {
         this.paginationData.page = 1;
@@ -271,8 +276,8 @@
       map_name(item) {
         return {
           content: ProductContent,
-          clazz: 'width30',
-          component_data: {articul: item.articul, brand: item.brand, link: item.link}
+          clazz: 'width30 itemWidthImage',
+          component_data: {goodsName: item.name, articul: item.articul, brand: item.brand, link: item.link, imagePath: item.image_link}
         };
       },
       map_currentPrice(item) {

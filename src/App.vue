@@ -119,6 +119,10 @@
     flex-direction: column;
     min-height: 100vh;
     position: relative;
+    @media screen and (max-width: 568px) {
+      padding-top: 60px;
+      padding-left: 0px;
+    }
   }
 
   h1 {

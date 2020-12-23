@@ -2,9 +2,9 @@
   <Fragment>
     <div class="overlay"></div>
     <div class="modal modal_small">
-      <div class="close-modal" v-if="closable" @click="hideModal"></div>
+      <div class="close-modal" v-if="closable" @click="hideModal" v-on:click="closeModal"></div>
       <slot name="logo"><span/></slot>
-      <div class="modal-title">{{title}}</div>
+      <div class="modal-title" v-html="title"></div>
       <slot/>
     </div>
   </Fragment>
@@ -53,6 +53,9 @@
       },
       onNext() {
         this.$emit('next');
+      },
+      closeModal() {
+        this.$emit('modalClose')
       }
     },
     mounted() {
@@ -151,6 +154,8 @@
     letter-spacing: .3px;
     color: black;
     text-align: center;
+    padding: 0px 10px;
+    line-height: 1;
   }
 
   .modal-form {

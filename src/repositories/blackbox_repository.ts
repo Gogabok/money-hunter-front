@@ -58,14 +58,20 @@ export class BlackboxRepository {
     return this.client.sendGet(this.searchesUrl);
   }
 
-  deleteSearch(name: any) {
-    return this.client.sendDelete(`${this.deleteSearchUrl}${name}/`)
+  deleteSearch(pk: number) {
+    return this.client.sendDelete(`${this.deleteSearchUrl}${pk}/`)
   }
 
-  saveSearch(name: string, data: GetSearchIDDataInterface) {
+  addSearch(name: string, data: GetSearchIDDataInterface) {
     const _data = {...data} as any;
     _data.name = name;
     return this.client.sendPost(this.searchesUrl, _data);
+  }
+
+  updateSearch(pk: number, name: string, data: GetSearchIDDataInterface) {
+    const _data = {...data} as any;
+    _data.name = name;
+    return this.client.sendPut(`${this.searchesUrl}${pk}/`, _data);
   }
 
   getProductImagePathAndName(articul: string) {
