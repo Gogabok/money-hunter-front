@@ -103,7 +103,7 @@
 
   
   .alert {
-    position: absolute;
+    position: fixed;
     right: 40px;
     top: 50px;
     padding: .75rem .9rem;
