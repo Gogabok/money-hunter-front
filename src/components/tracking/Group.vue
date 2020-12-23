@@ -3,7 +3,9 @@
     <div class="tracking-body">
       <div class="tracking-info" :style="progress > 0 ? 'border-bottom: 1px solid #DFE0EB;' : ''">
         <div class="tracking-add-product">
-          <AddGoodsBtn/>
+          <AddGoodsBtn
+            :disabled="progress >= maxTrackingProducts"
+          />
         </div>
         <div class="tracking-add-notification">
           <AddNotificationBtn/>
@@ -13,7 +15,7 @@
         </div>
         <progressBar
           v-if="progress || progress === 0 && isLoaded"
-          :progress="progress"
+          :progress="progress * 100 / maxTrackingProducts"
           :fontSize="'12px'"
           :text="`Товаров в отслеживании: ${progress} / ${maxTrackingProducts}`"
         />
@@ -111,7 +113,9 @@
 
         progress: 0,
 
-        isLoaded: false
+        isLoaded: false,
+
+        maxTrackingProducts: 0
       }
     },
     computed: {

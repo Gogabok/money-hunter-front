@@ -2,7 +2,9 @@
   <div class="tracking-body">
     <div class="tracking-info" :style="progress > 0 ? 'border-bottom: 1px solid #DFE0EB;' : ''">
       <div class="tracking-add-product">
-        <AddGoodsBtn/>
+        <AddGoodsBtn
+          :disabled="progress >= maxTrackingProducts"
+        />
       </div>
       <div class="tracking-actions">
         <RowWithIcon/>
@@ -15,7 +17,7 @@
       />
     </div>
 
-    <TrackingTable v-if="tablePositions && loaded && progress > 0"
+    <TrackingTable v-if="tablePositions && loaded"
                    :headers="tableHeaders"
                    :items="tablePositions"
                    :order="orderType"
@@ -65,7 +67,9 @@
 
         isLoaded: false,
 
-        loaded: true
+        loaded: true,
+
+        maxTrackingProducts: 0
       };
     },
     computed: {
@@ -101,12 +105,7 @@
       const userService = new UserService();
       userService.getSubscription().then(res => {
         this.maxTrackingProducts = res.maxTrackingProducts
-        const progressValue = res.trackingProductsCount
-        if(progressValue <= 100 && progressValue >= 0) {
-          this.progress = progressValue
-        } else {
-          this.progress =  false
-        }
+        this.progress = res.trackingProductsCount;
         this.isLoaded = true
       })
     },
