@@ -65,9 +65,6 @@
           <div class="filter-form__column-item">
             <InputField :label="ordersRangeLabel" range v-model="ordersRange" :min="0" :max="900000"/>
           </div>
-          <div class="filter-form__column-item">
-            <InputField label="Заказы в неделю" range v-model="ordersRange" :min="0" :max="900000"/>
-          </div>
         </div>
         <!-- <div class="filter-form__column">
           <div class="filter-form__column-item">
