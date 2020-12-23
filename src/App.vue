@@ -29,7 +29,7 @@
     components: {Sidebar, Header},
     data() {
       return {
-        isTechnicalWorks: false,
+        isTechnicalWorks: true,
         technicalMessage: 'Ведутся технические работы'
       }
     },
