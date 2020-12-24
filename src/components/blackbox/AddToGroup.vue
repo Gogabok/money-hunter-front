@@ -1,7 +1,7 @@
 <template>
   <Modal title="Выберите группу" closable @next="addBtnHandler">
     <template v-slot:default>
-      <form action="" class="modal-form">
+      <form action="" @submit="addBtnHandler($event)" class="modal-form">
         <ValidationProvider v-slot="{errors}" :rules="{required: true}" ref="validation">
           <SelectGroupModal v-model="selectedGroup" :error="$getValidationError(errors)"/>
 
@@ -44,7 +44,11 @@
       }
     },
     methods: {
-      async addBtnHandler() {
+      async addBtnHandler(e) {
+        if(e) {
+          e.preventDefault();
+        }
+
         this.loading = true
 
         if (!this.$validationProviderIsValid(this.$refs.validation)) {
