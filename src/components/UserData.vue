@@ -87,7 +87,16 @@
         return this.$store.state.user.subscription?.subscriptionType;
       },
       expDate() {
-        return this.$store.getters['user/getExpDate']
+        if(!this.$store.getters['user/getExpDate']) return '';
+        const monthes = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+        const expDate = this.$store.getters['user/getExpDate'].split("-");
+        const year = expDate[0];
+        let month = expDate[1];
+        const date = expDate[2];
+        if(month[0] === '0') {
+          month = month.split("").splice(1, 1).toString();
+        }
+        return `${date} ${monthes[--month]} ${year}`
       },
       isReccurent() {
         return this.$store.getters['user/isReccurent']
