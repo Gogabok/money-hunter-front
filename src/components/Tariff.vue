@@ -26,7 +26,7 @@
         <span class="tariff-list__item-label-text">С условием <span @click="showOffer">оферты</span> ознакомлен</span>
       </label>
       <span class="warning-text">
-        Оплата будет взиматься раз в месяц. По вопросам отмены и возврата пишите на почту info@moneyhunter.pro или в онлайн чат поддержки. Мы ответим вам в течении одного рабочего дня. 
+        Оплата будет взиматься раз {{ perPeriodString }}. По вопросам отмены и возврата пишите на почту info@moneyhunter.pro или в онлайн чат поддержки. Мы ответим вам в течении одного рабочего дня. 
       </span>
     </template>
   </div>
@@ -44,7 +44,7 @@
     name: "Tariff",
     components: {Btn},
     data: () => ({
-      termsReaded: false
+      termsReaded: true,
     }),
     props: {
       clazz: {
@@ -77,6 +77,17 @@
       },
       perPeriod: {
         type: Number
+      }
+    },
+    computed: {
+      perPeriodString() {
+        let string = 'в месяц'
+        if(this.perPeriod === 1) {
+          string = 'в 3 месяца'
+        } else if (this.perPeriod === 2) {
+          string = 'в 6 месяцев'
+        }
+        return string
       }
     },
     methods: {

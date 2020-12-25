@@ -1,5 +1,5 @@
 <template>
-  <Modal title="Добавить оповещение" closable>
+  <Modal title="Настроить оповещения" closable>
     <template v-slot:default>
       <form action="" class="modal-form" @submit.prevent>
         <notification-range
@@ -60,7 +60,7 @@ export default {
         {
           title: "Остаток",
           range: [1, 1000],
-          desc: "Оповещение, когда остаток достигнет:",
+          desc: "Оповестить, когда остаток по товару достигнет:",
           value: 1,
           currency: "шт.",
           isActive: true
@@ -68,18 +68,18 @@ export default {
         {
           title: "Цена",
           range: [1, 10000],
-          desc: "Оповещения, когда цена товара изменится на",
+          desc: "Оповестить когда цена товара изменится на:",
           value: 1,
           currency: "₽",
           isActive: true
         },
         {
-          title: "Уведомлять при новых отзывах",
+          title: "Уведомлять о новых отзывах",
           range: [],
           isActive: true
         },
         {
-          title: "Уведомлять при новых остатках",
+          title: "Уведомлять при пополнении остатков на складе",
           range: [],
           isActive: true
         },
@@ -90,8 +90,8 @@ export default {
     async saveNotifications() {
         const service = new TrackingService();
         const notificationsData = {
-          new_feedback: this.ranges.find(range => range.title === 'Уведомлять при новых отзывах').isActive,
-          stocks_gain: this.ranges.find(range => range.title === 'Уведомлять при новых остатках').isActive
+          new_feedback: this.ranges.find(range => range.title === 'Уведомлять о новых отзывах').isActive,
+          stocks_gain: this.ranges.find(range => range.title === 'Уведомлять при пополнении остатков на складе').isActive
         }
 
         notificationsData["min_quantity"] = this.ranges.find(range => range.title === 'Остаток').isActive 
@@ -135,8 +135,8 @@ export default {
       this.ranges.find(range => range.title === 'Цена').isActive = false
     }
 
-    this.ranges.find(range => range.title === 'Уведомлять при новых остатках').isActive = this.stocks_gain
-    this.ranges.find(range => range.title === 'Уведомлять при новых отзывах').isActive = this.new_feedback
+    this.ranges.find(range => range.title === 'Уведомлять при пополнении остатков на складе').isActive = this.stocks_gain
+    this.ranges.find(range => range.title === 'Уведомлять о новых отзывах').isActive = this.new_feedback
   },
 }
 </script>

@@ -49,7 +49,7 @@
             <InputField label="Отзывы" range v-model="feedbackRange" :min="0" :max="900000"/>
           </div>
           <div class="filter-form__column-item">
-            <TreeSelect label="Кол-во дней"
+            <TreeSelect label="Период, дней"
                       :normalizer="node=>({...node, label: node.name})"
                       v-model="days"
                       :clearable="false"
@@ -66,14 +66,6 @@
             <InputField :label="ordersRangeLabel" range v-model="ordersRange" :min="0" :max="900000"/>
           </div>
         </div>
-        <!-- <div class="filter-form__column">
-          <div class="filter-form__column-item">
-            <TreeSelect label="Кол-во дней"
-                      :normalizer="node=>({...node, label: node.name})"
-                      v-model="daysAmount"
-                      :options="daysAmountOptions"/>
-          </div>
-        </div> -->
       </div>
       <div class="filter-form__actions">
         <div class="filter-form__searchs" v-if="userSubscription==='FREE'">

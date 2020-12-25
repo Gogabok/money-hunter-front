@@ -1,5 +1,5 @@
 <template>
-  <Btn :disabled="isDisabled" clazz="button_add" label="Добавить оповещение" @click="addNotificationBtnHandler"/>
+  <Btn :disabled="isDisabled" clazz="button_add" label="Настроить оповещения" @click="addNotificationBtnHandler"/>
 </template>
 
 <script>
