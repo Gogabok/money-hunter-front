@@ -38,7 +38,6 @@
   import {GET_PAYMENT_LINK_ACTION} from "@/store/modules/user/constants";
   import {mapActions, mapMutations} from "vuex";
   import {SHOW_MODAL_MUTATION} from "@/store/modules/modal/constants";
-  import Warning from "@/components/blackbox/Warning";
   import OfferModal from "@/components/OfferModal";
 
   export default {

@@ -52,12 +52,12 @@ export default {
     const response = await userService.getPaymentLink(subscriptionID);
     return response
   },
-  async [GET_ALL_SUBSCRIBTIONS](context: ActionContext<VuexUserStateInterface, any>) {
+  async [GET_ALL_SUBSCRIBTIONS]() {
     const userService = new UserService();
     const response = await userService.getSubscriptions();
     return response
   },
-  async [POST_CANCEL_SUBSCRIPTION](conetext: ActionContext<VuexUserStateInterface, any>) {
+  async [POST_CANCEL_SUBSCRIPTION]() {
     const userService = new UserService();
     const response = await userService.cancelSubscription();
     return response

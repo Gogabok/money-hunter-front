@@ -84,7 +84,7 @@
                 id: 'y-axis-1',
                 ticks: {
                   beginAtZero: true,
-                  callback: function(value, index, values) {
+                  callback: function(value) {
                       return value % 1 ? '' : value + ' шт.'
                   }
                 },
@@ -111,7 +111,7 @@
                 id: 'y-axis-1',
                 ticks: {
                   beginAtZero: true,
-                  callback: function(value, index, values) {
+                  callback: function(value) {
                       return value % 1 ? '' : value + ' шт.'
                   }
                 },
@@ -138,7 +138,7 @@
                 id: 'y-axis-1',
                 ticks: {
                   beginAtZero: true,
-                  callback: function(value, index, values) {
+                  callback: function(value) {
                       return value % 1 ? '' : value + ' ₽'
                   }
                 },
@@ -165,7 +165,7 @@
                 id: 'y-axis-1',
                 ticks: {
                   beginAtZero: true,
-                  callback: function(value, index, values) {
+                  callback: function(value) {
                       return value % 1 ? '' : value + ''
                   }
                 },
@@ -192,7 +192,7 @@
                 id: 'y-axis-1',
                 ticks: {
                   beginAtZero: true,
-                  callback: function(value, index, values) {
+                  callback: function(value) {
                       return value % 1 ? '' : value + ''
                   }
                 },

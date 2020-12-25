@@ -23,7 +23,6 @@
 
 <script>
   import Tariff from "./Tariff";
-  import {GET_ALL_SUBSCRIBTIONS} from "@/store/modules/user/constants"
 
   export default {
     name: "TariffList",

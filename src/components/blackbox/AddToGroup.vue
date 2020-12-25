@@ -22,8 +22,6 @@
   import {LOAD_GROUPS_ACTION} from "@/store/modules/tracking/constants";
   import {HIDE_MODAL_MUTATION} from "@/store/modules/modal/constants";
   import Modal from "@/components/Modal";
-
-  import Warning from "@/components/blackbox/Warning";
   import {SHOW_MODAL_MUTATION} from "@/store/modules/modal/constants";
   import {mapMutations} from "vuex";
 

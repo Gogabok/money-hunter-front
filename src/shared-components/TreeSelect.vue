@@ -69,7 +69,6 @@
         const rightConerOfFilter = document.querySelector(".filter-form__columns").getBoundingClientRect().right - 10
         
         const differentBetweenConers = rightConerOfFilter - rightConerOfField
-        const extraWidth = '100%'
         const defaultWidth = document.querySelector(".filter .customWidthSelector .select-field").offsetWidth
         if(value.length > 0 && document.querySelector(".filter .customWidthSelector .vue-treeselect__menu")) {
           this.searchWidthActivated = true

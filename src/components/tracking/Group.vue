@@ -43,8 +43,6 @@
 <script>
   import RowWithIcon from "@/shared-components/RowWithIcon.vue";
   import TrackingTable from "@/shared-components/TrackingTable.vue";
-
-  import AlertImg from "@/assets/img/ikons/alert.svg";
   import AutosortImg from "@/assets/img/ikons/autosort.svg";
   import DownloadImg from "@/assets/img/ikons/download.svg";
 

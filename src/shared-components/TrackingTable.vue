@@ -50,8 +50,6 @@
 <script>
   import Btn from "@/shared-components/Btn";
   import TrackingTableRow from "@/shared-components/TrackingTableRow";
-  import {SHOW_MODAL_MUTATION} from "@/store/modules/modal/constants";
-  import AddToGroup from "@/components/blackbox/AddToGroup";
 
   export default {
     name: "TrackingTable",

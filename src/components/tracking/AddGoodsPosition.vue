@@ -57,7 +57,6 @@
 
 <script>
   import Modal from "@/components/Modal";
-  import Warning from "@/components/blackbox/Warning";
   import Btn from "@/shared-components/Btn";
   import {TrackingService} from "@/services/tracking_service";
   import {SET_MODAL_RESPONSE_MUTATION, SHOW_MODAL_MUTATION, HIDE_MODAL_MUTATION} from "@/store/modules/modal/constants";

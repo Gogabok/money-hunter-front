@@ -63,7 +63,6 @@ export class AuthService {
   async register(email: string, password: string, name: string, phoneNumber: string, code: string): Promise<boolean | string> {
     try {
       const response = await this.authRepo.register(email, password, name, phoneNumber);
-      /*eslint-disable */
       window.carrotquest.track("$registered", { "$email": email, "$name": email })
       window.carrotquest.identify([
         { op: "update_or_create", key: "$phone", value: phoneNumber },

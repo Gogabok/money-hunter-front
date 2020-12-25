@@ -28,7 +28,6 @@
 <script>
   import RowWithIcon from "@/shared-components/RowWithIcon";
   import TrackingTable from "@/shared-components/TrackingTable";
-  import ProductAction from "@/components/tracking-table/ProductAction";
   import {orderHandler} from "@/extenders/mixins/order_handler";
   import ProductPrice from "@/components/tracking-table/ProductPrice";
   import {tableMixins} from "@/extenders/mixins/table_mixins";

@@ -25,9 +25,8 @@
   import InputField from "../../shared-components/InputField";
   import Btn from "../../shared-components/Btn";
   import {UPDATE_GROUP_NAME_ACTION} from "../../store/modules/tracking/constants";
-  import Warning from "@/components/blackbox/Warning";
   import {HIDE_MODAL_MUTATION, SHOW_MODAL_MUTATION, SET_MODAL_RESPONSE_MUTATION} from "@/store/modules/modal/constants";
-  import {mapMutations, mapState} from "vuex";
+  import {mapMutations} from "vuex";
 
   export default {
     name: "ChangeGroupName",

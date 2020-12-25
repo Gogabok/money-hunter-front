@@ -49,7 +49,6 @@
   import {POST_USER_ACTION, SET_USER_MUTATION} from "@/store/modules/user/constants";
   import {SHOW_MODAL_MUTATION, SET_MODAL_RESPONSE_MUTATION} from "@/store/modules/modal/constants";
   import {mapMutations, mapActions} from "vuex";
-  import Warning from "@/components/blackbox/Warning";
   import {AuthService} from "@/services/auth_service";
   import CancelSubscrptionAlert from "@/components/CancelSubscrptionAlert";
   import {GET_PROFILE_ACTION, GET_SUBSCRIPTION_ACTION} from "@/store/modules/user/constants";

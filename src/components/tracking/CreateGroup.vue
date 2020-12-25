@@ -79,7 +79,6 @@
 <script>
   import Btn from "../../shared-components/Btn";
   import InputField from "../../shared-components/InputField";
-  import Warning from "@/components/blackbox/Warning";
   import Modal from "@/components/Modal";
   import FindProductModal from "@/shared-components/FindProductModal";
   import {ValidationProvider, ValidationObserver} from 'vee-validate';
