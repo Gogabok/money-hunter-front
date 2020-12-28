@@ -36,7 +36,7 @@
       </form>
 
       <div class="user-data-change">
-        <Btn label="Изменить" disabled clazz="button__change" @click="handleSubmit(postUser)"/>
+        <Btn label="Изменить" clazz="button__change" @click="handleSubmit(postUser)"/>
       </div>
     </ValidationObserver>
   </div>

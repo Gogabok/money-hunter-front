@@ -2,7 +2,7 @@
   <Fragment>
     <div class="modal-form__save-project">
       <div class="modal-form__save-project-wrapper">
-        <FindProductInputField label="Введите артикул товара"
+        <FindProductInputField label="Введите артикул товара или ссылку на него"
                   v-model="selectedArticul"
                   :products="products"
                   @input="handleProductSearch"
@@ -49,6 +49,7 @@
     data() {
       return {
         selectedArticul: '',
+        inputedArticul: '',
         debouncedProductSearch: debounce(this.searchProduct, 500),
         products: [],
         lastProduct: false
@@ -68,18 +69,26 @@
     },
     methods: {
       handleProductSearch() {
+        const a = document.createElement('a');
+        a.href = this.selectedArticul;
+
+        const regex = /\d+/g;
+        const matches = a.pathname.match(regex); 
+
+        this.inputedArticul = matches[0]
+
         this.debouncedProductSearch();
       },
       async searchProduct() {
         const service = new TrackingService();
-        const result = await service.getProductInfoByArticul(this.selectedArticul);
+        const result = await service.getProductInfoByArticul(this.inputedArticul);
 
-        if(typeof result === 'object' && !this.products.find(i => i === this.selectedArticul)) {
-          this.products.push(this.selectedArticul)
+        if(typeof result === 'object' && !this.products.find(i => i === this.inputedArticul)) {
+          this.products.push(this.inputedArticul)
           this.selectedArticul = ''
         }
 
-        this.$emit('input', typeof result === 'object' ? {...result, articul: this.selectedArticul} : result);
+        this.$emit('input', typeof result === 'object' ? {...result, articul: this.inputedArticul} : result);
       },
       removeProduct(i) {
         this.products.splice(this.products.findIndex(item => item === i), 1)

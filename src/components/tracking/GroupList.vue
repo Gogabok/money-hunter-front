@@ -49,17 +49,17 @@
           {
             name: 'count',
             label: 'Количество товаров',
-            clazz: 'width23 tracking-table__header-item_align-center mw200',
+            clazz: 'width23 tracking-table__header-item_align-right mw200',
           },
           {
             name: 'orders',
-            label: 'Сумма заказов/шт.',
-            clazz: 'width23 tracking-table__header-item_align-center mw200'
+            label: 'Сумма заказов/шт. (7 дней)',
+            clazz: 'width23 tracking-table__header-item_align-right mw200'
           },
-          {name: 'revenue', label: 'Сумма заказов/руб.', clazz: 'width23 tracking-table__header-item_align-center mw200'},
+          {name: 'revenue', label: 'Сумма заказов/руб. (7 дней)', clazz: 'width23 tracking-table__header-item_align-right mw200'},
         ],
 
-        orderType: 'count',
+        orderType: 'nothing',
 
         progress: 0,
 
@@ -90,12 +90,12 @@
           onClick: ({content}) => this.$router.push({name: 'tracking.group', params: {name: content}})
         }
       },
-      map_count: item => ({content: item.details.count, clazz: 'tracking-table__align-center width23'}),
-      map_orders: item => ({content: item.details.orders, clazz: 'tracking-table__align-center width23'}),
+      map_count: item => ({content: item.details.count, clazz: 'tracking-table__align-right width23'}),
+      map_orders: item => ({content: item.details.orders, clazz: 'tracking-table__align-right width23'}),
       map_revenue: item => ({
         content: ProductPrice,
         component_data: {price: item.details.revenue},
-        clazz: 'tracking-table__align-center width23'
+        clazz: 'tracking-table__align-right width23'
       })
     },
     mounted() {

@@ -3,10 +3,15 @@
     <template v-slot:default>
       <form action="" class="modal-form" @submit.prevent>
         <div class="modal-form__download-project">
-          <div class="modal-form__download-project-item" v-for="(item, idx) in positions" :key="idx">
+          <div class="modal-form__download-project-item" v-for="(item, idx) in positions" :key="item.pk">
             <Btn :label="item.data.name"
-                 :clazz="{'button_align-left': true, 'button_empty':idx!==checked, 'button_check': idx===checked}"
-                 @click="checked=idx"/>
+                 :clazz="{'button_align-left': true, 'button_empty':idx!==checked, 'button_check': idx===checked || item.contenteditable, 'button_filter': true}"
+                 @click="checked=idx"
+                 :contenteditable="item.contenteditable"
+                 :ref="`filter-${item.pk}`"
+                 :pk="item.pk"
+                 @onInput="editFilterName"/>
+            <div v-if="!item.contenteditable" @click="editFilter(item)" class="modal-form__download-project-item-edit"></div>
             <div @click="deleteFilter(item)" :class="idx == checked ? 'hidden' : ''" class="modal-form__download-project-item-close"></div>
           </div>
         </div>
@@ -39,7 +44,7 @@ export default {
     return {
       checked: null,
       positions: [],
-
+      contenteditable: false,
       loading: false
     }
   },
@@ -68,6 +73,49 @@ export default {
       this.loading = false
 
       this[HIDE_MODAL_MUTATION]();
+    },
+    editFilter(item) {
+      this.positions.map(filter => filter['contenteditable'] = false)
+      this.positions.find(filter => filter.pk === item.pk)['contenteditable'] = true
+      this.positions = [...this.positions]
+      this.$nextTick(() => {
+        const range = document.createRange();
+        range.selectNodeContents(this.$refs[`filter-${item.pk}`][0].$el);
+        range.collapse(false);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+      })
+    },
+    async editFilterName(e) {
+      const filterPreviousName = this.positions.find(item => item.pk === e.pk).data.name;
+      if(e.e.target.innerText.length > 0 && filterPreviousName !== e.e.target.innerText) {
+        const blackboxService = new BlackboxService();
+
+        const _nested = {...this.positions.find(item => item.pk === e.pk)};
+        _nested.data.name = e.e.target.innerText;
+        const result = await blackboxService.saveSearch(filterPreviousName, _nested.data);
+
+        if(result) {
+          this.$store.commit('notifications/ADD_NOTIFICATION', {text: 'Группа переименована', status: 'success'})
+        } else {
+          this.$store.commit('notifications/ADD_NOTIFICATION', {text: 'Произошла ошибка', status: 'error'})
+        }
+
+        this.positions.find(item => item.pk === e.pk).data.name = e.e.target.innerText;
+
+        this.$nextTick(() => {
+          this.$refs[`filter-${e.pk}`][0].$el.blur();
+          this.positions.map(filter => filter['contenteditable'] = false);
+          this.positions = [...this.positions];
+        })
+      } else {
+        this.$refs[`filter-${e.pk}`][0].$el.blur();
+        this.positions.map(filter => filter['contenteditable'] = false);
+        this.$refs[`filter-${e.pk}`][0].$el.innerHTML = filterPreviousName
+        this.positions.find(item => item.pk === e.pk).data.name = filterPreviousName;
+        this.positions = [...this.positions];
+      }
     },
     async deleteFilter(item) {
       const blackboxService = new BlackboxService();
@@ -106,5 +154,16 @@ export default {
     opacity: 0;
     visibility: hidden;
   }
+}
+.modal-form__download-project-item-edit {
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  right: 35px;
+  transform: translate(0, -50%);
+  width: 2rem;
+  height: 2rem;
+  background: url("../../assets/img/ikons/edit.svg") no-repeat;
+  background-position: center center;
 }
 </style>

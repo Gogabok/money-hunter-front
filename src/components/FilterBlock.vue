@@ -381,7 +381,6 @@
             data.revenueRange[1] = ''
           } 
           this.revenueRange = data.revenueRange;
-          this.categories = data.categories;
           let brands = [];
           if (data.brands[0] !== 'all') {
             data.brands.forEach(name => {
@@ -390,12 +389,21 @@
           } else {
             brands = ['all']
           }
-          data.brands = brands
+          if(data.categories[0] !== 0) {
+            this.categoryOptions = [{
+              id: 0,
+              name: 'Все',
+              isDefaultExpanded: true,
+              children: this.allCategories[0].children
+            }]
+          }
+          this.categories = data.categories;
+          data.brands = brands;
           this.brands = data.brands;
           this.addWords = data.addWords;
           this.minusWords = data.minusWords;
-          this.days = data.days
-          this.searchBtnHandler()
+          this.days = data.days;
+          this.searchBtnHandler();
         })
       }
       ,
