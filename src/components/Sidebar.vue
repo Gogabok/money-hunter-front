@@ -41,9 +41,9 @@
     data() {
       return {
         links: [
+          {name: 'Поиск товаров', systemName: 'blackbox'},
           {name: 'Отслеживание', systemName: 'tracking'},
           {name: 'Отслеживание позиций', systemName: 'trackingPositions'},
-          {name: 'Поиск товаров', systemName: 'blackbox'},
           {name: 'Профиль', systemName: 'profile'},
         ],
         burgerMenuShowen: false

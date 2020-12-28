@@ -49,8 +49,8 @@ export class BlackboxRepository {
     const params = { searchID, orderType } as any;
 
     return this.client.sendGet(
-        queryStringBuilder(this.downloadSearchResultsUrl, params),
-        { responseType: 'blob' }
+      queryStringBuilder(this.downloadSearchResultsUrl, params),
+      { responseType: 'blob' }
     );
   }
 

@@ -9,7 +9,10 @@
         </div>
         <transition name="toggleDown" mode="out-in">
             <div v-if="rangeData.range.length > 0" v-show="isRangeVissible" class="notificationRange-isVissibleRange">
-                <span class="notificationRange-desc">{{ rangeData.desc }} <b>{{ value }}{{ rangeData.currency }}</b></span>
+                <span class="notificationRange-desc">{{ rangeData.desc }} 
+                    <input type="number" v-model="value" :style="`width: ${10 + String(value).length * 9}px; min-width: 25px;`">
+                    <b>{{ rangeData.currency }}</b>
+                </span>
                 <vue-range-slider
                     v-model="value"
                     :tooltip="'hover'"
@@ -153,6 +156,17 @@ export default {
             color: #000;
             padding: 0px 5px;
             font-size: 14px;
+            & input {
+                font-weight: bold;
+                border: 1px solid rgba(36, 36, 36, .5);
+                padding: 0px 5px;
+                margin-right: 5px;
+            }
+            & input::-webkit-outer-spin-button,
+            & input::-webkit-inner-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
         }
     }
 </style>

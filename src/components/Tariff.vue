@@ -25,6 +25,9 @@
         <input v-model="termsReaded" :id="name" type="checkbox">
         <span class="tariff-list__item-label-text">С условием <span @click="showOffer">оферты</span> ознакомлен</span>
       </label>
+      <span class="warning-text">
+        Оплата будет взиматься раз {{ perPeriodString }}. По вопросам отмены и возврата пишите на почту info@moneyhunter.pro или в онлайн чат поддержки. Мы ответим вам в течении одного рабочего дня. 
+      </span>
     </template>
   </div>
 </template>
@@ -35,14 +38,13 @@
   import {GET_PAYMENT_LINK_ACTION} from "@/store/modules/user/constants";
   import {mapActions, mapMutations} from "vuex";
   import {SHOW_MODAL_MUTATION} from "@/store/modules/modal/constants";
-  import Warning from "@/components/blackbox/Warning";
   import OfferModal from "@/components/OfferModal";
 
   export default {
     name: "Tariff",
     components: {Btn},
     data: () => ({
-      termsReaded: false
+      termsReaded: true,
     }),
     props: {
       clazz: {
@@ -75,6 +77,17 @@
       },
       perPeriod: {
         type: Number
+      }
+    },
+    computed: {
+      perPeriodString() {
+        let string = 'в месяц'
+        if(this.perPeriod === 1) {
+          string = 'в 3 месяца'
+        } else if (this.perPeriod === 2) {
+          string = 'в 6 месяцев'
+        }
+        return string
       }
     },
     methods: {
@@ -200,6 +213,15 @@
       background: url("../assets/img/ikons/error.svg") no-repeat 100% center;
       padding-right: 2.14rem;
     }
+  }
+
+  .warning-text {
+    line-height: 1;
+    display: block;
+    margin-top: 15px;
+    font-size: .8rem;
+    color: #9FA2B4;
+    text-align: center;
   }
 
   .tarif-list__text {

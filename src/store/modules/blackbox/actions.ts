@@ -12,10 +12,7 @@ import {VuexBlackBoxStateInterface} from "@/store/modules/blackbox/index";
 import {BlackboxService} from "@/services/blackbox_service";
 import {GetSearchIDDataInterface} from "@/repositories/blackbox_repository";
 import {GET_SUBSCRIPTION_ACTION} from "@/store/modules/user/constants";
-import {isEqual} from 'lodash';
 import {AmplitudeService} from "@/services/amplitude_service";
-
-const isFiltersEquals = (a: any, b: any) => isEqual(a, b);
 
 export default {
   async [CHECK_SEARCH_ID_ACTION](context: ActionContext<VuexBlackBoxStateInterface, any>, filters: Record<string, any>) {

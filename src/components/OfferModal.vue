@@ -68,11 +68,6 @@
 
 <script>
   import Modal from "@/components/Modal";
-  import {mapMutations, mapActions} from "vuex";
-
-  const ADD_BY_GOODS = 'byGoods';
-  const ADD_BY_BRAND = 'byBrand';
-
   export default {
     name: "AddPosition",
     components: {

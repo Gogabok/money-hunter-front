@@ -16,8 +16,7 @@
         :text="`Товаров в отслеживании: ${progress} / ${maxTrackingProducts}`"
       />
     </div>
-
-    <TrackingTable v-if="tablePositions && loaded"
+    <TrackingTable v-if="tablePositions && loaded && progress > 0"
                    :headers="tableHeaders"
                    :items="tablePositions"
                    :order="orderType"
@@ -29,7 +28,6 @@
 <script>
   import RowWithIcon from "@/shared-components/RowWithIcon";
   import TrackingTable from "@/shared-components/TrackingTable";
-  import ProductAction from "@/components/tracking-table/ProductAction";
   import {orderHandler} from "@/extenders/mixins/order_handler";
   import ProductPrice from "@/components/tracking-table/ProductPrice";
   import {tableMixins} from "@/extenders/mixins/table_mixins";

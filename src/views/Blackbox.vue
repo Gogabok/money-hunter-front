@@ -23,7 +23,7 @@
       <div v-else-if="isLoading || isLoadingAgregated" class="loading-table">
         <img ondragstart="return false" src="../assets/img/loading.svg" alt="">
       </div>
-      <div v-else-if="isLoading === false && tablePositions.length <= 0 && isLoadingAgregated === false" class="table-notFounded">
+      <div v-else-if="isLoading === false && tablePositions.length <= 0 && isLoadingAgregated === false && loadedListError" class="table-notFounded">
         <p class="table-notFounded-text">Товары по заданным критериям не найдены</p>
       </div>
     </div>
@@ -83,7 +83,21 @@
 
         columns: [],
 
-        cachedSearchResults: null
+        cachedSearchResults: null,
+
+        loadedListError: false,
+
+        tableHeaders: [
+          {name: 'name', label: 'Товар', clazz: 'width30 mw300', sortable: false},
+          {name: 'articul', label: 'Артикул', clazz: 'width9 mw100', isOnlyAscSorting: true},
+          {name: 'currentPrice', label: 'Цена', clazz: 'width5 mw100'},
+          {name: 'currentQty', label: 'Остаток', clazz: 'width9 mw100'},
+          {name: 'avOrdersSpeed', label: 'Заказов в неделю', clazz: 'width9 mw100'},
+          {name: 'avRevenue', label: 'Сумма заказов за неделю', clazz: 'width9 mw150'},
+          {name: 'currentRating', label: 'Рейтинг', clazz: 'tracking-table__header-item_align-right width23 mw150'},
+          {name: 'currentFeedBackCount', label: 'Кол-во отзывов', clazz: 'width9 mw100'},
+          {name: 'add', label: 'Добавить в мои товары', sortable: false, clazz: 'width9 mw150'}
+        ]
       }
     },
     computed: {
@@ -92,24 +106,6 @@
           ...this.$mapItemListToTableItem(item),
           nested: {content: ProductBlackboxNested, articul: item.articul, clazz: 'tracking-table-dropdown__item-chart', days: this.days}
         }));
-      },
-      tableHeaders() {
-        const avOrdersSpeedLabel = this.days === 7 ? 'Заказов в неделю' : this.days === 14 ? 'Заказов за две недели' : 'Заказов в месяц';
-        const avRevenueLabel = this.days === 7 ? 'Сумма заказов за неделю' : this.days === 14 ? 'Сумма заказов за две недели' : 'Сумма заказов за месяц';
-
-        return [
-          {name: 'name', label: 'Товар', clazz: 'width30 mw300', sortable: false},
-          {name: 'articul', label: 'Артикул', clazz: 'width9 mw100', isOnlyAscSorting: true},
-          {name: 'currentPrice', label: 'Цена', clazz: 'width5 mw100'},
-          {name: 'currentQty', label: 'Остаток', clazz: 'width9 mw100'},
-          {name: 'avOrdersSpeed', label: avOrdersSpeedLabel, clazz: 'width9 mw100'},
-          {name: 'avRevenue', label: avRevenueLabel, clazz: 'width9 mw150'},
-          // {name: 'selesCount', label: 'Продажи', clazz: 'width5 mw100'},
-          // {name: 'salesRevenue', label: 'Сумма продаж', clazz: 'width9 mw100'},
-          {name: 'currentRating', label: 'Рейтинг', clazz: 'tracking-table__header-item_align-right width23 mw150'},
-          {name: 'currentFeedBackCount', label: 'Кол-во отзывов', clazz: 'width9 mw100'},
-          {name: 'add', label: 'Добавить в мои товары', sortable: false, clazz: 'width9 mw150'}
-        ]
       },
       columnsItems() {
         const columnsItems = []
@@ -139,6 +135,9 @@
         this.days = days
       },
       async searchHandler() {
+        this.isLoading = true
+        this.tableHeaders.find(header => header.name === "avOrdersSpeed").label = this.days === 7 ? 'Заказов в неделю' : this.days === 14 ? 'Заказов за две недели' : 'Заказов в месяц';
+        this.tableHeaders.find(header => header.name === "avRevenue").label = this.days === 7 ? 'Сумма заказов за неделю' : this.days === 14 ? 'Сумма заказов за две недели' : 'Сумма заказов за месяц';
         this.paginationData.page = 1;
         this.orderType = DEFAULT_ORDER_TYPE;
         this.debounceLoadGoods();
@@ -183,10 +182,14 @@
           this.cachedSearchResults = result
 
           this.$nextTick(() => {
-            setTimeout(() => {
-              this.isLoading = false
-            }, 1000);
+            this.isLoading = false
           })
+
+          if(this.list.length <= 0) {
+            this.loadedListError = true
+          } else {
+            this.loadedListError = false
+          }
 
         }
       },
@@ -253,6 +256,7 @@
             formatting: true
           }
         }
+        this.subheaders = {}
         Object.keys(renamedHeaders).forEach(header => {
           // this.tableHeaders.find(item => item.name === renamedHeaders[header].label)["subheader"] = renamedHeaders[header].title
           this.subheaders[header] = {}
@@ -339,17 +343,19 @@
       },
       agregatedData: {
         handler: function () {
-          const result = this.agregatedData
-          const mainInfo = ['onPage', 'products', "countAll"]
-          const potentialHeaders = []
-          Object.keys(result).forEach(resultItem => {
-            if(!mainInfo.find(resultPotentialItem => resultPotentialItem === resultItem)) {
-              potentialHeaders.push({label: resultItem, value: result[resultItem]})
+          this.$nextTick(() => {
+            const result = this.agregatedData
+            const mainInfo = ['onPage', 'products', "countAll"]
+            const potentialHeaders = []
+            Object.keys(result).forEach(resultItem => {
+              if(!mainInfo.find(resultPotentialItem => resultPotentialItem === resultItem)) {
+                potentialHeaders.push({label: resultItem, value: result[resultItem]})
+              }
+            })
+            if(potentialHeaders.length > 0) {
+              this.insertHeaders(potentialHeaders)
             }
           })
-          if(potentialHeaders.length > 0) {
-            this.insertHeaders(potentialHeaders)
-          }
         },
         deep: true
       },

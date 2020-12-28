@@ -119,9 +119,6 @@
       }
     },
     watch: {
-      // checkbox: function () {
-      //   this.$emit("selectItemsMethod", this.index)
-      // },
       selectedItems: function () {
         if(this.selectedItems.indexOf(this.index) > -1) {
           this.checkbox = true

@@ -49,7 +49,7 @@
             <InputField label="Отзывы" range v-model="feedbackRange" :min="0" :max="900000"/>
           </div>
           <div class="filter-form__column-item">
-            <TreeSelect label="Кол-во дней"
+            <TreeSelect label="Период, дней"
                       :normalizer="node=>({...node, label: node.name})"
                       v-model="days"
                       :clearable="false"
@@ -235,7 +235,7 @@
         this.foundedBrands = brands
       } 
       ,
-      searchChange(searchQuery, instanceId) {
+      searchChange(searchQuery) {
         this.categories.forEach((item, idx) => {
           if(item === 0) {
             this.categories.splice(idx, 1)
@@ -440,10 +440,26 @@
           })
         } else {
           categories = await this.loadUpdatedCategories()
+          localStorage.setItem('isCategoriesUpdated', true)
         }
         this.categories = [0]
         this.allCategories = categories.categories
         this.categories_list = categories.categories_list
+        
+        const isCategoriesUpdated = JSON.parse(localStorage.getItem('isCategoriesUpdated'))
+        
+        if(!isCategoriesUpdated || !categories?.categories || !categories?.categories_list) {
+          this.isCategoriesLoading = true
+          await this.loadUpdatedCategories()
+          this.$nextTick(() => {
+            this.isCategoriesLoading = false
+            localStorage.setItem('isCategoriesUpdated', true)
+            
+            this.categories = [0]
+            this.allCategories = categories.categories
+            this.categories_list = categories.categories_list
+          })
+        }
       }
       ,
       async loadUpdatedCategories () {
@@ -455,11 +471,12 @@
         this.categories_list = loadedCategories.categories_list
 
         localStorage.setItem("categories", JSON.stringify({categories: loadedCategories.categories, categories_list: loadedCategories.categories_list, timestamp: new Date().getTime().toString()}))
-
+        
         this.isCategoriesLoading = true
         this.$nextTick(() => {
           this.isCategoriesLoading = false
         })
+        return loadedCategories
       }
       ,
       loadOptions({ action, parentNode, callback }) {

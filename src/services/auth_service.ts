@@ -73,6 +73,7 @@ export class AuthService {
       window.carrotquest.track('Registration date', {
         'date': `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDate()} ${new Date().getHours()}:${new Date().getMinutes()}`
       });
+      /*eslint-enable */
       return response.status === 201;
     } catch (e) {
       const _e = e as AxiosError;

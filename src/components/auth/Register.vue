@@ -142,11 +142,9 @@
       async register() {
         this.loading = true
         const fields = ['login', 'password', 'phoneNumber', 'name']
-        let isError = false
         fields.forEach(elem => {
           if(this[elem] === '') {
             this[`${elem}Error`] = 'Обязательно для заполнения'
-            isError = true
           }
         });
         if(!this.isDisabled) {
@@ -155,7 +153,7 @@
           if (typeof status === 'boolean' && status) {
             this.confirmMessage = true;
             if(this.codeStatus === 'valid') {
-              const promocodeStatus = await service.setPromocode(this.code, this.login);
+              await service.setPromocode(this.code, this.login);
             }
           } else {
             this.loginError = status;

@@ -204,15 +204,15 @@
   .error-working {
     position: fixed;
     top: 0px;
-    width: 100%;
+    width: calc(100% + 52px);
     min-height: 100vh;
     background: rgba(0, 0, 0, 0.7);
     display: flex;
     align-items: center;
     justify-content: center;
     user-select: none;
-    pointer-events: none;
-    z-index: 98;
+    z-index: 99999;
+    left: -52px;
   }
   .error-working-message {
     color: #fff;

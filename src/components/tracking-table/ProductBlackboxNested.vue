@@ -90,7 +90,7 @@
                 id: 'y-axis-1',
                 ticks: {
                   beginAtZero: true,
-                  callback: function(value, index, values) {
+                  callback: function(value) {
                       return value % 1 ? '' : value + ' шт.'
                   }
                 },
@@ -117,7 +117,7 @@
                 id: 'y-axis-1',
                 ticks: {
                   beginAtZero: true,
-                  callback: function(value, index, values) {
+                  callback: function(value) {
                       return value % 1 ? '' : value + ' шт.'
                   }
                 },
@@ -144,7 +144,7 @@
                 id: 'y-axis-1',
                 ticks: {
                   beginAtZero: true,
-                  callback: function(value, index, values) {
+                  callback: function(value) {
                       return value % 1 ? '' : value + ' ₽'
                   }
                 },
@@ -171,7 +171,7 @@
                 id: 'y-axis-1',
                 ticks: {
                   beginAtZero: true,
-                  callback: function(value, index, values) {
+                  callback: function(value) {
                       return value % 1 ? '' : value + ''
                   }
                 },
@@ -198,7 +198,7 @@
                 id: 'y-axis-1',
                 ticks: {
                   beginAtZero: true,
-                  callback: function(value, index, values) {
+                  callback: function(value) {
                       return value % 1 ? '' : value + ''
                   }
                 },
@@ -240,27 +240,24 @@
         }
       }
     },
+    computed: {
+      userSubscription() {
+        return this.$store.state.user.subscription?.subscriptionType;
+      },
+    },
     methods: {
       changeType(label) {
         this.currentType = label.class
       }
     },
     async created() {
+      let days = false
+      if(this.$route.name === 'tracking.group' && this.userSubscription === 'BUSINESS') {
+        days = 30
+      }
       const blackboxService = new BlackboxService();
-      const productData = await blackboxService.getChartData(this.articul, this.days? this.days : undefined);
-      // const productData = [
-      //   {"date": "2020-07-16", "orders": 10},
-      //   {"date": "2020-07-17", "orders": 15},
-      //   {"date": "2020-07-18", "orders": 0},
-      //   {"date": "2020-07-19", "orders": 27},
-      //   {"date": "2020-07-20", "orders": 28},
-      //   {"date": "2020-07-21", "orders": 20},
-      //   {"date": "2020-07-22", "orders": 13},
-      //   {"date": "2020-07-23", "orders": 2},
-      //   {"date": "2020-07-24", "orders": 11},
-      //   {"date": "2020-07-25", "orders": 22},
-      //   {"date": "2020-07-26", "orders": 17},
-      // ];
+      const productData = await blackboxService.getChartData(this.articul, days ? days : this.days);
+
       const labels = productData.map(item => item.date);
       const orders = productData.map(item => item.orders);
       const qty = productData.map(item => item.qty);

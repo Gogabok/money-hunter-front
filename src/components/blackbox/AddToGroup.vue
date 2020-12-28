@@ -1,7 +1,7 @@
 <template>
   <Modal title="Выберите группу" closable @next="addBtnHandler">
     <template v-slot:default>
-      <form action="" class="modal-form">
+      <form action="" @submit="addBtnHandler($event)" class="modal-form">
         <ValidationProvider v-slot="{errors}" :rules="{required: true}" ref="validation">
           <SelectGroupModal v-model="selectedGroup" :error="$getValidationError(errors)"/>
 
@@ -22,8 +22,6 @@
   import {LOAD_GROUPS_ACTION} from "@/store/modules/tracking/constants";
   import {HIDE_MODAL_MUTATION} from "@/store/modules/modal/constants";
   import Modal from "@/components/Modal";
-
-  import Warning from "@/components/blackbox/Warning";
   import {SHOW_MODAL_MUTATION} from "@/store/modules/modal/constants";
   import {mapMutations} from "vuex";
 
@@ -44,7 +42,11 @@
       }
     },
     methods: {
-      async addBtnHandler() {
+      async addBtnHandler(e) {
+        if(e) {
+          e.preventDefault();
+        }
+
         this.loading = true
 
         if (!this.$validationProviderIsValid(this.$refs.validation)) {

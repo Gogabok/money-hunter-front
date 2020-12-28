@@ -43,8 +43,6 @@
 <script>
   import RowWithIcon from "@/shared-components/RowWithIcon.vue";
   import TrackingTable from "@/shared-components/TrackingTable.vue";
-
-  import AlertImg from "@/assets/img/ikons/alert.svg";
   import AutosortImg from "@/assets/img/ikons/autosort.svg";
   import DownloadImg from "@/assets/img/ikons/download.svg";
 
@@ -180,7 +178,7 @@
         return {
           content: ProductAction,
           component_data: {isRecycle: true, clickHandler: this.deleteProductFromTracking, articul: item.articul},
-          clazz: 'width9 tracking-table__align-righ'
+          clazz: 'width9 tracking-table__align-right'
         }
       },
       async loadGoods() {

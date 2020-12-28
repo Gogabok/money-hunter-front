@@ -25,8 +25,6 @@
   import InputField from "../../shared-components/InputField";
   import Btn from "../../shared-components/Btn";
   import {AuthService} from "@/services/auth_service";
-
-  import Warning from "@/components/blackbox/Warning";
   import {SHOW_MODAL_MUTATION} from "@/store/modules/modal/constants";
   import {mapMutations} from "vuex";
 
