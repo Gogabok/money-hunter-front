@@ -9,7 +9,8 @@
       v-for="item in tariffs"
       :key="item.name"
       :old-price="item.oldPrice ? item.oldPrice : 0"
-      :price="Math.round(Math.floor(item.price * (100 - discount)) / 100)"
+      :price="item.priceSale ? item.priceSale : Math.round(Math.floor(item.price * (100 - discount)) / 100)"
+      :saleInfo="item.saleInfo"
       :perPeriod="(discount / 5) - 1"
       :id="item.id ? item.id : 0"
       :clazz="item.clazz"
@@ -68,6 +69,11 @@
             name: "BUSINESS",
             oldPrice: 5000,
             price: 3990,
+            priceSale: 2450,
+            saleInfo: {
+              saleAmount: "-51%",
+              saleDesc: "до 10.01.2020"
+            },
             clazz: "tarif__item_fourth",
             isBuyable: true,
             id: 5,
