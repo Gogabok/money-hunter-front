@@ -53,10 +53,10 @@
           },
           {
             name: 'orders',
-            label: 'Сумма заказов/шт. (7 дней)',
+            label: 'Сумма заказов/шт.<br/>7 дней',
             clazz: 'width23 tracking-table__header-item_align-right mw200'
           },
-          {name: 'revenue', label: 'Сумма заказов/руб. (7 дней)', clazz: 'width23 tracking-table__header-item_align-right mw200'},
+          {name: 'revenue', label: 'Сумма заказов/руб.<br/>7 дней', clazz: 'width23 tracking-table__header-item_align-right mw200'},
         ],
 
         orderType: 'nothing',

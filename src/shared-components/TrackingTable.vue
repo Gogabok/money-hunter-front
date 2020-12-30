@@ -29,7 +29,7 @@
           <th v-for="item in headers" :key="item.name" class="tracking-table__header-item" :class="{[item.clazz]: item.clazz, [item.status]: item.status }|| ''">
             <div>
               <span :class="{'tracking-table__header-label': isSortable(item)}"
-                    @click="headerClickHandler(item)">{{item.label}}</span>
+                    @click="headerClickHandler(item)" v-html="item.label"></span>
               <Btn v-if="isSortable(item) && getSortClass(item)"
                   @click="headerClickHandler(item)"
                   without-default-class
