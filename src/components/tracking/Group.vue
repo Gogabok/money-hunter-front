@@ -348,6 +348,7 @@
     }
     .tracking-actions {
       flex: 0 0 auto;
+      margin: 15px auto 0px auto;
     }
   }
 
@@ -365,6 +366,13 @@
       margin-left: 0px;
       justify-content: center;
       margin-top: 15px;
+    }
+  }
+
+  @media screen and (max-width: 450px){
+    .tracking-add-notification {
+      padding-left: 0px;
+      margin-top: 5px;
     }
   }
 </style>

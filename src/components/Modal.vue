@@ -174,7 +174,13 @@
         overflow: visible;
       }
     }
+    @media screen and (max-width: 500px) {
+      & {
+        margin: 10px;
+      }
+    }
   }
+
 
   .modal-form__input-item {
 
@@ -291,6 +297,12 @@
     justify-content: space-between;
     position: relative;
     padding: 0 7.14rem;
+    @media screen and (max-width: 500px) {
+      & {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+    }
   }
 
   .modal-form-steps__line {
@@ -302,6 +314,11 @@
     top: 1.28rem;
     left: 50%;
     transform: translateX(-50%);
+     @media screen and (max-width: 500px) {
+      & {
+        width: 100%;
+      }
+    }
   }
 
   .modal-form-steps__item {

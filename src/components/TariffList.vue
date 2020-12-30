@@ -158,5 +158,18 @@
       padding: 0px 10px;
     }
   }
+
+  @media screen and (max-width: 700px){
+    .tarifes-tabs {
+      flex-direction: column;
+      &__btn {
+        width: 200px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        margin-right: auto !important;
+        margin-left: auto;
+      }
+    }
+  }
   
 </style>
