@@ -9,7 +9,8 @@
       v-for="item in tariffs"
       :key="item.name"
       :old-price="item.oldPrice ? item.oldPrice : 0"
-      :price="Math.round(Math.floor(item.price * (100 - discount)) / 100)"
+      :price="item.priceSale ? item.priceSale : Math.round(Math.floor(item.price * (100 - discount)) / 100)"
+      :saleInfo="item.saleInfo"
       :perPeriod="(discount / 5) - 1"
       :id="item.id ? item.id : 0"
       :clazz="item.clazz"
@@ -38,11 +39,11 @@
             isBuyable: false,
             list: [
               {text: "10 товаров на отслеживании", success: true},
-              {text: "20 анализов по категориям", success: true},
+              {text: "20 запросов к статистике по всем товарам", success: true},
+              {text: "Отображение данных за период 7 дней", success: true},
               {text: "Скачивание отчётов", error: true},
-              {text: "Автоподсорт", error: true},
+              {text: "Расчёт поставок (beta)", error: true},
               {text: "Экспорт поисковой выдачи в XLS", error: true},
-              {text: "Возможность выбрать период 7,14,30", error: true},
               {text: "Оповещения об изменениях остатков, цены, отзывов по email", error: true},
               {text: "Ранний доступ к новому функционалу", error: true}
             ]
@@ -55,11 +56,11 @@
             id: 2,
             list: [
               {text: "150 товаров на отслеживании", success: true},
-              {text: "Безлимит анализов по категориям", success: true},
+              {text: "Безлимитные запрос к статистике по всем товарам", success: true},
+              {text: "Отображение данных за период 7 дней", success: true},
               {text: "Скачивание отчётов", success: true},
-              {text: "Автоподсорт", success: true},
+              {text: "Расчёт поставок (beta)", success: true},
               {text: "Экспорт поисковой выдачи в XLS", success: true},
-              {text: "Возможность выбрать период 7 дней", success: true},
               {text: "Оповещения об изменениях остатков, цены, отзывов по email", error: true},
               {text: "Ранний доступ к новому функционалу", error: true}
             ]
@@ -68,16 +69,21 @@
             name: "BUSINESS",
             oldPrice: 5000,
             price: 3990,
+            priceSale: 2450,
+            saleInfo: {
+              saleAmount: "-51%",
+              saleDesc: "до 10.01.2020"
+            },
             clazz: "tarif__item_fourth",
             isBuyable: true,
             id: 5,
             list: [
               {text: "500 товаров на отслеживании", success: true},
-              {text: "Безлимит анализов по категориям", success: true},
+              {text: "Безлимитные запрос к статистике по всем товарам", success: true},
+              {text: "Отображение данных за период 30 дней", success: true},
               {text: "Скачивание отчетов", success: true},
-              {text: "Автоподсорт", success: true},
+              {text: "Расчёт поставок (beta)", success: true},
               {text: "Экспорт поисковой выдачи в XLS", success: true},
-              {text: "Возможность выбрать период 7, 14, 30 дней", success: true},
               {text: "Оповещения об изменениях остатков, цены, отзывов по email", success: true},
               {text: "Ранний доступ к новому функционалу", success: true},
             ]

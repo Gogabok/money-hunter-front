@@ -69,6 +69,7 @@ export default {
       if (await this.$validationProviderIsValid(this.$refs.validation)) {
         const blackboxService = new BlackboxService();
         const _nested = {...this.nested};
+        console.log(this.name, _nested)
 
         const result = await blackboxService.saveSearch(this.name, _nested);
         if (typeof result === 'boolean' && result) {

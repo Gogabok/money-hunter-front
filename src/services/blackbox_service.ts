@@ -124,8 +124,11 @@ export class BlackboxService {
       AmplitudeService.blackBoxSearchSave(_data, name);
 
       const pk = await this.findSearchIDByName(name);
+      if(pk && !data.name) {
+        data.name = name
+      }
       const response = await this.service.refreshWrapper(pk ?
-          this.repo.updateSearch.bind(this.repo, pk, name, _data) : this.repo.addSearch.bind(this.repo, name, _data));
+          this.repo.updateSearch.bind(this.repo, pk, data.name, _data) : this.repo.addSearch.bind(this.repo, name, _data));
       return response.status === 201 || response.status === 200 || 'Произошла ошибка';
     } catch (e) {
       if (e.response?.status === 400) {

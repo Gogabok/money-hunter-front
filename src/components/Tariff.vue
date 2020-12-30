@@ -17,6 +17,10 @@
           <span class="tariff-price-desc-oldPrice" v-if="oldPrice > 0">{{ oldPrice }} ₽</span>
           <div class="tariff-price-desc-at">в месяц</div>
         </div>
+        <div class="tariff-price-saleInfo" v-if="saleInfo">
+          <span class="tariff-price-saleInfo-saleAmount">{{ saleInfo.saleAmount }}</span>
+          <div class="tariff-price-saleInfo-saleDesc">{{ saleInfo.saleDesc }}</div>
+        </div>
       </div>
       <Btn label="Купить" :isDisabled="!termsReaded" @click="handleBuyBtn"/>
     </template>
@@ -77,6 +81,9 @@
       },
       perPeriod: {
         type: Number
+      },
+      saleInfo: {
+        type: Object
       }
     },
     computed: {
@@ -238,6 +245,7 @@
 
   .tariff-price {
     display: flex;
+    align-items: center;
     // justify-content: center;
     margin: 1.61rem 0;
     &-actual {
@@ -265,6 +273,27 @@
         font-size: 16px;
       }
       &-at {
+        font-size: 14px;
+        display: block;
+        color: #ccc;
+        line-height: 1;
+      }
+    }
+    &-saleInfo {
+      margin-left: auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      max-width: 100px;
+      text-align: right;
+      &-saleAmount {
+        color: red;
+        font-weight: bold;
+        display: block;
+        line-height: 1;
+        font-size: 24px;
+      }
+      &-saleDesc {
         font-size: 14px;
         display: block;
         color: #ccc;

@@ -11,7 +11,6 @@
     <LineChart v-show="currentType === 'price'" v-if="chartData[`price`]" :chart-data="chartData['price']" :chart-options="options['price']"/>
     <LineChart v-show="currentType === 'rating'" v-if="chartData[`rating`]" :chart-data="chartData['rating']" :chart-options="options['rating']"/>
     <LineChart v-show="currentType === 'feedBackCount'" v-if="chartData[`feedBackCount`]" :chart-data="chartData['feedBackCount']" :chart-options="options['feedBackCount']"/>
-    <LineChart v-show="currentType === 'todaySales'" v-if="chartData[`todaySales`]" :chart-data="chartData['todaySales']" :chart-options="options['todaySales']"/>
   </div>
 </template>
 
@@ -67,11 +66,6 @@
             label: "Отзывы",
             icon: "feedback-icon",
             class: "feedBackCount"
-          },
-          todaySales: {
-            label: "Количество продаж",
-            icon: "todaySales-icon",
-            class: "todaySales"
           },
         },
         options: {
@@ -210,33 +204,6 @@
               ]
             }
           },
-          todaySales: {
-            scales: {
-              xAxes: [{
-                ticks: {
-                  callback(value) {
-                    return value.substr(5);
-                  }
-                }
-              }],
-              yAxes: [
-              {
-                position: 'left',
-                id: 'y-axis-1',
-                ticks: {
-                  beginAtZero: true,
-                  callback: function(value, index, values) {
-                      return value % 1 ? '' : value + ''
-                  }
-                },
-                scaleLabel: {
-                  display: true,
-                  labelString: 'Количество продаж'
-                }
-              }, 
-              ]
-            }
-          }
         }
       }
     },
@@ -264,7 +231,7 @@
       const price = productData.map(item => item.price);
       const rating = productData.map(item => item.rating);
       const feedBackCount = productData.map(item => item.feedBackCount);
-      const todaySales = productData.map(item => item.todaySales);
+      // const todaySales = productData.map(item => item.todaySales);
       this.chartData.orders = {
         labels,
         datasets: [
@@ -295,12 +262,12 @@
           {yAxisID: 'y-axis-1', data: feedBackCount, fill: false, borderColor: "#D81B60", lineTension: 0, label: 'Отзывы'},
         ]
       }
-      this.chartData.todaySales = {
-        labels,
-        datasets: [
-          {yAxisID: 'y-axis-1', data: todaySales, fill: false, borderColor: "#212121", lineTension: 0, label: 'Количество продаж'},
-        ]
-      }
+      // this.chartData.todaySales = {
+      //   labels,
+      //   datasets: [
+      //     {yAxisID: 'y-axis-1', data: todaySales, fill: false, borderColor: "#212121", lineTension: 0, label: 'Количество продаж'},
+      //   ]
+      // }
     }
   }
 </script>

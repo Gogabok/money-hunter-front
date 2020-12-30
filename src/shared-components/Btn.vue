@@ -1,5 +1,5 @@
 <template>
-  <button class="btn btn-primary" :disabled="isDisabled" :class="`${defaultClass} ${_clazz} ${loading ? 'loading ld-ext-right running' : ''}`" :type="type" @click="onClick">
+  <button @blur="$emit('onInput', {e: $event, pk: pk})" class="btn btn-primary" :disabled="isDisabled" :class="`${defaultClass} ${_clazz} ${loading ? 'loading ld-ext-right running' : ''}`" :type="type" @click="onClick">
     <span v-if="!loading">
       {{label}}
       <slot/>
@@ -41,6 +41,9 @@
       loading: {
         type: Boolean,
         default: false
+      },
+      pk: {
+        type: Number
       }
     },
     computed: {
@@ -147,5 +150,18 @@
   .button_check {
     background: url("../assets/img/ikons/check.svg") no-repeat, $yellow;
     background-position: calc(100% - .64rem) center;
+  }
+
+  .button_filter {
+    padding-right: 70px !important;
+    overflow: hidden;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    & span {
+      display: block;
+      width: 100%;
+      overflow: hidden;
+    }
   }
 </style>

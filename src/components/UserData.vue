@@ -33,13 +33,10 @@
             <button @click="setPromocode" class="modal-form__promocod-done" :class="codeStatus" type="button"/>
           </template>
         </div>
-        <div class="user-data__item">
-          <telegram-notification-input/>
-        </div>
       </form>
 
       <div class="user-data-change">
-        <Btn label="Изменить" disabled clazz="button__change" @click="handleSubmit(postUser)"/>
+        <Btn label="Изменить" clazz="button__change" @click="handleSubmit(postUser)"/>
       </div>
     </ValidationObserver>
   </div>
@@ -52,15 +49,13 @@
   import {POST_USER_ACTION, SET_USER_MUTATION} from "@/store/modules/user/constants";
   import {SHOW_MODAL_MUTATION, SET_MODAL_RESPONSE_MUTATION} from "@/store/modules/modal/constants";
   import {mapMutations, mapActions} from "vuex";
-  import Warning from "@/components/blackbox/Warning";
   import {AuthService} from "@/services/auth_service";
   import CancelSubscrptionAlert from "@/components/CancelSubscrptionAlert";
-  import TelegramNotificationInput from "@/shared-components/TelegramNotificationInput"
   import {GET_PROFILE_ACTION, GET_SUBSCRIPTION_ACTION} from "@/store/modules/user/constants";
 
   export default {
     name: "UserData",
-    components: {InputField, Btn, ValidationObserver, ValidationProvider, TelegramNotificationInput},
+    components: {InputField, Btn, ValidationObserver, ValidationProvider},
     data: () => ({
       promocode: '',
       codeStatus: '',
