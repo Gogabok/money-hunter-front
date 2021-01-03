@@ -33,6 +33,9 @@
             <button @click="setPromocode" class="modal-form__promocod-done" :class="codeStatus" type="button"/>
           </template>
         </div>
+        <div class="user-data__item">
+          <telegram-notification-input/>
+        </div>
       </form>
 
       <div class="user-data-change">
@@ -51,11 +54,12 @@
   import {mapMutations, mapActions} from "vuex";
   import {AuthService} from "@/services/auth_service";
   import CancelSubscrptionAlert from "@/components/CancelSubscrptionAlert";
+  import TelegramNotificationInput from "@/shared-components/TelegramNotificationInput"
   import {GET_PROFILE_ACTION, GET_SUBSCRIPTION_ACTION} from "@/store/modules/user/constants";
 
   export default {
     name: "UserData",
-    components: {InputField, Btn, ValidationObserver, ValidationProvider},
+    components: {InputField, Btn, ValidationObserver, ValidationProvider, TelegramNotificationInput},
     data: () => ({
       promocode: '',
       codeStatus: '',
