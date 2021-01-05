@@ -65,6 +65,7 @@
               <button @click="promocodeCheking" class="modal-form__promocod-done" type="button"/>
             </template>
           </div>
+          <a class="modal-form__agreement" target="_blank" href="https://moneyhunter.pro/agreement/">Пользовательское соглашение</a>
           <div class="modal-form__submit-item">
             <Btn :loading="loading" :isDisabled="isDisabled" label="Зарегистрироваться" type="submit"/>
           </div>
@@ -206,5 +207,10 @@
   .promocode-status {
     text-align: center;
     margin-top: 10px;
+  }
+  .modal-form__agreement {
+    color: #ff8562;
+    text-align: center;
+    margin-top: 15px;
   }
 </style>
