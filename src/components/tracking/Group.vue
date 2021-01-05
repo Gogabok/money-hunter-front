@@ -128,7 +128,9 @@
               content: ProductNestedSizesTable,
               articul: item.articul,
               groupName: this.$route.params.name,
-              priceWithDiscount: item.currentPrice
+              priceWithDiscount: item.currentPrice,
+              pk: item.pk,
+              groupPK: this.$store.state.tracking.groups.find(group => group.name === this.$route.params.name).pk,
             },
           }));
         } else {

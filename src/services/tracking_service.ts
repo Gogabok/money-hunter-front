@@ -81,9 +81,9 @@ export class TrackingService {
     }
   }
 
-  async getRatingAndSizes(groupName: string, articul: string) {
+  async getRatingAndSizes(groupPK: number, pk: number) {
     try {
-      return (await this.authService.refreshWrapper(this.repo.getRatingAndSizes.bind(this.repo, groupName, articul))).data;
+      return (await this.authService.refreshWrapper(this.repo.getRatingAndSizes.bind(this.repo, groupPK, pk))).data;
     } catch (e) {
       const _e = e as AxiosError;
 

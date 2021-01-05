@@ -9,6 +9,7 @@ export class TrackingRepository {
   private createUpdateGroup = 'wb/tracking/user/groups/';
   private groupDataUrl = 'wb/tracking/user/groups/{groupName}/';
   private productDataUrl = 'wb/tracking/{groupName}/{articul}/';
+  private productAddtionalDataUrl = 'wb/tracking/additional/';
   private getProductInfoByArticulUrl = 'wb/tracking/product/info/{articul}/';
   private getGroupInfoFileUrl = 'wb/tracking/user/groups/{groupName}/download/';
   private getGroupSortFileUrl = 'wb/tracking/user/groups/{groupName}/{days}/autosort/';
@@ -52,8 +53,8 @@ export class TrackingRepository {
     return this.client.sendDelete(url);
   }
 
-  getRatingAndSizes(groupName: string, articul: string) {
-    const url = queryStringBuilder(this.productDataUrl, { groupName, articul });
+  getRatingAndSizes(groupPK: number, pk: number) {
+    const url = `wb/tracking/additional/${groupPK}/${pk}`
     return this.client.sendGet(url);
   }
 
