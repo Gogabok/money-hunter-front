@@ -13,6 +13,7 @@ export class TrackingRepository {
   private getGroupInfoFileUrl = 'wb/tracking/user/groups/{groupName}/download/';
   private getGroupSortFileUrl = 'wb/tracking/user/groups/{groupName}/{days}/autosort/';
   private groupNotificationUrl = 'wb/tracking/group/notification/{notificationId}/';
+  private getGroupChartUrl = 'wb/tracking/group/charts/{groupPK}'
 
   getBrands() {
     return this.client.sendGet(this.getBrandsUrl);
@@ -78,4 +79,8 @@ export class TrackingRepository {
       { responseType: 'blob' }
     )
   }
+
+  getGroupChart(groupPK: number) {
+    return this.client.sendGet(queryStringBuilder(this.getGroupChartUrl, { groupPK }));
+  } 
 }

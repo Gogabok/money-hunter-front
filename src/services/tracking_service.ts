@@ -157,4 +157,12 @@ export class TrackingService {
       return "Произошла ошибка";
     }
   }
+
+  async getGroupChart(groupPK: number) {
+    try {
+      return await this.authService.refreshWrapper(this.repo.getGroupChart.bind(this.repo, groupPK));
+    } catch (e) {
+      return "Произошла ошибка";
+    }
+  }
 }

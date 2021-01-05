@@ -94,6 +94,7 @@
         return nested;
       },
       open() {
+        console.log(this.rowData)
         if (this.rowData.nested) {
           this.rowOpened = !this.rowOpened;
         }

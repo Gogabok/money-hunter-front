@@ -34,6 +34,7 @@
   import {mapState} from "vuex";
   import {GROUPS_SORTED_BY_GETTER} from "@/store/modules/tracking/constants";
   import AddGoodsBtn from "@/shared-components/AddGoodsBtn";
+  import ProductBlackboxNested from "@/components/tracking-table/ProductBlackboxNested";
 
   import progressBar from "@/shared-components/progressBar"
   import {UserService} from "@/services/user_service";
@@ -72,7 +73,17 @@
     },
     computed: {
       tablePositions() {
-        return this.groupsSortedBy.map(item => this.$mapItemListToTableItem(item));
+        // groups.forEach(group => {
+        //   group["nested"] = {
+        //     content: ProductBlackboxNested,
+        //     groupPK: group.pk
+        //   }
+        // });
+        console.log(this.groupsSortedBy)
+        return this.groupsSortedBy.map(item => ({
+          ...this.$mapItemListToTableItem(item),
+          nested: {content: ProductBlackboxNested, groupPK: item.pk}
+        }));
       },
       groupsSortedBy() {
         return this.$store.getters[`tracking/${GROUPS_SORTED_BY_GETTER}`](this.orderType);
@@ -105,7 +116,7 @@
         this.maxTrackingProducts = res.maxTrackingProducts
         this.progress = res.trackingProductsCount;
         this.isLoaded = true
-      })
+      });
     },
     watch: {
       orderType: function () {

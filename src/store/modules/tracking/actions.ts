@@ -2,7 +2,8 @@ import {
   ADD_GROUP_MUTATION,
   CLEAR_GROUPS_MUTATION, DELETE_GROUP,
   LOAD_GROUPS_ACTION,
-  UPDATE_GROUP_NAME_ACTION
+  UPDATE_GROUP_NAME_ACTION,
+  GET_GROUP_CHART
 } from "@/store/modules/tracking/constants";
 import {ActionContext} from "vuex";
 import {TrackingService} from "@/services/tracking_service";
@@ -41,5 +42,12 @@ export const actions = {
     }
 
     return false;
+  },
+  async [GET_GROUP_CHART](context: ActionContext<VuexTrackingStateInterface, any>, groupPK: number) {
+    const service = new TrackingService();
+
+    const result = await service.getGroupChart(groupPK);
+
+    console.log(result)
   }
 };
