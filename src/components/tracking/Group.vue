@@ -212,10 +212,16 @@
       async deleteProductFromTracking($event, articul) {
         $event.stopPropagation();
 
-        const groupName = this.$route.params.name;
+        const groupPK = this.$store.state.tracking.groups.find(group => group.name === this.$route.params.name).pk;
+        
         this.$store.commit(`modal/${SHOW_MODAL_MUTATION}`, {
           component: DeleteProductFromTracking,
-          data: {articul: [articul], groupName, callback: () => this.loadGoods()},
+          data: {
+            articul: [articul],
+            groupPK: groupPK, 
+            callback: () => this.loadGoods(), 
+            pk: this.tablePositions.find(item => item.nested.articul === articul).nested.pk
+          },
         });
       }
     },

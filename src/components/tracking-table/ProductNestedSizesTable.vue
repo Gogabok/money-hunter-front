@@ -9,7 +9,7 @@
           <th class="tracking-table-dropdown__header-item">Товара хватит на</th>
         </tr>
         <tr class="tracking-table-dropdown__row" v-for="item in sortedSizes" :key="item.key">
-          <td class="tracking-table-dropdown__cell">{{item.key}}</td>
+          <td class="tracking-table-dropdown__cell">{{item.name}}</td>
           <td class="tracking-table-dropdown__cell">{{item.value}}</td>
           <td class="tracking-table-dropdown__cell" v-if="sizes[item.key].supply_info">{{sizes[item.key].supply_info.orders_speed}}</td>
           <td class="tracking-table-dropdown__cell" v-else>Доступно на тарифе BUSINESS</td>
@@ -111,8 +111,7 @@
     },
     computed: {
       sortedSizes() {
-        console.log(this.sizes)
-        return Object.keys(this.sizes).map(key => ({key, value: this.sizes[key].name, supply_info: key.supply_info})).sort((a, b) => b.key - a.key);
+        return Object.keys(this.sizes).map(key => ({name: this.sizes[key].name, key: key, value: this.sizes[key].qty, supply_info: key.supply_info})).sort((a, b) => b.key - a.key);
       }
     },
     methods: {

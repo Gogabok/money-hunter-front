@@ -101,10 +101,10 @@ export class TrackingService {
     }
   }
 
-  async deleteProductFromTracking(groupName: string, articul: string) {
+  async deleteProductFromTracking(groupPK: number, pk: number) {
     try {
-      const response = await this.authService.refreshWrapper(this.repo.deleteProductFromTracking.bind(this.repo, groupName, articul));
-      return response.status === 200;
+      const response = await this.authService.refreshWrapper(this.repo.deleteProductFromTracking.bind(this.repo, groupPK, pk));
+      return response.status === 204;
     } catch (e) {
       const _e = e as AxiosError;
 

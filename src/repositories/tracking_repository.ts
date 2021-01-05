@@ -58,8 +58,9 @@ export class TrackingRepository {
     return this.client.sendGet(url);
   }
 
-  deleteProductFromTracking(groupName: string, articul: string) {
-    const url = queryStringBuilder(this.productDataUrl, { groupName, articul });
+  deleteProductFromTracking(groupPK: number, pk: number) {
+    // const url = queryStringBuilder(this.productDataUrl, { groupName, articul });
+    const url = `wb/tracking/additional/${groupPK}/${pk}`
     return this.client.sendDelete(url);
   }
 
