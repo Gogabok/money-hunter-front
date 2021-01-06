@@ -23,7 +23,7 @@
       </label>
       <Btn @click="selectItems" style="max-width: 200px; margin: 5px;" :label="!isSelecting ? 'Выбрать товары' : afterSelectingTitle"/>
     </div>
-    <table class="tracking-table tracking-table_sticky">
+    <table class="tracking-table tracking-table_sticky" ref="HeaderScroll" v-on:scroll="handleHeaderScroll">
       <tbody class="tracking-table-tbody">
         <tr :class="isSelecting ? `selecting` : ''" class="tracking-table__header">
           <th v-for="item in headers" :key="item.name" class="tracking-table__header-item" :class="{[item.clazz]: item.clazz, [item.status]: item.status }|| ''">
@@ -40,7 +40,7 @@
         </tr>
       </tbody>
     </table>
-    <table class="tracking-table" v-if="items.length>0">
+    <table class="tracking-table" v-if="items.length>0" ref="BodyScroll" v-on:scroll="handleBodyScroll">
       <!-- {{ items[0].currentPrice.component_data.price }} -->
       <TrackingTableRow :selectedItems="selectedItems" @selectItemsMethod="selectItemsMethod" :isSelecting="isSelecting" :row-data="item" :header-keys="headers.map(h=>h.name)" :headerWidth="headers" :index="idx" v-for="(item, idx) in items" :key="idx"/>
     </table>
@@ -95,6 +95,12 @@
       // }
     },
     methods: {
+      handleHeaderScroll() {
+        this.$refs.BodyScroll.scrollLeft = this.$refs.HeaderScroll.scrollLeft
+      },
+      handleBodyScroll() {
+        this.$refs.HeaderScroll.scrollLeft = this.$refs.BodyScroll.scrollLeft
+      },
       isSortable(item) {
         return item.sortable || item.sortable === undefined;
       },
@@ -235,8 +241,15 @@
       position: sticky;
       max-width: 100%;
       width: 100%;
-      top: 0px;
+      top: -1px;
       z-index: 2;
+      overflow-x: hidden !important;
+      background: white;
+      @media screen and (max-width: 568px) {
+        & {
+          top: 60px;
+        }
+      }
     }
   }
 
@@ -246,7 +259,7 @@
     align-items: center;
     justify-content: space-between;
     background: white;
-    top: 0px;
+    top: -1px;
     width: 100%;
     // padding: 0px 10px;
     padding: 0px;
@@ -401,11 +414,11 @@
     }
   @media screen and (max-width: 1615px) {
     .tracking-table-wrapper {
-      overflow-x: auto;
-      max-width: 100%;
-      width: 100%;
       & .tracking-table {
-        max-width: 1450px;
+        overflow-x: scroll;
+        max-width: 100%;
+        width: 100%;
+        display: block;
       }
     }
   }

@@ -199,22 +199,27 @@
 
   .tracking-table__row {
     // width: 100%;
-    min-width: 910px;
-    width: 100%;
+    // min-width: 910px;
     display: flex;
+    min-width: 1250px;
+    width: 100%;
     align-items: center;
     justify-content: space-between;
-    border-top: 1px solid $drayDevider;
     position: relative;
+    border-top: 1px solid $drayDevider;
     @media screen and (max-width: 1400px) {
       & .tracking-table__cell {
         font-size: 12px;
       }
     }
+   
   }
 
   .tracking-table__row_open {
     background: $gray3;
+    display: flex;
+    justify-content: center;
+    min-width: 1250px;
   }
 
   .positive {
@@ -234,6 +239,7 @@
     // padding: 15px 15px 15px 5px;
     padding: 15px 5px 15px 5px;
     text-align: right;
+    justify-content: flex-end;
     letter-spacing: .2px;
     box-sizing: border-box;
     &.width5 {
@@ -241,11 +247,13 @@
     }
     &.tracking-table__align-center {
       text-align: center;
+      justify-content: center;
       padding-left: 0;
       padding-right: 10px;
     }
     &.tracking-table__align-left {
       text-align: left;
+      justify-content: flex-start;
       padding-right: 10px;
       &.pl-35 {
         padding-left: 35px !important;
