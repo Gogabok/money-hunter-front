@@ -5,11 +5,13 @@
             <Btn
                 class="modal-form-save"
                 label="По размерам"
+                :loading="loading"
                 @click="downloadBySize"
             />
             <Btn
                 class="modal-form-save"
                 label="По артикулам"
+                :loading="loading"
                 @click="downloadByArticul"
             />
         </div>
@@ -30,6 +32,9 @@ export default {
     Modal,
     Btn,
   },
+  data: () => ({
+      loading: false
+  }),
   props: {
       groupName: {
           type: String,
@@ -38,22 +43,26 @@ export default {
   },
   methods: {
         async downloadBySize() {
+            this.loading = true
             const service = new TrackingService();
             const result = await service.getGroupInfoBySizeFile(this.$route.params.name);
             let isError = 'error'
             if(result === 'Файл успешно скачен') {
                 isError = 'success'
             }
+            this.loading = false
             this[HIDE_MODAL_MUTATION]()
             this.$store.commit('notifications/ADD_NOTIFICATION', {text: result, status: isError})
         },
         async downloadByArticul() {
+            this.loading = true
             const service = new TrackingService();
             const result = await service.getGroupInfoByArticulFile(this.$route.params.name);
             let isError = 'error'
             if(result === 'Файл успешно скачен') {
                 isError = 'success'
             }
+            this.loading = false
             this[HIDE_MODAL_MUTATION]()
             this.$store.commit('notifications/ADD_NOTIFICATION', {text: result, status: isError})
         },
