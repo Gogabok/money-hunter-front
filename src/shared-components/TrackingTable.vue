@@ -2,7 +2,7 @@
   <div class="tracking-table-wrapper">
     <tr v-if="subheaders" class="tracking-table__header tracking-table__header-subheader">
       <th v-for="item in subheaders" :key="item.name" class="tracking-table__header-item" :class="item.clazz || ''">
-        <span v-if="item.subheader && item.subHeaderValue >= 0" class="tracking-table__header-item-subheader">{{ item.subheader }}: <span>{{ item.subHeaderValue }}</span></span>
+        <span v-if="item.subheader && item.subHeaderValue !== false" class="tracking-table__header-item-subheader">{{ item.subheader }}: <span>{{ item.subHeaderValue }}</span></span>
       </th>
     </tr>
     <div v-if="selectAll" class="selectAll-folder" :class="isSelecting ? `allSelecting` : ''">

@@ -279,6 +279,9 @@
 
             renamedHeaders.forEach(header => {
               header['subHeaderValue'] = values[header.label]
+              if(header.value) {
+                header['subHeaderValue'] += `${header.value}`
+              }
               header['subheader'] = header.title
             })
 
