@@ -30,6 +30,7 @@
             :order="orderType" 
             :order-handler="$orderHandler"
             :select-all="true"
+            :subheaders="subheaders"
             @show-modal="showModalDeleteFromGroup"
             :after-selecting-title="`Удалить из отслеживания`"
       />
@@ -82,6 +83,11 @@
             clazz: 'width9 tracking-table__header-item_align-center mw100',
 
           },
+          {
+            name: 'articul',
+            label: 'Артикул',
+            clazz: 'width9 tracking-table__header-item_align-right mw100',
+          },
           {name: 'rating', label: 'Рейтинг', clazz: 'width9 tracking-table__header-item_align-right mw100', },
           {name: 'currentQty', label: 'Доступно к заказу', clazz: 'width9 mw100', },
           {name: 'todayOrders', label: 'Заказы Сегодня', clazz: 'width9 mw100', },
@@ -91,6 +97,7 @@
           {name: 'actions', label: 'Действия', sortable: false, clazz: 'width9 mw100'},
         ],
         list: [],
+        subheaders: [],
         trackingActionList: [
           {
             label: "Автоподсорт", img: AutosortImg, onClick: () => {
@@ -200,9 +207,80 @@
         
         this.loaded = true
 
+        this.getAgregatedData()
+
         setTimeout(() => {
           this.orderType = "currentPrice"
         }, 0);
+      },
+
+      getAgregatedData() {
+        const renamedHeaders = [
+          {
+            label: "price",
+            title: "Средняя цена",
+            value: "₽",
+          },
+          {
+            label: "qty",
+            title: "Cреднее кол-во остатков",
+            value: null,
+          },
+          {
+            label: "raiting",
+            title: "Средний рейтинг",
+            value: null,
+          },
+          {
+            label: "monthOrders",
+            title: "Заказов за месяц",
+            value: null,
+          },
+          {
+            label: "weekOrders",
+            title: "Заказов за неделю",
+            value: null,
+          },
+          {
+            label: "todayOrders",
+            title: "Заказов за сегодня",
+            value: null,
+          },
+          {
+            label: "yesterdayOrders",
+            title: "Заказов за вчера",
+            value: null,
+          },
+        ]
+        const values = {
+          price: 0, // Средняя цена
+          qty: 0, // Среднее кол-во остатков
+          raiting: 0, // Средний рейтинг
+          monthOrders: 0, // Заказов за месяц
+          weekOrders: 0, // Заказов за неделю
+          todayOrders: 0, // Заказов за сегодня
+          yesterdayOrders: 0 // Заказов за вчера
+        }
+        this.$nextTick(() => {
+            this.list.forEach(product => {
+              values.price += product.currentPrice;
+              values.qty += product.currentQty;
+              values.raiting += product.currentRating;
+              values.monthOrders += product.ordersInfo.monthOrders;
+              values.weekOrders += product.ordersInfo.weekOrders;
+              values.todayOrders += product.ordersInfo.todayOrders;
+              values.yesterdayOrders += product.ordersInfo.yesterdayOrders;
+            });
+            values.price = (values.price / this.list.length).toFixed(2);
+            values.qty = (values.qty / this.list.length).toFixed(2);
+            values.raiting = (values.raiting / this.list.length).toFixed(2);
+            renamedHeaders.forEach(header => {
+              header['subHeaderValue'] = values[header.label]
+              header['subheader'] = header.title
+            })
+            this.subheaders = renamedHeaders
+        });
+
       },
       /**
        *
