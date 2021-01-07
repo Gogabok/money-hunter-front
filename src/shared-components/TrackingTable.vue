@@ -2,15 +2,7 @@
   <div class="tracking-table-wrapper">
     <tr v-if="subheaders" class="tracking-table__header tracking-table__header-subheader">
       <th v-for="item in subheaders" :key="item.name" class="tracking-table__header-item" :class="item.clazz || ''">
-        <div>
-          <span :class="{'tracking-table__header-label': isSortable(item)}"
-                @click="headerClickHandler(item)">{{item.label}}</span>
-          <Btn v-if="isSortable(item) && getSortClass(item)"
-               @click="headerClickHandler(item)"
-               without-default-class
-               :clazz="`tracking-table__sort ${getSortClass(item)}`"/>
-        </div>
-        <span v-if="item.subheader && item.subHeaderValue" class="tracking-table__header-item-subheader">{{ item.subheader }}: <span>{{ item.subHeaderValue }}</span></span>
+        <span v-if="item.subheader && item.subHeaderValue >= 0" class="tracking-table__header-item-subheader">{{ item.subheader }}: <span>{{ item.subHeaderValue }}</span></span>
       </th>
     </tr>
     <div v-if="selectAll" class="selectAll-folder" :class="isSelecting ? `allSelecting` : ''">
@@ -72,7 +64,7 @@
         required: false,
       },
       subheaders: {
-        type: Object,
+        type: [Object, Array],
         required: false
       },
       selectAll: {
