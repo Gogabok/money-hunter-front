@@ -112,14 +112,29 @@ export class TrackingService {
     }
   }
 
-  async getGroupInfoFile(groupName: string): Promise<void> {
+  async getGroupInfoBySizeFile(groupName: string): Promise<string> {
     try {
-      const response = await this.authService.refreshWrapper(this.repo.getGroupInfoFile.bind(this.repo, groupName));
+      const response = await this.authService.refreshWrapper(this.repo.getGroupInfoBySizeFile.bind(this.repo, groupName));
       const headers = response.headers;
       const blob = new Blob([`\uFEFF ${response.data}`], { type: headers['content-type'] });
       FileSaver.saveAs(blob, `Moneyhunter_stat.csv`);
+      return 'Файл успешно скачен'
     } catch (e) {
       console.log('Cannot download file', e);
+      return 'Невозможно скачать файл' + e
+    }
+  }
+
+  async getGroupInfoByArticulFile(groupName: string): Promise<string> {
+    try {
+      const response = await this.authService.refreshWrapper(this.repo.getGroupInfoByArticulFile.bind(this.repo, groupName));
+      const headers = response.headers;
+      const blob = new Blob([`\uFEFF ${response.data}`], { type: headers['content-type'] });
+      FileSaver.saveAs(blob, `Moneyhunter_stat.csv`);
+      return 'Файл успешно скачен'
+    } catch (e) {
+      console.log('Cannot download file', e);
+      return 'Невозможно скачать файл' + e
     }
   }
 

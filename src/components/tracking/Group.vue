@@ -60,6 +60,7 @@
   import AddGoodsBtn from "@/shared-components/AddGoodsBtn";
   import {debounce} from "lodash";
   import {SHOW_MODAL_MUTATION} from "@/store/modules/modal/constants";
+  import DownloadSearchModal from "@/components/tracking/DownloadSearchModal"
   import DeleteProductFromTracking from "@/components/tracking/DeleteProductFromTracking";
   import AutoSort from "./AutoSort";
 
@@ -101,8 +102,10 @@
           },
           {
             label: "Скачать", img: DownloadImg, onClick: () => {
-              const service = new TrackingService();
-              service.getGroupInfoFile(this.$route.params.name);
+              this.$store.commit(`modal/${SHOW_MODAL_MUTATION}`, {
+                component: DownloadSearchModal,
+                data: {groupName: this.$route.params.name}
+              });
             }
           },
         ],
@@ -296,6 +299,7 @@
   .tracking-actions {
     flex: 1 0 auto;
     margin-left: 2.14em;
+    margin-right: 2.14em;
     display: flex;
     align-items: center;
   }
@@ -336,7 +340,7 @@
       }
     }
   }
-  @media screen and (max-width: 1030px){
+  @media screen and (max-width: 1150px){
     .tracking-info {
       flex-wrap: wrap;
       justify-content: space-between;
@@ -348,6 +352,14 @@
     }
     .tracking-actions {
       flex: 0 0 auto;
+      margin: 0px 10px 0px auto;
+    }
+  }
+
+  @media screen and (max-width: 815px){
+    .tracking-actions {
+      flex: 0 0 auto;
+      margin: 15px auto 0px auto;
     }
   }
 

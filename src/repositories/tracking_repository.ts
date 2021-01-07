@@ -10,7 +10,8 @@ export class TrackingRepository {
   private groupDataUrl = 'wb/tracking/user/groups/{groupName}/';
   private productDataUrl = 'wb/tracking/{groupName}/{articul}/';
   private getProductInfoByArticulUrl = 'wb/tracking/product/info/{articul}/';
-  private getGroupInfoFileUrl = 'wb/tracking/user/groups/{groupName}/download/';
+  private getGroupInfoBySizeFileUrl = 'wb/tracking/user/groups/{groupName}/download/sizes/';
+  private getGroupInfoByArticulFileUrl = 'wb/tracking/user/groups/{groupName}/download/products/';
   private getGroupSortFileUrl = 'wb/tracking/user/groups/{groupName}/{days}/autosort/';
   private groupNotificationUrl = 'wb/tracking/group/notification/{notificationId}/';
 
@@ -65,9 +66,16 @@ export class TrackingRepository {
     return this.client.sendGet(queryStringBuilder(this.getProductInfoByArticulUrl, { articul }));
   }
 
-  getGroupInfoFile(groupName: string) {
+  getGroupInfoBySizeFile(groupName: string) {
     return this.client.sendGet(
-      queryStringBuilder(this.getGroupInfoFileUrl, { groupName }),
+      queryStringBuilder(this.getGroupInfoBySizeFileUrl, { groupName }),
+      { responseType: 'blob' }
+    );
+  }
+
+  getGroupInfoByArticulFile(groupName: string) {
+    return this.client.sendGet(
+      queryStringBuilder(this.getGroupInfoByArticulFileUrl, { groupName }),
       { responseType: 'blob' }
     );
   }
