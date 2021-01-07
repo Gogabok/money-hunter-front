@@ -202,6 +202,7 @@
     // min-width: 910px;
     display: flex;
     min-width: 1250px;
+    max-width: 1250px;
     width: 100%;
     align-items: center;
     justify-content: space-between;

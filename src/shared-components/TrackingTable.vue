@@ -235,6 +235,8 @@
     &-tbody {
       display: flex;
       flex-direction: column;
+      min-width: 1250px;
+      max-width: 1250px;
     }
 
     &.tracking-table_sticky {
@@ -271,8 +273,8 @@
     position: static;
     display: flex;
     justify-content: center;
-    // min-width: 100%;
-    min-width: 910px;
+    // max-width: 100%;
+    min-width: auto !important;
     & .tracking-table__header-item {
       min-width: 120px;
       border-bottom: 1px solid #DFE0EB;
@@ -283,6 +285,30 @@
       // justify-content: flex-start;
       // overflow-x: scroll;
       padding-bottom: 5px;
+    }
+    @media screen and (max-width: 1080px) {
+      flex-wrap: wrap;
+      justify-content: space-between;
+      padding: 5px 10px;
+      & .tracking-table__header-item {
+        width: 140px;
+        margin: 10px 10px;
+        justify-content: flex-start;
+        text-align: left;
+        & .tracking-table__header-item-subheader {
+          font-size: 14px;
+          line-height: 1.2;
+          text-align: left;
+          height: 50px;
+          & span {
+            font-size: 15px;
+            text-align: left;
+          }
+        }
+      }
+    }
+    @media screen and (max-width: 1080px) {
+      justify-content: center;
     }
   }
 
