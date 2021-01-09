@@ -86,7 +86,6 @@
             name: 'articul',
             label: 'Артикул',
             clazz: 'width9 tracking-table__header-item_align-right mw100',
-
           },
           {name: 'rating', label: 'Рейтинг', clazz: 'width9 tracking-table__header-item_align-right mw100', },
           {name: 'currentQty', label: 'Доступно к заказу', clazz: 'width9 mw100', },
@@ -97,7 +96,7 @@
           {name: 'actions', label: 'Действия', sortable: false, clazz: 'width9 mw100'},
         ],
         list: [],
-        subheaders: {},
+        subheaders: [],
         trackingActionList: [
           {
             label: "Автоподсорт", img: AutosortImg, onClick: () => {
@@ -109,8 +108,10 @@
           },
           {
             label: "Скачать", img: DownloadImg, onClick: () => {
-              const service = new TrackingService();
-              service.getGroupInfoFile(this.$route.params.name);
+              // this.$store.commit(`modal/${SHOW_MODAL_MUTATION}`, {
+              //   component: DownloadSearchModal,
+              //   data: {groupName: this.$route.params.name}
+              // });
             }
           },
         ],
@@ -251,7 +252,6 @@
             value: null,
           },
         ]
-
         const values = {
           price: 0, // Средняя цена
           qty: 0, // Среднее кол-во остатков
@@ -261,7 +261,6 @@
           todayOrders: 0, // Заказов за сегодня
           yesterdayOrders: 0 // Заказов за вчера
         }
-
         this.$nextTick(() => {
             this.list.forEach(product => {
               values.price += product.currentPrice;
@@ -272,39 +271,16 @@
               values.todayOrders += product.ordersInfo.todayOrders;
               values.yesterdayOrders += product.ordersInfo.yesterdayOrders;
             });
-
             values.price = (values.price / this.list.length).toFixed(2);
             values.qty = (values.qty / this.list.length).toFixed(2);
             values.raiting = (values.raiting / this.list.length).toFixed(2);
-
             renamedHeaders.forEach(header => {
               header['subHeaderValue'] = values[header.label]
-              if(header.value) {
-                header['subHeaderValue'] += `${header.value}`
-              }
               header['subheader'] = header.title
             })
-
             this.subheaders = renamedHeaders
-
-            console.log(this.subheaders)
         });
 
-  
-
-        // articul: "9999816"
-        // brand: "ANNA Collection"
-        // currentPrice: 6395
-        // currentQty: 15
-        // currentRating: 5
-        // link: "https://wildberries.ru/catalog/9999816/detail.aspx"
-        // name: " Пальто"
-        // ordersInfo: 
-        //   monthOrders: 2
-        //   todayOrders: 0
-        //   weekOrders: 2
-        //   yesterdayOrders: 0
-        //   pk: 2518068
       },
       /**
        *
@@ -407,6 +383,7 @@
   .tracking-actions {
     flex: 1 0 auto;
     margin-left: 2.14em;
+    margin-right: 2.14em;
     display: flex;
     align-items: center;
   }
@@ -447,7 +424,7 @@
       }
     }
   }
-  @media screen and (max-width: 1030px){
+  @media screen and (max-width: 1150px){
     .tracking-info {
       flex-wrap: wrap;
       justify-content: space-between;
@@ -457,6 +434,13 @@
       // margin: 10px 0px;
       margin-top: 15px;
     }
+    .tracking-actions {
+      flex: 0 0 auto;
+      margin: 0px 10px 0px auto;
+    }
+  }
+
+  @media screen and (max-width: 815px){
     .tracking-actions {
       flex: 0 0 auto;
       margin: 15px auto 0px auto;

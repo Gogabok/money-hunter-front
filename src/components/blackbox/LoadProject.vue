@@ -23,7 +23,7 @@
             <Btn label="Отмена" clazz="button_gray" @click="hideModal"/>
           </div>
           <div class="modal-form__double-submit-item">
-            <Btn :loading="loading" label="Загрузить" :disabled="!checkedPositionName" @click="saveHandler"/>
+            <Btn :loading="loading" label="Загрузить" :disabled="!checkedPositionName || positions.find(item => item.isEditMode)" @click="saveHandler"/>
           </div>
         </div>
       </form>
@@ -63,18 +63,20 @@ export default {
   },
   methods: {
     async saveHandler() {
-      this.loading = true
+      if(this.checkedPositionName && !this.positions.find(item => item.isEditMode)) {
+        this.loading = true
 
-      if (this.checkedPositionName === null) {
-        return;
+        if (this.checkedPositionName === null) {
+          return;
+        }
+
+        if (this.checkedPositionName.data) {
+          this.$eventBus.$emit('find_search_id_data', this.checkedPositionName);
+        }
+        this.loading = false
+
+        this[HIDE_MODAL_MUTATION]();
       }
-
-      if (this.checkedPositionName.data) {
-        this.$eventBus.$emit('find_search_id_data', this.checkedPositionName);
-      }
-      this.loading = false
-
-      this[HIDE_MODAL_MUTATION]();
     },
     editFilter(item) {
       this.positions.map(filter => filter['isEditMode'] = false);

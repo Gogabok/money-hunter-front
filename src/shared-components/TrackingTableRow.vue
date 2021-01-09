@@ -201,8 +201,6 @@
     // width: 100%;
     // min-width: 910px;
     display: flex;
-    min-width: 1250px;
-    max-width: 1250px;
     width: 100%;
     align-items: center;
     justify-content: space-between;
@@ -212,6 +210,10 @@
       & .tracking-table__cell {
         font-size: 12px;
       }
+    }
+    @media screen and (max-width: 1420px) {
+      min-width: 1250px;
+      max-width: 1250px;
     }
    
   }

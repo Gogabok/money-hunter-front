@@ -227,8 +227,10 @@
     &-tbody {
       display: flex;
       flex-direction: column;
-      min-width: 1250px;
-      max-width: 1250px;
+      @media screen and (max-width: 1420px) {
+        min-width: 1250px;
+        max-width: 1250px;
+      }
     }
 
     &.tracking-table_sticky {
