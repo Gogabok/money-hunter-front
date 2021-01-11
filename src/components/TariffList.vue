@@ -72,7 +72,7 @@
             priceSale: 2450,
             saleInfo: {
               saleAmount: "-51%",
-              saleDesc: "до 10.01.2020"
+              saleDesc: "до 20.01.2020"
             },
             clazz: "tarif__item_fourth",
             isBuyable: true,
