@@ -162,4 +162,12 @@ export class BlackboxService {
       return [];
     }
   }
+
+  async getCalculatorData(pk: number) {
+    try {
+      return (await this.service.refreshWrapper(this.repo.getCalculatorData.bind(this.repo, pk))).data;
+    } catch (e) {
+      return e.message;
+    }
+  }
 }

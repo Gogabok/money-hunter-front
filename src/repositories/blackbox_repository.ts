@@ -30,6 +30,7 @@ export class BlackboxRepository {
   private deleteSearchUrl = 'wb/blackbox/user/searches/';
   private getAgregatedDataUrl = 'wb/blackbox/agregated/';
   private downloadSearchResultsUrl = 'wb/blackbox/download/'
+  private getCalculatorDataUrl = 'wb/blackbox/calculator/{pk}'
 
   getNewSearchID(data: GetSearchIDDataInterface) {
     return this.client.sendPost(this.getNewSearchIDUrl, data);
@@ -89,5 +90,9 @@ export class BlackboxRepository {
 
   getAgregatedData(searchID: any) {
     return this.client.sendGet(queryStringBuilder(this.getAgregatedDataUrl, { searchID }))
+  }
+
+  getCalculatorData(pk: number) {
+    return this.client.sendGet(queryStringBuilder(this.getCalculatorDataUrl, { pk }))
   }
 }

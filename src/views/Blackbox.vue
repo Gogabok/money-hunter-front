@@ -104,6 +104,8 @@
       tablePositions() {
         return this.list.map(item => ({
           ...this.$mapItemListToTableItem(item),
+          splicedPrice: item.splicedPrice,
+          pk: item.pk,
           nested: {content: ProductBlackboxNested, articul: item.articul, clazz: 'tracking-table-dropdown__item-chart', days: this.days}
         }));
       },
@@ -177,6 +179,15 @@
           );
     
           this.paginationData.totalCount = result.countAll;
+
+          // Временная разбивка цены, хардкод
+          result.products.forEach(product => {
+            product.splicedPrice = {
+              firstPrice: (product.currentPrice * 0.8).toFixed(),
+              secondPrice: (product.currentPrice * 0.2).toFixed()
+            }
+          })
+
           this.list = result.products;
 
           this.cachedSearchResults = result

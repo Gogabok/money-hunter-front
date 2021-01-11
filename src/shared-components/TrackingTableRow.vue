@@ -28,7 +28,12 @@
         <!-- <template v-else>{{item.content}}</template> -->
         <template v-else>
            <div v-if="item.image" class="product-photo row-with-photo"><img :src="item.image" alt="">{{ formattingNum(item) }}</div>
-           <span v-else>{{ formattingNum(item) }}</span>
+           <span v-else>
+             {{ formattingNum(item) }}
+             <div class="tracking-table__cell-splicedPrice" v-if="item.name === 'currentPrice'">
+               (<span @click.stop="openCalculator">{{ rowData.splicedPrice.firstPrice }}₽</span> | <span @click.stop="openCalculator">{{ rowData.splicedPrice.secondPrice }}₽</span>)
+             </div>
+           </span>
         </template>
       </td>
     </tr>
@@ -44,6 +49,8 @@
 
 <script>
   import {Fragment} from 'vue-fragment';
+  import Calculator from '@/components/blackbox/Calculator'
+  import {SHOW_MODAL_MUTATION} from "@/store/modules/modal/constants";
 
   export default {
     name: "TrackingTableRow",
@@ -94,7 +101,6 @@
         return nested;
       },
       open() {
-        console.log(this.rowData)
         if (this.rowData.nested) {
           this.rowOpened = !this.rowOpened;
         }
@@ -117,6 +123,12 @@
       },
       selectItemsEmit() {
         this.$emit("selectItemsMethod", this.index)
+      },
+      openCalculator() {
+        this.$store.commit(`modal/${SHOW_MODAL_MUTATION}`, {
+          component: Calculator,
+          data: {pk: this.rowData.pk}
+        });
       }
     },
     watch: {
@@ -221,8 +233,11 @@
   .tracking-table__row_open {
     background: $gray3;
     display: flex;
-    justify-content: center;
-    min-width: 1250px;
+    // justify-content: center;
+    // min-width: 1250px;
+    & .tracking-table-dropdown__item {
+      margin: 20px auto 0px auto;
+    }
   }
 
   .positive {
@@ -245,6 +260,20 @@
     justify-content: flex-end;
     letter-spacing: .2px;
     box-sizing: border-box;
+    &-splicedPrice {
+      font-size: 12px;
+      margin-bottom: -16px;
+      @media screen and (max-width: 1400px) {
+        margin-bottom: -18px;
+      }
+      & span {
+        color: rgb(177, 138, 0);
+        cursor: pointer;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
     &.width5 {
       white-space: nowrap;
     }
