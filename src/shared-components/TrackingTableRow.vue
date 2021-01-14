@@ -205,6 +205,10 @@
     max-width: 50px;
   }
 
+  .underlined:hover {
+    text-decoration: underline;
+  }
+
   .tracking-table {
     // width: 100%;
   }

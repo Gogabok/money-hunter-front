@@ -97,7 +97,7 @@
       map_name(item) {
         return {
           content: item.name,
-          clazz: 'width23 pl-35 tracking-table__align-left',
+          clazz: 'width23 pl-35 tracking-table__align-left underlined',
           onClick: ({content}) => this.$router.push({name: 'tracking.group', params: {name: content}})
         }
       },

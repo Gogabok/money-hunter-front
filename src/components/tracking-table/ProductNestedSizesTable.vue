@@ -6,14 +6,14 @@
           <th class="tracking-table-dropdown__header-item">Размер</th>
           <th class="tracking-table-dropdown__header-item">Остаток</th>
           <th class="tracking-table-dropdown__header-item textAlignLeft">Скорость продаж за последние <br/>14 дней</th>
-          <th class="tracking-table-dropdown__header-item">Товара хватит на</th>
+          <th class="tracking-table-dropdown__header-item textAlignRight">Товара хватит на<br/>дней</th>
         </tr>
         <tr class="tracking-table-dropdown__row" v-for="item in sortedSizes" :key="item.key">
           <td class="tracking-table-dropdown__cell">{{item.name}}</td>
           <td class="tracking-table-dropdown__cell">{{item.value}}</td>
           <td class="tracking-table-dropdown__cell" v-if="sizes[item.key].supply_info">{{sizes[item.key].supply_info.orders_speed}}</td>
           <td class="tracking-table-dropdown__cell" v-else>Доступно на тарифе BUSINESS</td>
-          <td class="tracking-table-dropdown__cell" v-if="sizes[item.key].supply_info">{{sizes[item.key].supply_info.days_on_sales}} дней</td>
+          <td class="tracking-table-dropdown__cell textAlignRight" v-if="sizes[item.key].supply_info">{{sizes[item.key].supply_info.days_on_sales}}</td>
           <td class="tracking-table-dropdown__cell" v-else>Доступно на тарифе BUSINESS</td>
         </tr>
       </table>
@@ -151,6 +151,10 @@
     &:last-child {
       border-right: none;
     }
+    
+    &.textAlignRight {
+      text-align: right;
+    }
   }
 
   .tracking-table-dropdown__header-item {
@@ -162,6 +166,9 @@
 
     &.textAlignLeft {
       text-align: left;
+    }
+    &.textAlignRight {
+      text-align: right;
     }
   }
 

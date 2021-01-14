@@ -99,7 +99,7 @@
         subheaders: [],
         trackingActionList: [
           {
-            label: "Автоподсорт", img: AutosortImg, onClick: () => {
+            label: "Расчет поставок", img: AutosortImg, onClick: () => {
               this.$store.commit(`modal/${SHOW_MODAL_MUTATION}`, {
                 component: AutoSort,
                 data: {groupName: this.$route.params.name}

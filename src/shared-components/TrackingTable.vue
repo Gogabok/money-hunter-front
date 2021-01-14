@@ -350,7 +350,6 @@
       }
     }
 
-
     &.tracking-table__header-item_align-right {
 
       div {
