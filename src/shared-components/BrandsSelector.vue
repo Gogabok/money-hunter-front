@@ -21,7 +21,7 @@
     @open="handleMenuOpen"
     @close="handleMenuClose"
     @search-change="handleSearchChange"
-    :loadingText="'Загрузка брендов'"
+    :loadingText="'Загрузится в течении 1 минуты'"
   >
     <label slot="option-label" slot-scope="{ node, shouldShowCount, count, labelClassName, countClassName }" :class="labelClassName">
       {{ node.label }}1

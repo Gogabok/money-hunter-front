@@ -57,7 +57,7 @@
   import ImgBtn from "../shared-components/ImgBtn";
   import TreeSelect from "@/shared-components/TreeSelect";
 
-  const DEFAULT_ORDER_TYPE = '-articul';
+  const DEFAULT_ORDER_TYPE = '-avRevenue';
 
   export default {
     name: "Blackbox",
