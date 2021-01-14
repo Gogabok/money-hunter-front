@@ -1,8 +1,12 @@
 <template>
-  <Modal class="modal" :clazz="'large_modal'" title="Калькулятор" closable>
+  <Modal class="modal" :clazz="'large_modal'" title="Калькулятор прибыли" closable>
     <template v-slot:default>
       <div class="modal-wrapper">
         <form v-if="loaded" action="" class="modal-form">
+          <div class="modal-wrapper_product">
+            <AsyncImg :src="product.imagePath" v-if="product.imagePath" class="modal-wrapper_product-photo"/>
+            <span class="modal-wrapper_product-title" v-if="product.goodsName">{{ product.goodsName }}</span>
+          </div>
           <div class="modal-wrapper-inputs">
             <div class="modal-wrapper-inputs-part">
               <input-field
@@ -42,13 +46,12 @@
               />
             </div>
             <div class="modal-wrapper-inputs-part">
-              <input-field
-                :label="inputs[5].title"
+              <TreeSelect :label="inputs[5].title"
+                :normalizer="node=>({...node, label: node.name})"
                 v-model="inputs[5].value"
-                :symbol="inputs[5].symbol"
-                :disabled="inputs[5].isDisabled"
-                class="modal-form__input modal-wrapper-common-width"
-              />
+                :clearable="false"
+                :options="inputs[5].values"
+                class="modal-form__input modal-wrapper-common-width"/>
               <input-field
                 :label="inputs[6].title"
                 v-model="inputs[6].value"
@@ -86,6 +89,8 @@
 <script>
   import Btn from "../../shared-components/Btn";
   import InputField from "../../shared-components/InputField"
+  import TreeSelect from "@/shared-components/TreeSelect";
+  import AsyncImg from "@/shared-components/AsyncImg";
   import {BlackboxService} from "@/services/blackbox_service";
   import {HIDE_MODAL_MUTATION} from "@/store/modules/modal/constants";
   import Modal from "@/components/Modal";
@@ -93,9 +98,13 @@
 
   export default {
     name: "AddToGroup",
-    components: {Modal, Btn, InputField},
+    components: {Modal, Btn, InputField, TreeSelect, AsyncImg},
     props: {
       pk: {
+        type: [String, Number],
+        required: true
+      },
+      articul: {
         type: [String, Number],
         required: true
       }
@@ -142,7 +151,25 @@
           name: "feeForWildberries",
           isDisabled: false,
           symbol: "%",
-          value: 0,
+          value: 5,
+          values: [
+            {
+              name: '5%',
+              id: 5,
+            },
+            {
+              name: '10%',
+              id: 10,
+            },
+            {
+              name: '12%',
+              id: 12,
+            },
+            {
+              name: '15%',
+              id: 15,
+            },
+          ]
         },
         {
           title: "Себестоимость товара",
@@ -161,7 +188,11 @@
       ],
       loaded: false,
       isCalculated: false,
-      profit: 0
+      profit: 0,
+      product: {
+        imagePath: null,
+        goodsName: null
+      }
     }),
     async created() {
         const blackboxService = new BlackboxService();
@@ -172,6 +203,8 @@
             return false;
         }
 
+        await this.loadPath()
+
         Object.keys(result).forEach(InputName => {
           this.inputs.find(input => input.name === InputName).value = result[InputName]
         })
@@ -181,6 +214,14 @@
         this.loaded = true
     },
     methods: {
+        async loadPath() {
+          const service = new BlackboxService();
+          const data = await service.getProductImagePathAndName(this.articul);
+          if (typeof data === 'object') {
+            this.product.imagePath = data.imageLink;
+            this.product.goodsName = data.name;
+          }
+        },
         calculate() {
           // Розничная цена
           const price = this.inputs.find(item => item.name === 'price').value;
@@ -227,7 +268,7 @@
           // Вы заработали 
           const profit = profitBeforeFees - feeSum;
           
-          this.profit = profit;
+          this.profit = profit.toFixed(1);
           this.isCalculated = true;
         },
         ...mapMutations('modal', [HIDE_MODAL_MUTATION]),
@@ -249,6 +290,24 @@
         &-part {
           max-width: calc(100% / 2 - 1rem);
           width: 100%;
+        }
+      }
+      &_product {
+        display: flex;
+        align-items: flex-start;
+        width: 100%;
+        margin: 0px 0px 20px 0px;
+        &-photo {
+          width: 88px;
+          height: 88px;
+          -o-object-fit: cover;
+          object-fit: cover;
+          min-width: 88px;
+        }
+        &-title {
+          margin-left: 20px;
+          font-size: 1.4rem;
+          font-weight: 500;
         }
       }
       &-common-width {

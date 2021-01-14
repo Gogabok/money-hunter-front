@@ -127,7 +127,7 @@
       openCalculator() {
         this.$store.commit(`modal/${SHOW_MODAL_MUTATION}`, {
           component: Calculator,
-          data: {pk: this.rowData.pk}
+          data: {pk: this.rowData.pk, articul: this.rowData.articul.content}
         });
       }
     },
