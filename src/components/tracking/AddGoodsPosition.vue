@@ -2,7 +2,7 @@
   <Modal title="Добавить товар" closable @next="onNext">
     <template v-slot:default>
 
-      <div class="modal-form-steps">
+      <div class="modal-form-steps" v-if="!isGroupRoute">
         <div class="modal-form-steps__line"/>
         <div class="modal-form-steps__item"
              :class="{'modal-form-steps__item_success': firstDone, 'modal-form-steps__item_active': !firstDone}">
@@ -28,7 +28,8 @@
             </ValidationProvider>
 
             <div class="modal-form__submit-item">
-              <Btn label="Далее"
+              <Btn :label="isGroupRoute ? 'Добавить' : 'Далее'"
+                   :loading="isGroupRoute ? loading : false"
                    type="button"
                    @click="firstStepDoneHandler"/>
             </div>
@@ -96,6 +97,9 @@
           ? 'Добавить товар'
           : 'Добавить бренд';
       },
+      isGroupRoute() {
+        return this.$route.name === 'tracking.group'
+      }
     },
     mounted() {
       this.$refs.form.addEventListener("submit", (event) => {
@@ -114,12 +118,17 @@
         }
       },
       async firstStepDoneHandler() {
-        this.firstDone = await this.$refs.firstStepObserver.validate();
+        if(!this.isGroupRoute) {
+          this.firstDone = await this.$refs.firstStepObserver.validate();
+        } else {
+          this.selectedGroup = this.$route.params.name
+          this.handleSaveBtn()
+        }
       },
       async handleSaveBtn() {
         this.loading = true
 
-        if (!this.$validationProviderIsValid(this.$refs.secondStepProvider)) {
+        if (!this.isGroupRoute && !this.$validationProviderIsValid(this.$refs.secondStepProvider)) {
           return;
         }
 
