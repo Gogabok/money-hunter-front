@@ -48,7 +48,7 @@
           <div class="filter-form__column-item">
             <InputField label="Отзывы" range v-model="feedbackRange" :min="0" :max="900000"/>
           </div>
-          <div class="filter-form__column-item">
+          <!-- <div class="filter-form__column-item">
             <TreeSelect label="Период, дней"
                       :normalizer="node=>({...node, label: node.name})"
                       v-model="days"
@@ -56,14 +56,14 @@
                       :class="userSubscription !== 'BUSINESS' ? 'disabled' : ''"
                       :disabled="userSubscription !== 'BUSINESS'"
                       :options="daysOptions"/>
+          </div> -->
+          <div class="filter-form__column-item">
+            <InputField :label="ordersRangeLabel" range v-model="ordersRange" :min="0" :max="900000"/>
           </div>
         </div>
         <div class="filter-form__column column-fields-custom">
           <div class="filter-form__column-item">
             <InputField :label="revenueRangeLabel" range v-model="revenueRange" :min="0" :max="900000"/>
-          </div>
-          <div class="filter-form__column-item">
-            <InputField :label="ordersRangeLabel" range v-model="ordersRange" :min="0" :max="900000"/>
           </div>
         </div>
       </div>
@@ -138,6 +138,10 @@
       downloadBtnStatus: {
         type: [String, Boolean],
         required: false
+      },
+      days: {
+        type: Number,
+        required: true,
       }
     },
     data() {
@@ -176,22 +180,6 @@
         categoriesSearchQuery: "",
 
         dataLoaded: false,
-
-        days: 7,
-        daysOptions: [
-          {
-            name: "7 дней",
-            id: 7
-          },
-          {
-            name: "14 дней",
-            id: 14
-          },
-          {
-            name: "30 дней",
-            id: 30
-          },
-        ]
       }
     },
     computed: {
@@ -289,6 +277,8 @@
         delete data.brands;
         delete data.categories;
 
+        data.days = this.days;
+
         if(this.brands.length === 0) {
           this.brands = ['all']
         }
@@ -340,7 +330,6 @@
         this.brands = ['all'];
         this.addWords = [];
         this.minusWords = [];
-        this.days = 7
       }
       ,
       loadProject() {
@@ -402,7 +391,6 @@
           this.brands = data.brands;
           this.addWords = data.addWords;
           this.minusWords = data.minusWords;
-          this.days = data.days;
           this.searchBtnHandler();
         })
       }
@@ -575,9 +563,6 @@
         },
         deep: true
       },
-      days: function () {
-        this.$emit('daysChange', this.days)
-      }
     }
   }
 </script>
@@ -645,8 +630,8 @@
         }
         &.column-fields-custom {
           flex-direction: row;
-          min-width: 300px;
-          width: 200%;
+          min-width: 250px;
+          width: 100%;
           & .filter-form__column-item {
             margin: 10px 0px;
             width: 100%;
@@ -742,18 +727,31 @@
           &.selectors {
             max-width: 250px;
           }
+          &.column-fields-last {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            width: calc(100% - (100% / 3) - 20px);
+            max-width: 100%;
+            margin: 0px;
+            & .filter-form__column-item {
+              width: calc(50% - 20px);
+              margin: 10px 10px;
+            }
+          }
           &.column-fields-custom {
             flex-direction: row;
-            min-width: 300px;
-            width: calc((100% / 1.5) - 20px);
+            min-width: 150px;
+            // width: calc((100% / 1.5) - 20px);
+            width: calc((100% / 3) - 20px);
             & .filter-form__column-item {
               margin: 10px 0px;
               width: 100%;
               &:nth-child(1) {
-                margin-right: 10px;
+                margin-right: 0px;
               }
               &:nth-child(2) {
-                margin-left: 10px;
+                margin-left: 0px;
               }
             }
           }
@@ -793,7 +791,7 @@
           }
           &.column-fields-custom {
             flex-direction: row;
-            min-width: 300px;
+            min-width: 150px;
             width: 100%;
             & .filter-form__column-item {
               width: 100%;

@@ -4,13 +4,23 @@
                  @downloadSearchResults="downloadSearchResults" 
                  :isLoading="isLoading" 
                  :searchHandler="searchHandler"
-                 @daysChange="daysChange"/>
+                 :days="days"/>
     <TreeSelect label="Отображаемые колонки"
                     v-model="columns"
                     :multiple="true"
                     :options="columnsItems"
                     class="column-selector"/>
     <div class="blackbox">
+      <div class="blackbox-days">
+        <span 
+          v-for="day in daysOption"
+          :key="day.title"
+          :class="{'active': days === day.value, 'disabled': day.isDisabled}"
+          class="blackbox-days-item"
+          @click="daysChange(day)">
+            {{ day.title }}
+        </span>
+      </div>
       <TrackingTable v-if="!isLoading && tablePositions.length > 0 && !isLoadingAgregated"
                      :headers="tableHeaders"
                      :items="tablePositions"
@@ -81,6 +91,24 @@
 
         days: 7,
 
+        daysOption: [
+          {
+            title: '7 дн',
+            value: 7,
+            isDisabled: false,
+          },
+          {
+            title: '14 дн',
+            value: 14,
+            isDisabled: true,
+          },
+          {
+            title: '30 дн',
+            value: 30,
+            isDisabled: true,
+          },
+        ],
+
         columns: [],
 
         cachedSearchResults: null,
@@ -127,14 +155,14 @@
       },
       agregatedData() {
         return this.$store.state.blackbox.agregated
-      }
+      },
+      userSubscription() {
+        return this.$store.state.user.subscription?.subscriptionType;
+      },
     },
     methods: {
       showModalAddToGroup(data) {
         this.$store.commit(`modal/${SHOW_MODAL_MUTATION}`, {component: AddToGroup, data})
-      },
-      daysChange(days) {
-        this.days = days
       },
       async searchHandler() {
         this.isLoading = true
@@ -163,6 +191,12 @@
         this.paginationData.page += 1;
 
         this.loadGoods();
+      },
+
+      daysChange(day) {
+        if(!day.isDisabled) {
+          this.days = day.value;
+        }
       },
 
       async loadGoods() {
@@ -338,6 +372,16 @@
         }
       }
 
+      if(this.userSubscription === 'BUSINESS') {
+        this.daysOption.forEach(day => {
+          if(day.value === 14) {
+            day.isDisabled = false
+          } else if(day.value === 30) {
+            day.isDisabled = false
+          }
+        })
+      }
+
       for(let i = 0; i < this.columnsItems.length; i++) {
         this.columns.push(this.columnsItems[i].id)
       }
@@ -398,12 +442,31 @@
   @import "../assets/scss/variables";
 
   .blackbox {
-    margin: 1.42rem 2.28rem 0;
+    margin: 2.28rem 2.28rem 0;
     background: white;
     border: 1px solid $drayDevider;
     flex: 1;
     position: relative;
     min-height: 200px;
+    &-days {
+      position: absolute;
+      right: 0px;
+      top: -25px;
+      &-item {
+        margin: 0px 5px;
+        font-weight: bold;
+        color: #9FA2B4;
+        cursor: pointer;
+        user-select: none;
+        &.active {
+          border-bottom: 1px solid #9FA2B4;
+        }
+        &.disabled {
+          cursor: default;
+          color:rgba(159, 162, 180, .5);
+        }
+      }
+    }
   }
 
   .column-selector {
