@@ -1,7 +1,7 @@
 <template>
   <Fragment>
     <div class="overlay"></div>
-    <div class="modal modal_small">
+    <div class="modal" :class="clazz">
       <div class="close-modal" v-if="closable" @click="hideModal" v-on:click="closeModal"></div>
       <slot name="logo"><span/></slot>
       <div class="modal-title" v-html="title"></div>
@@ -27,6 +27,11 @@
       closable: {
         type: Boolean,
         default: false
+      },
+      clazz: {
+        type: String,
+        required: false,
+        default: 'modal_small',
       }
     },
     data() {
@@ -101,6 +106,10 @@
 
     &.modal_small {
       max-width: 39.28rem;
+    }
+    &.large_modal {
+      max-width: calc(100vw - 10rem);
+      width: 100%;
     }
 
     &.modal_big {

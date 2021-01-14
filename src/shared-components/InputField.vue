@@ -180,7 +180,8 @@
       font-weight: 400;
       top: 50%;
       height: 100%;
-      width: 40px;
+      min-width: 40px;
+      padding: 0px 5px;
       border-left: 1px solid #DFE0EB;
       background: rgba(223, 224, 235, .3);
       display: flex;

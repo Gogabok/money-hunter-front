@@ -1,65 +1,79 @@
 <template>
-  <Modal class="modal" title="Калькулятор" closable>
+  <Modal class="modal" :clazz="'large_modal'" title="Калькулятор" closable>
     <template v-slot:default>
       <div class="modal-wrapper">
         <form v-if="loaded" action="" class="modal-form">
-          <div class="modal-form__range-header">
-            <span class="modal-form__range-header__title">{{ rangeData2.title }}</span>
-            <span class="modal-form__range-header__value">{{ rangeDataValue2 }}{{ rangeData2.currency }}</span>
-          </div>
-          <vue-range-slider
-              v-model="rangeDataValue2"
-              :tooltip="'hover'"
-              :process-style="{background: `#FFC700`}"
-              :tooltip-dir="'bottom'"
-              :tooltip-style="{background: `#FFC700`, borderColor: `#FFC700`}"
-              :min="0"
-              :max="100"
-              @input="isCalculated ? calculate() : false"
-            />
-          <input-field
-            v-for="input in inputs"
-            :key="input.name"
-            :label="input.title"
-            v-model="input.value"
-            :symbol="input.symbol"
-            :disabled="input.isDisabled"
-            class="modal-form__input"
-            @input="isCalculated ? calculate() : false"
-          />
-          <div class="modal-form__range">
-            <div class="modal-form__range-header">
-              <span class="modal-form__range-header__title">{{ rangeData1.title }}</span>
-              <span class="modal-form__range-header__value">{{ rangeDataValue1 }}{{ rangeData1.currency }}</span>
+          <div class="modal-wrapper-inputs">
+            <div class="modal-wrapper-inputs-part">
+              <input-field
+                :label="inputs[0].title"
+                v-model="inputs[0].value"
+                :symbol="inputs[0].symbol"
+                :disabled="inputs[0].isDisabled"
+                class="modal-form__input modal-wrapper-common-width"
+              />
+              <input-field
+                :label="inputs[1].title"
+                v-model="inputs[1].value"
+                :symbol="inputs[1].symbol"
+                :disabled="inputs[1].isDisabled"
+                class="modal-form__input modal-wrapper-common-width"
+              />
+              <input-field
+                :label="inputs[2].title"
+                v-model="inputs[2].value"
+                :symbol="inputs[2].symbol"
+                :disabled="inputs[2].isDisabled"
+                class="modal-form__input modal-wrapper-common-width"
+              />
+              <input-field
+                :label="inputs[3].title"
+                v-model="inputs[3].value"
+                :symbol="inputs[3].symbol"
+                :disabled="inputs[3].isDisabled"
+                class="modal-form__input modal-wrapper-common-width"
+              />
+              <input-field
+                :label="inputs[4].title"
+                v-model="inputs[4].value"
+                :symbol="inputs[4].symbol"
+                :disabled="inputs[4].isDisabled"
+                class="modal-form__input modal-wrapper-common-width"
+              />
             </div>
-            <vue-range-slider
-              v-model="rangeDataValue1"
-              :tooltip="'hover'"
-              :process-style="{background: `#FFC700`}"
-              :tooltip-dir="'bottom'"
-              :tooltip-style="{background: `#FFC700`, borderColor: `#FFC700`}"
-              :min="0"
-              :max="100"
-              @input="isCalculated ? calculate() : false"
-            />
+            <div class="modal-wrapper-inputs-part">
+              <input-field
+                :label="inputs[5].title"
+                v-model="inputs[5].value"
+                :symbol="inputs[5].symbol"
+                :disabled="inputs[5].isDisabled"
+                class="modal-form__input modal-wrapper-common-width"
+              />
+              <input-field
+                :label="inputs[6].title"
+                v-model="inputs[6].value"
+                :symbol="inputs[6].symbol"
+                :disabled="inputs[6].isDisabled"
+                class="modal-form__input modal-wrapper-common-width"
+              />
+              <input-field
+                :label="inputs[7].title"
+                v-model="inputs[7].value"
+                :symbol="inputs[7].symbol"
+                :disabled="inputs[7].isDisabled"
+                class="modal-form__input modal-wrapper-common-width"
+              />
+              <div class="modal-form__profit">
+                <span class="modal-form__profit-title">Прибыль: </span>
+                <span class="modal-form__profit-value">{{ profit }} ₽</span>
+              </div>
+              <Btn
+                class="modal-form__btn modal-wrapper-common-width"
+                label="Рассчитать"
+                @click="calculate"
+              />
+            </div>
           </div>
-          <Btn
-            class="modal-form__btn"
-            label="Рассчитать"
-            @click="calculate"
-            v-if="!isCalculated"
-          />
-        </form>
-        <form v-if="loaded && isCalculated" action="" class="modal-form">
-          <input-field
-            v-for="input in resultInputs"
-            :key="input.name"
-            :label="input.title"
-            v-model="input.value"
-            :symbol="input.symbol"
-            :disabled="input.isDisabled"
-            class="modal-form__input"
-          />
         </form>
         <div class="loader" v-if="!loaded">
           <img src="../../assets/img/loading.svg" alt="">
@@ -75,14 +89,11 @@
   import {BlackboxService} from "@/services/blackbox_service";
   import {HIDE_MODAL_MUTATION} from "@/store/modules/modal/constants";
   import Modal from "@/components/Modal";
-  import 'vue-range-component/dist/vue-range-slider.css'
-  import VueRangeSlider from 'vue-range-component'
-//   import {SHOW_MODAL_MUTATION} from "@/store/modules/modal/constants";
   import {mapMutations} from "vuex";
 
   export default {
     name: "AddToGroup",
-    components: {Modal, Btn, InputField, VueRangeSlider},
+    components: {Modal, Btn, InputField},
     props: {
       pk: {
         type: [String, Number],
@@ -90,33 +101,23 @@
       }
     },
     data: () => ({
-      rangeDataValue1: 1,
-      rangeData1: {
-        title: "Процент выкупа",
-        currency: "%",
-      },
-      rangeDataValue2: 1,
-      rangeData2: {
-        title: "Процент вознаграждения Wildberries",
-        currency: "%",
-      },
       inputs: [
         {
           title: "Розничная цена",
           name: "price",
-          isDisabled: true,
+          isDisabled: false,
           symbol: "₽",
           value: 0,
         },
         {
-          title: "Согласованная скидка",
+          title: "Скидка",
           name: "basicSale",
           isDisabled: true,
           symbol: "%",
           value: 0,
         },
         {
-          title: "Согласованный промокод",
+          title: "Промокод",
           name: "promoSale",
           isDisabled: true,
           symbol: "%",
@@ -130,9 +131,23 @@
           value: 0,
         },
         {
+          title: "Процент выкупа",
+          name: "percentOfBuying",
+          isDisabled: false,
+          symbol: "%",
+          value: 0,
+        },
+        {
+          title: "Комиссия Wildberries",
+          name: "feeForWildberries",
+          isDisabled: false,
+          symbol: "%",
+          value: 0,
+        },
+        {
           title: "Себестоимость товара",
           name: "productCost",
-          isDisabled: false,
+          isDisabled: true,
           symbol: "₽",
           value: 0,
         },
@@ -146,43 +161,7 @@
       ],
       loaded: false,
       isCalculated: false,
-      resultInputs: [
-        {
-          title: "Покупатель приобрел товар за",
-          name: "result-bougthPrice",
-          isDisabled: true,
-          symbol: "₽",
-          value: '',
-        },
-        {
-          title: "Сумма всех скидок",
-          name: "result-allSales",
-          isDisabled: true,
-          symbol: "₽",
-          value: '',
-        },
-        {
-          title: "Вознаграждение Wildberries",
-          name: "result-award",
-          isDisabled: true,
-          symbol: "₽",
-          value: '',
-        },
-        {
-          title: "Среднестатистическая стоимость доставки",
-          name: "result-transport",
-          isDisabled: true,
-          symbol: "₽",
-          value: '',
-        },
-        {
-          title: "Сумма налога",
-          name: "result-feeSum",
-          isDisabled: true,
-          symbol: "₽",
-          value: '',
-        },
-      ]
+      profit: 0
     }),
     async created() {
         const blackboxService = new BlackboxService();
@@ -213,6 +192,15 @@
           const clientSale = this.inputs.find(item => item.name === 'clientSale').value;
           // Ставка налога
           const fee = this.inputs.find(item => item.name === 'fee').value;
+          // Процент выкупа 
+          let percentOfBuying = this.inputs.find(item => item.name === 'percentOfBuying').value;
+          if(!percentOfBuying) {
+            percentOfBuying = 1
+          }
+          // Процент вознаграждения Wildberries 
+          const feeForWildberries = this.inputs.find(item => item.name === 'feeForWildberries').value;
+          // Себестоимость товара 
+          const productCost = this.inputs.find(item => item.name === 'productCost').value;
 
 
           // Сумма всех скидок
@@ -222,21 +210,25 @@
           const bougthPrice = price - allSales;
 
           // Вознаграждение Wildberries
-          const award = bougthPrice * this.rangeDataValue2 / 100;
+          const award = bougthPrice * feeForWildberries / 100;
 
           // Среднестатистическая стоимость доставки
-          const transport = 66 * (100 / this.rangeDataValue1 - 1) + 33
+          const transport = 66 * (100 / percentOfBuying - 1) + 33;
+
+          // Начисление с продажи одной единицы
+          const forOneSale = bougthPrice - award - transport;
+
+          // Валовая прибыль до вычета налогов (EBITDA):
+          const profitBeforeFees = forOneSale - productCost;
 
           // Сумма налога
           const feeSum = bougthPrice * fee / 100;
 
-          this.resultInputs.find(input => input.name === 'result-allSales').value = allSales.toFixed(2);
-          this.resultInputs.find(input => input.name === 'result-bougthPrice').value = bougthPrice.toFixed(2);
-          this.resultInputs.find(input => input.name === 'result-award').value = award.toFixed(2);
-          this.resultInputs.find(input => input.name === 'result-transport').value = transport.toFixed(2);
-          this.resultInputs.find(input => input.name === 'result-feeSum').value = feeSum.toFixed(2);
-
-          this.isCalculated = true
+          // Вы заработали 
+          const profit = profitBeforeFees - feeSum;
+          
+          this.profit = profit;
+          this.isCalculated = true;
         },
         ...mapMutations('modal', [HIDE_MODAL_MUTATION]),
     }
@@ -247,14 +239,46 @@
   .modal {
     &-wrapper {
       max-height: calc(100% - (5.57rem * 2));
-      overflow-y: scroll;
       margin-top: 10px;
+      &-inputs {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        justify-content: space-between;
+        width: 100%;
+        &-part {
+          max-width: calc(100% / 2 - 1rem);
+          width: 100%;
+        }
+      }
+      &-common-width {
+        width: 100%;
+      }
     }
     &-form {
       overflow: visible;
+      display: flex !important;
+      flex-direction: row !important;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      &__profit {
+        display: flex;
+        justify-content: space-between;
+        border-top: 1px solid #DFE0EB;
+        margin-top: 33px;
+        height: calc(2.85rem + 3px + 20px);
+        padding-top: 11px;
+        &-title {
+          font-weight: bold;
+          padding: 0px 5px;
+        }
+        &-value {
+          font-weight: bold;
+          padding: 0px 5px;
+        }
+      }
       &__btn {
-        max-width: 250px;
-        margin: 20px auto 0px auto;
+        margin: 10px auto 0px auto;
       }
       &__input {
         margin: 10px 0px 0px 0px;
