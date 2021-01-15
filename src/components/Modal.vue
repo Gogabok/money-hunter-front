@@ -108,8 +108,8 @@
       max-width: 39.28rem;
     }
     &.large_modal {
-      max-width: calc(100vw - 10rem);
-      width: 100%;
+      max-width: 900px;
+      width: calc(100% - 20px);
     }
 
     &.modal_big {

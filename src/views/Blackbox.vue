@@ -14,6 +14,7 @@
       <div class="blackbox-navigation-wrapper">
         <BlackboxNav
           :list="blackboxNavList"
+          @navigate-group="navigateGroup"
         />
       </div>
     </div>
@@ -87,12 +88,17 @@
           {
             label: 'По товарам',
             systemName: 'byGoods',
-            system: true
+            isActive: true,
+          },
+          {
+            label: 'По брендам',
+            systemName: 'byBrands',
+            isActive: false,
           },
           {
             label: 'По продавцам',
             systemName: 'bySellers',
-            system: true
+            isActive: false,
           },
         ],
 
@@ -146,7 +152,7 @@
           {name: 'currentRating', label: 'Рейтинг', clazz: 'tracking-table__header-item_align-right width23 mw150'},
           {name: 'currentFeedBackCount', label: 'Кол-во отзывов', clazz: 'width9 mw100'},
           {name: 'add', label: 'Добавить в мои товары', sortable: false, clazz: 'width9 mw150'}
-        ]
+        ],
       }
     },
     computed: {
@@ -182,6 +188,10 @@
       },
     },
     methods: {
+      navigateGroup(groupName) {
+        this.blackboxNavList.forEach(item => item.isActive = false);
+        this.blackboxNavList.find(item => item.systemName === groupName).isActive = true;
+      },
       showModalAddToGroup(data) {
         this.$store.commit(`modal/${SHOW_MODAL_MUTATION}`, {component: AddToGroup, data})
       },

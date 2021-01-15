@@ -1,10 +1,10 @@
 <template>
-  <ul class="tracking-navlist">
-    <li class="tracking-navlist__item"
+  <ul class="blackbox-navlist">
+    <li class="blackbox-navlist__item"
         @click="navigateTo(item)"
         v-for="(item, idx) in list"
         :key="idx"
-        :class="{'tracking-navlist__item_active':  isActive(item)}">
+        :class="{'blackbox-navlist__item_active':  item.isActive}">
       <span>{{item.label}}</span>
     </li>
   </ul>
@@ -25,7 +25,7 @@
         return false;
       },
       navigateTo(item) {
-        return false;
+        this.$emit('navigate-group', item.systemName)
       },
     },
   }
@@ -34,12 +34,12 @@
 <style scoped lang="scss">
   @import "../assets/scss/variables";
 
-  .tracking-navlist {
+  .blackbox-navlist {
     display: flex;
     flex: 1;
   }
 
-  .tracking-navlist__item {
+  .blackbox-navlist__item {
     cursor: pointer;
     flex: 1 0 auto;
     padding: 0.71rem 1.42rem;
@@ -53,7 +53,7 @@
     justify-content: space-between;
     /*position: relative;*/
 
-    &.tracking-navlist__item_active {
+    &.blackbox-navlist__item_active {
       background: white;
       box-shadow: inset 0px 3px 0px $yellow;
     }
@@ -70,7 +70,7 @@
     }
   }
 
-  .tracking-navlist-trigger {
+  .blackbox-navlist-trigger {
     width: 3px;
     height: 12px;
     background: url("../assets/img/ikons/navlist-action.svg") no-repeat right;
@@ -78,7 +78,7 @@
     cursor: pointer;
   }
 
-  .tracking-navlist-actions {
+  .blackbox-navlist-actions {
     position: absolute;
     background: white;
     z-index: 3;
@@ -89,7 +89,7 @@
     border: 1px solid $drayDevider;
   }
 
-  .tracking-navlist-actions__item {
+  .blackbox-navlist-actions__item {
     padding: 0 .64rem 2px;
     border-bottom: 1px solid $drayDevider;
     display: flex;
@@ -104,7 +104,7 @@
       font-size: .85rem;
     }
 
-    &.tracking-navlist-actions__item_delete {
+    &.blackbox-navlist-actions__item_delete {
 
       span {
         color: $red;

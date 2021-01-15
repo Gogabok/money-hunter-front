@@ -281,6 +281,7 @@
     &-wrapper {
       max-height: calc(100% - (5.57rem * 2));
       margin-top: 10px;
+      overflow-y: auto;
       &-inputs {
         display: flex;
         flex-wrap: wrap;
@@ -290,6 +291,12 @@
         &-part {
           max-width: calc(100% / 2 - 1rem);
           width: 100%;
+        }
+        @media screen and (max-width: 540px) {
+          flex-direction: column;
+          &-part {
+            max-width: 100%;
+          }
         }
       }
       &_product {
