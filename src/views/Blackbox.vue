@@ -6,10 +6,17 @@
                  :searchHandler="searchHandler"
                  :days="days"/>
     <TreeSelect label="Отображаемые колонки"
-                    v-model="columns"
-                    :multiple="true"
-                    :options="columnsItems"
-                    class="column-selector"/>
+                v-model="columns"
+                :multiple="true"
+                :options="columnsItems"
+                class="column-selector"/>
+    <div class="blackbox-navigation">
+      <div class="blackbox-navigation-wrapper">
+        <BlackboxNav
+          :list="blackboxNavList"
+        />
+      </div>
+    </div>
     <div class="blackbox">
       <div class="blackbox-days">
         <span 
@@ -66,15 +73,29 @@
   import PlusImage from '../assets/img/ikons/plus3.svg';
   import ImgBtn from "../shared-components/ImgBtn";
   import TreeSelect from "@/shared-components/TreeSelect";
+  import BlackboxNav from "@/components/BlackboxNav";
 
   const DEFAULT_ORDER_TYPE = '-avRevenue';
 
   export default {
     name: "Blackbox",
-    components: {TrackingPagination, TrackingTable, FilterBlock, Fragment, TreeSelect},
+    components: {TrackingPagination, TrackingTable, FilterBlock, Fragment, TreeSelect, BlackboxNav},
     mixins: [tableMixins, paginationMixin],
     data() {
       return {
+        blackboxNavList: [
+          {
+            label: 'По товарам',
+            systemName: 'byGoods',
+            system: true
+          },
+          {
+            label: 'По продавцам',
+            systemName: 'bySellers',
+            system: true
+          },
+        ],
+
         list: [],
 
         orderType: DEFAULT_ORDER_TYPE,
@@ -442,7 +463,7 @@
   @import "../assets/scss/variables";
 
   .blackbox {
-    margin: 2.28rem 2.28rem 0;
+    margin: 0 2.28rem 0;
     background: white;
     border: 1px solid $drayDevider;
     flex: 1;
@@ -452,6 +473,9 @@
       position: absolute;
       right: 0px;
       top: -25px;
+      @media screen and(max-width: 450px) {
+        top: -70px;
+      }
       &-item {
         margin: 0px 5px;
         font-weight: bold;
@@ -467,6 +491,17 @@
         }
       }
     }
+  }
+
+  .blackbox-navigation {
+    display: flex;
+    margin: 2.28rem 2.28rem 0;
+  }
+
+  .blackbox-navigation-wrapper {
+    overflow: auto hidden;
+    display: flex;
+    flex-direction: column;
   }
 
   .pagination_container {
@@ -523,6 +558,10 @@
       margin-left: 10px;
       margin-right: 10px;
       min-height: 140px;
+    }
+    .blackbox-navigation {
+      margin-left: 10px;
+      margin-right: 10px;
     }
   }
 </style>
