@@ -15,6 +15,7 @@ export interface GetSearchIDDataInterface {
   brands: Array<string>;
   days: number;
   name: string;
+  ids: Array<string>;
 }
 
 export class BlackboxRepository {

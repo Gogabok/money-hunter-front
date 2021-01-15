@@ -1,72 +1,91 @@
 <template>
   <div class="filter block_container">
     <form action="" class="filter-form">
-      <div class="filter-form__columns">
-        <div class="filter-form__column selectors">
-          <div class="filter-form__column-item customWidthSelector">
-            <TreeSelect label="Выберите категории"
-                      v-if="!isCategoriesLoading"
-                      v-model="categories"
-                      :options="categoryOptions"
-                      :normalizer="node=>({...node, label: node.name})"
-                      :limit="3"
-                      :limitText="count=>`и еще ${count}`"
-                      :multiple="true"
-                      :load-options="loadOptions"
-                      @search-change="searchChange"
-                      @open="handleMenuOpen"
-                      ref="CategoriesTreeselect"
-                      :loadingText="'Загрузка категорий'"
-                      :dont-use-local-search="true"/>
+      <transition name="zoomOut" mode="out-in">
+        <div v-show="filtersMode === 'byCommonFilters'" class="filter-form__columns">
+          <div class="filter-form__column selectors">
+            <div class="filter-form__column-item customWidthSelector">
+              <TreeSelect label="Выберите категории"
+                        v-if="!isCategoriesLoading"
+                        v-model="categories"
+                        :options="categoryOptions"
+                        :normalizer="node=>({...node, label: node.name})"
+                        :limit="3"
+                        :limitText="count=>`и еще ${count}`"
+                        :multiple="true"
+                        :load-options="loadOptions"
+                        @search-change="searchChange"
+                        @open="handleMenuOpen"
+                        ref="CategoriesTreeselect"
+                        :loadingText="'Загрузка категорий'"
+                        :dont-use-local-search="true"/>
+            </div>
+            <div class="filter-form__column-item">
+              <ValidationProvider class="brandsSelector" :rules="{required: true}" key="byBrandType">
+                <BrandsSelector
+                  v-model="brands"
+                  @brands="brandsFinding"
+                />
+              </ValidationProvider>
+            </div>
           </div>
-          <div class="filter-form__column-item">
-            <ValidationProvider class="brandsSelector" :rules="{required: true}" key="byBrandType">
-              <BrandsSelector
-                v-model="brands"
-                @brands="brandsFinding"
-              />
+          <div class="filter-form__column column-fields-price">
+            <div class="filter-form__column-item">
+              <InputField label="Цена" range v-model="priceRange" :min="1" :max="900000"/>
+            </div>
+            <div class="filter-form__column-item">
+              <FindWords label="Плюс слова" :value="addWords" v-model="addWords"></FindWords>
+            </div>
+          </div>
+          <div class="filter-form__column column-fields-rating">
+            <div class="filter-form__column-item">
+              <InputField label="Рейтинг" range v-model="ratingRange" :min="0" :max="5"/>
+            </div>
+            <div class="filter-form__column-item">
+              <FindWords label="Минус слова" v-model="minusWords"></FindWords>
+            </div>
+          </div>
+          <div class="filter-form__column column-fields-last">
+            <div class="filter-form__column-item">
+              <InputField label="Отзывы" range v-model="feedbackRange" :min="0" :max="900000"/>
+            </div>
+            <!-- <div class="filter-form__column-item">
+              <TreeSelect label="Период, дней"
+                        :normalizer="node=>({...node, label: node.name})"
+                        v-model="days"
+                        :clearable="false"
+                        :class="userSubscription !== 'BUSINESS' ? 'disabled' : ''"
+                        :disabled="userSubscription !== 'BUSINESS'"
+                        :options="daysOptions"/>
+            </div> -->
+            <div class="filter-form__column-item">
+              <InputField :label="ordersRangeLabel" range v-model="ordersRange" :min="0" :max="900000"/>
+            </div>
+          </div>
+          <div class="filter-form__column column-fields-custom">
+            <div class="filter-form__column-item">
+              <InputField :label="revenueRangeLabel" range v-model="revenueRange" :min="0" :max="900000"/>
+            </div>
+          </div>
+        </div>
+      </transition>
+      <transition name="zoomOut" mode="out-in">
+        <div v-show="filtersMode === 'byArticul'" class="filter-form__byArticul">
+          <ValidationObserver>
+            <ValidationProvider
+                :rules="{required: true, is_type: 'object'}"
+                :custom-messages="{is_type: 'Не найдено'}"
+                v-slot="{errors}"
+                key="byArticul">
+                <FindProductModal 
+                  @selectedIds="selectedIds"
+                  :validation-error="$getValidationError(errors)"
+                  v-model="currentArticulesInInput"
+                />
             </ValidationProvider>
-          </div>
+          </ValidationObserver>
         </div>
-        <div class="filter-form__column column-fields-price">
-          <div class="filter-form__column-item">
-            <InputField label="Цена" range v-model="priceRange" :min="1" :max="900000"/>
-          </div>
-          <div class="filter-form__column-item">
-            <FindWords label="Плюс слова" :value="addWords" v-model="addWords"></FindWords>
-          </div>
-        </div>
-        <div class="filter-form__column column-fields-rating">
-          <div class="filter-form__column-item">
-            <InputField label="Рейтинг" range v-model="ratingRange" :min="0" :max="5"/>
-          </div>
-          <div class="filter-form__column-item">
-            <FindWords label="Минус слова" v-model="minusWords"></FindWords>
-          </div>
-        </div>
-        <div class="filter-form__column column-fields-last">
-          <div class="filter-form__column-item">
-            <InputField label="Отзывы" range v-model="feedbackRange" :min="0" :max="900000"/>
-          </div>
-          <!-- <div class="filter-form__column-item">
-            <TreeSelect label="Период, дней"
-                      :normalizer="node=>({...node, label: node.name})"
-                      v-model="days"
-                      :clearable="false"
-                      :class="userSubscription !== 'BUSINESS' ? 'disabled' : ''"
-                      :disabled="userSubscription !== 'BUSINESS'"
-                      :options="daysOptions"/>
-          </div> -->
-          <div class="filter-form__column-item">
-            <InputField :label="ordersRangeLabel" range v-model="ordersRange" :min="0" :max="900000"/>
-          </div>
-        </div>
-        <div class="filter-form__column column-fields-custom">
-          <div class="filter-form__column-item">
-            <InputField :label="revenueRangeLabel" range v-model="revenueRange" :min="0" :max="900000"/>
-          </div>
-        </div>
-      </div>
+      </transition>
       <div class="filter-form__actions">
         <div class="filter-form__searchs" v-if="userSubscription==='FREE'">
           <RowWithIcon :list="[{img: searchIcon, label: 'У вас осталось поисков:'}]"/>
@@ -74,10 +93,13 @@
         </div>
         <div class="filter-form__buttons">
           <Btn without-default-class
+               :label="filtersMode === 'byCommonFilters' ? 'Найти по артикулам' : 'Найти по обычным фильтрам'"
+               clazz="filter-form__action-button filter-form__action-button_clear"
+               @click="changeFilterMode"/>
+          <Btn without-default-class
                label="Загрузить фильтр"
                clazz="filter-form__action-button filter-form__action-button_download"
-               @click="loadProject"
-               />
+               @click="loadProject"/>
           <Btn without-default-class
                label="Сохранить фильтр"
                clazz="filter-form__action-button filter-form__action-button_save"
@@ -97,7 +119,8 @@
                @click="downloadSearchResults"/>
         </div>
         <div class="filter-form__send">
-          <Btn :loading="isLoading" label="Найти" clazz="button_save" @click="searchBtnHandler"/>
+          <Btn v-if="filtersMode === 'byCommonFilters'" :loading="isLoading" label="Найти" clazz="button_save" @click="searchBtnHandler"/>
+          <Btn v-if="filtersMode === 'byArticul'" :loading="isLoading" label="Найти" clazz="button_save" @click="searchBtnHandlerWithArticul"/>
         </div>
       </div>
     </form>
@@ -118,14 +141,15 @@
   import {CHECK_SEARCH_ID_ACTION, GET_AGREGATED_DATA} from "@/store/modules/blackbox/constants";
   import TreeSelect from "@/shared-components/TreeSelect";
   import {BlackboxService} from "../services/blackbox_service";
-  import {ValidationProvider} from 'vee-validate';
+  import {ValidationProvider, ValidationObserver} from 'vee-validate';
   import BrandsSelector from "@/shared-components/BrandsSelector";
   import FindWords from "@/shared-components/FindWords";
+  import FindProductModal from "@/shared-components/FindProductModal";
   import { LOAD_CHILDREN_OPTIONS } from '@riophae/vue-treeselect'
 
   export default {
     name: "FilterBlock",
-    components: {BrandsSelector, ValidationProvider, TreeSelect, Btn, InputField, RowWithIcon, FindWords},
+    components: {BrandsSelector, ValidationProvider, ValidationObserver, TreeSelect, Btn, InputField, RowWithIcon, FindWords, FindProductModal},
     props: {
       searchHandler: {
         type: Function,
@@ -155,6 +179,9 @@
         categories: [0],
         brands: ['all'],
 
+        selectedArticulesInInput: null,
+        currentArticulesInInput: null,
+
         allCategories: null,
 
         addWords: [],
@@ -180,6 +207,8 @@
         categoriesSearchQuery: "",
 
         dataLoaded: false,
+
+        filtersMode: 'byCommonFilters'
       }
     },
     computed: {
@@ -213,12 +242,21 @@
       this.$store.commit('blackbox/saveFiltersLocal', this.$data)
     },
     methods: {
+      selectedIds(ids) {
+        console.log(ids.map(item => item.id))
+        this.selectedArticulesInInput = ids.map(item => item.id)
+      },
       async searchBtnHandler() {
         await this.checkSearchID();
         this.searchHandler();
         this.getAgregatedData();
       }
       ,
+      async searchBtnHandlerWithArticul() {
+        await this.checkSearchIDWithArticul();
+        this.searchHandler();
+        this.getAgregatedData();
+      },
       brandsFinding(brands) {
         this.foundedBrands = brands
       } 
@@ -315,6 +353,61 @@
             brands.push(this.foundedBrands.find(item => item.id === id).name)
           })
         }
+        data.brands = brands
+
+        await this.$store.dispatch(`blackbox/${CHECK_SEARCH_ID_ACTION}`, data);
+      }
+      ,
+      async checkSearchIDWithArticul() {
+        const data = {...this.$data};
+        delete data.searchIcon;
+        delete data.availableOptions;
+        delete data.brands;
+        delete data.categories;
+
+        data.days = this.days;
+
+        data.ids = this.selectedArticulesInInput;
+
+        if(this.brands.length === 0) {
+          this.brands = ['all']
+        }
+
+        if(this.categories.length === 0) {
+          this.categories = [0]
+        }
+      
+        const categories = []
+        if(this.categories.find(item => item === 0)) {
+          this.categories = [0]
+        }
+        if(this.categories[0] !== 0) {
+          this.categories.forEach(category => {
+            const isIncluded = this.allCategories[0].children.find(item => item.id === category)
+            if(isIncluded) {
+              const childCategories = isIncluded.children_id
+              if(childCategories.length > 0) {
+                categories.push(...childCategories)
+              }
+            } else {
+              categories.push(category)
+            }
+          })
+          data.categories = categories
+        } else {
+          data.categories = [0]
+        }
+
+        let brands = [...this.brands];
+        if (brands[0] !== 'all') {
+          brands = []
+          this.brands.forEach(id => {
+            brands.push(this.foundedBrands.find(item => item.id === id).name)
+          })
+        }
+
+
+
         data.brands = brands
 
         await this.$store.dispatch(`blackbox/${CHECK_SEARCH_ID_ACTION}`, data);
@@ -490,6 +583,13 @@
         this.$emit('downloadSearchResults')
       }
       ,
+      changeFilterMode() {
+        if(this.filtersMode === 'byCommonFilters') {
+          this.filtersMode = 'byArticul'
+        } else if(this.filtersMode === 'byArticul') {
+          this.filtersMode = 'byCommonFilters'
+        }
+      },
       revertCategories() {
         if(!this.dataLoaded) {
           if(this.allCategories) {
@@ -614,6 +714,7 @@
     border-radius: 8px;
     background: white;
     border: 1px solid $drayDevider;
+    position: relative;
     &-form__columns {
       display: flex;
       & .filter-form__column {
@@ -985,5 +1086,15 @@
         width: 170px;
       }
     }
+  }
+
+  .zoomOut-enter-active, .zoomOut-leave-active {
+    transition: transform .2s;
+  }
+  .zoomOut-enter, .zoomOut-leave-to {
+    transform: scale(0);
+    position: absolute;
+    left: 0;
+    top: 0;
   }
 </style>

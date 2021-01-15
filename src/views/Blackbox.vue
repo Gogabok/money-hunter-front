@@ -37,7 +37,7 @@
         <p class="table-notFounded-text">Товары по заданным критериям не найдены</p>
       </div>
     </div>
-    <div class="block_container" v-if="!isLoading && tablePositions.length > 0 && !isLoadingAgregated">
+    <div class="block_container pagination_container" v-if="!isLoading && tablePositions.length > 0 && !isLoadingAgregated">
       <TrackingPagination :total-count="paginationData.totalCount"
                           :page="paginationData.page"
                           :per-page="paginationData.perPage"
@@ -467,6 +467,10 @@
         }
       }
     }
+  }
+
+  .pagination_container {
+    margin-bottom: 5.71rem;
   }
 
   .column-selector {
