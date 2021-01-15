@@ -120,7 +120,7 @@
         </div>
         <div class="filter-form__send">
           <Btn v-if="filtersMode === 'byCommonFilters'" :loading="isLoading" label="Найти" clazz="button_save" @click="searchBtnHandler"/>
-          <Btn v-if="filtersMode === 'byArticul'" :loading="isLoading" label="Найти" clazz="button_save" @click="searchBtnHandlerWithArticul"/>
+          <Btn :disabled="selectedArticulesInInput.length <= 0" v-if="filtersMode === 'byArticul'" :loading="isLoading" label="Найти" clazz="button_save" @click="searchBtnHandlerWithArticul"/>
         </div>
       </div>
     </form>
@@ -179,7 +179,7 @@
         categories: [0],
         brands: ['all'],
 
-        selectedArticulesInInput: null,
+        selectedArticulesInInput: [],
         currentArticulesInInput: null,
 
         allCategories: null,

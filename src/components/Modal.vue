@@ -255,7 +255,7 @@
   }
 
   .modal-form__save-project {
-    margin-top: 1.42rem;
+    // margin-top: 1.42rem;
 
     label {
       text-align: center;
