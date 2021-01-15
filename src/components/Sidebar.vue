@@ -45,7 +45,7 @@
           {name: 'Отслеживание', systemName: 'tracking'},
           {name: 'Профиль', systemName: 'profile'},
           {name: 'Отслеживание позиций', systemName: 'trackingPositions'},
-          {name: 'Калькулятор', systemName: 'calculator'},
+          // {name: 'Калькулятор', systemName: 'calculator'},
         ],
         burgerMenuShowen: false
       }

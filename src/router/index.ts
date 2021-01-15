@@ -70,14 +70,14 @@ const routes: Array<RouteConfig> = [
       { path: 'group/:name', name: 'tracking.group', component: lazyLoad('components/tracking/Group') }
     ]
   },
-  {
-    path: '/calculator',
-    name: 'calculator',
-    component: Calculator,
-    meta: {
-      title: 'Калькулятор цены на Wildberries',
-    },
-  },
+  // {
+  //   path: '/calculator',
+  //   name: 'calculator',
+  //   component: Calculator,
+  //   meta: {
+  //     title: 'Калькулятор цены на Wildberries',
+  //   },
+  // },
   {
     path: '/tracking-positions',
     name: 'trackingPositions',
