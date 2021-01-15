@@ -76,6 +76,9 @@
       },
       selectedItems: {
         type: Array
+      },
+      openRowIndex: {
+        type: Number
       }
     },
     data() {
@@ -103,6 +106,9 @@
       open() {
         if (this.rowData.nested) {
           this.rowOpened = !this.rowOpened;
+          if(this.rowOpened) {
+            this.$emit('close-other-tabs', this.index)
+          }
         }
       },
       isCellOpen(idx) {
@@ -129,7 +135,7 @@
           component: Calculator,
           data: {pk: this.rowData.pk, articul: this.rowData.articul.content}
         });
-      }
+      },
     },
     watch: {
       selectedItems: function () {
@@ -138,6 +144,12 @@
         } else {
           this.checkbox = false
         }
+      },
+      openRowIndex: function () {
+        if(!this.openRowIndex) return;
+        if(this.openRowIndex === this.index) return;
+
+        this.rowOpened = false;
       }
     }
   }

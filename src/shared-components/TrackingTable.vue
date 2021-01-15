@@ -34,7 +34,19 @@
     </table>
     <table class="tracking-table" v-if="items.length>0" ref="BodyScroll" v-on:scroll="handleBodyScroll">
       <!-- {{ items[0].currentPrice.component_data.price }} -->
-      <TrackingTableRow :selectedItems="selectedItems" @selectItemsMethod="selectItemsMethod" :isSelecting="isSelecting" :row-data="item" :header-keys="headers.map(h=>h.name)" :headerWidth="headers" :index="idx" v-for="(item, idx) in items" :key="idx"/>
+      <TrackingTableRow 
+        :selectedItems="selectedItems" 
+        @selectItemsMethod="selectItemsMethod" 
+        :isSelecting="isSelecting" 
+        :row-data="item" 
+        :header-keys="headers.map(h=>h.name)" 
+        :headerWidth="headers" 
+        :index="idx" 
+        v-for="(item, idx) in items" 
+        :key="idx"
+        @close-other-tabs="closeOtherTabsHandler"
+        :openRowIndex="openRowIndex"
+      />
     </table>
   </div>
 </template>
@@ -78,7 +90,8 @@
       return {
         isSelecting: false,
         selectedItems: [],
-        selectAllCheckbox: false
+        selectAllCheckbox: false,
+        openRowIndex: null
       }
     },
     computed: {
@@ -142,6 +155,12 @@
             this.selectedItems = []
           }
         })
+      },
+      closeOtherTabsHandler(index) {
+        this.openRowIndex = null;
+        this.$nextTick(() => {
+          this.openRowIndex = index;
+        });
       }
     },
   }
