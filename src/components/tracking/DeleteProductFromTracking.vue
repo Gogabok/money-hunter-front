@@ -62,7 +62,6 @@
         await Promise.all(this.articul.map(async (articul) => {
           result = await service.deleteProductFromTracking(this.groupPK, this.pk);
         }));
-        console.log(result)
         if (typeof result === 'boolean' && result) {
           this.callback();
           if(this.articul.length === 1) {

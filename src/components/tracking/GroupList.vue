@@ -79,7 +79,6 @@
         //     groupPK: group.pk
         //   }
         // });
-        console.log(this.groupsSortedBy)
         return this.groupsSortedBy.map(item => ({
           ...this.$mapItemListToTableItem(item),
           nested: {content: ProductBlackboxNested, groupPK: item.pk}

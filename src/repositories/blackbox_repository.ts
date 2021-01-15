@@ -16,6 +16,7 @@ export interface GetSearchIDDataInterface {
   days: number;
   name: string;
   ids: Array<string>;
+  providers_ids: Array<string>;
 }
 
 export class BlackboxRepository {
@@ -30,8 +31,9 @@ export class BlackboxRepository {
   private getCategoriesUrl = 'wb/blackbox/categories/';
   private deleteSearchUrl = 'wb/blackbox/user/searches/';
   private getAgregatedDataUrl = 'wb/blackbox/agregated/';
-  private downloadSearchResultsUrl = 'wb/blackbox/download/'
-  private getCalculatorDataUrl = 'wb/blackbox/calculator/{pk}'
+  private downloadSearchResultsUrl = 'wb/blackbox/download/';
+  private getCalculatorDataUrl = 'wb/blackbox/calculator/{pk}';
+  private getProvidersUrl = 'wb/blackbox/providers/'
 
   getNewSearchID(data: GetSearchIDDataInterface) {
     return this.client.sendPost(this.getNewSearchIDUrl, data);
@@ -95,5 +97,9 @@ export class BlackboxRepository {
 
   getCalculatorData(pk: number) {
     return this.client.sendGet(queryStringBuilder(this.getCalculatorDataUrl, { pk }))
+  }
+
+  getProviders() {
+    return this.client.sendGet(this.getProvidersUrl);
   }
 }

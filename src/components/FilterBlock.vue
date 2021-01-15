@@ -49,22 +49,21 @@
             <div class="filter-form__column-item">
               <InputField label="Отзывы" range v-model="feedbackRange" :min="0" :max="900000"/>
             </div>
-            <!-- <div class="filter-form__column-item">
-              <TreeSelect label="Период, дней"
-                        :normalizer="node=>({...node, label: node.name})"
-                        v-model="days"
-                        :clearable="false"
-                        :class="userSubscription !== 'BUSINESS' ? 'disabled' : ''"
-                        :disabled="userSubscription !== 'BUSINESS'"
-                        :options="daysOptions"/>
-            </div> -->
             <div class="filter-form__column-item">
-              <InputField :label="ordersRangeLabel" range v-model="ordersRange" :min="0" :max="900000"/>
+              <ValidationProvider class="providersSelector" :rules="{required: true}" key="byProvidersType">
+                <ProvidersSelector
+                  v-model="providers"
+                  @providers="providersFinding"
+                />
+              </ValidationProvider>
             </div>
           </div>
-          <div class="filter-form__column column-fields-custom">
+          <div class="filter-form__column column-fields-last">
             <div class="filter-form__column-item">
               <InputField :label="revenueRangeLabel" range v-model="revenueRange" :min="0" :max="900000"/>
+            </div>
+            <div class="filter-form__column-item">
+              <InputField :label="ordersRangeLabel" range v-model="ordersRange" :min="0" :max="900000"/>
             </div>
           </div>
         </div>
@@ -143,13 +142,14 @@
   import {BlackboxService} from "../services/blackbox_service";
   import {ValidationProvider, ValidationObserver} from 'vee-validate';
   import BrandsSelector from "@/shared-components/BrandsSelector";
+  import ProvidersSelector from "@/shared-components/ProvidersSelector";
   import FindWords from "@/shared-components/FindWords";
   import FindProductModal from "@/shared-components/FindProductModal";
   import { LOAD_CHILDREN_OPTIONS } from '@riophae/vue-treeselect'
 
   export default {
     name: "FilterBlock",
-    components: {BrandsSelector, ValidationProvider, ValidationObserver, TreeSelect, Btn, InputField, RowWithIcon, FindWords, FindProductModal},
+    components: {BrandsSelector, ProvidersSelector, ValidationProvider, ValidationObserver, TreeSelect, Btn, InputField, RowWithIcon, FindWords, FindProductModal},
     props: {
       searchHandler: {
         type: Function,
@@ -188,6 +188,10 @@
         minusWords: [],
 
         foundedBrands: null,
+        
+        foundedProviders: null,
+
+        providers: ['all'],
 
         isCategoriesLoading: false,
         
@@ -243,7 +247,6 @@
     },
     methods: {
       selectedIds(ids) {
-        console.log(ids.map(item => item.id))
         this.selectedArticulesInInput = ids.map(item => item.id)
       },
       async searchBtnHandler() {
@@ -258,8 +261,12 @@
         this.getAgregatedData();
       },
       brandsFinding(brands) {
-        this.foundedBrands = brands
-      } 
+        this.foundedBrands = brands;
+      }
+      ,
+      providersFinding(providers) {
+        this.foundedProviders = providers;
+      }
       ,
       searchChange(searchQuery) {
         this.categories.forEach((item, idx) => {
@@ -321,6 +328,10 @@
           this.brands = ['all']
         }
 
+        if(this.providers.length === 0) {
+          this.providers = ['all']
+        }
+
         if(this.categories.length === 0) {
           this.categories = [0]
         }
@@ -354,6 +365,17 @@
           })
         }
         data.brands = brands
+
+        let providers = [...this.providers];
+        if (providers[0] !== 'all') {
+          providers = []
+          this.providers.forEach(id => {
+            providers.push(this.foundedProviders.find(item => item.id === id).id)
+          })
+        } else if (providers[0] === 'all') {
+          providers = []
+        }
+        data.providers_ids = providers
 
         await this.$store.dispatch(`blackbox/${CHECK_SEARCH_ID_ACTION}`, data);
       }
@@ -373,6 +395,10 @@
           this.brands = ['all']
         }
 
+        if(this.providers.length === 0) {
+          this.providers = ['all']
+        }
+
         if(this.categories.length === 0) {
           this.categories = [0]
         }
@@ -402,13 +428,21 @@
         if (brands[0] !== 'all') {
           brands = []
           this.brands.forEach(id => {
-            brands.push(this.foundedBrands.find(item => item.id === id).name)
+            brands.push(this.foundedBrands.find(item => item.id === id).id)
           })
         }
-
-
-
         data.brands = brands
+
+        let providers = [...this.providers];
+        if (providers[0] !== 'all') {
+          providers = []
+          this.providers.forEach(id => {
+            providers.push(this.foundedProviders.find(item => item.id === id).name)
+          })
+        } else if (providers[0] === 'all') {
+          providers = []
+        }
+        data.providers_ids = providers
 
         await this.$store.dispatch(`blackbox/${CHECK_SEARCH_ID_ACTION}`, data);
       }
@@ -423,6 +457,7 @@
         this.brands = ['all'];
         this.addWords = [];
         this.minusWords = [];
+        this.providers = ['all']
       }
       ,
       loadProject() {
@@ -471,6 +506,14 @@
           } else {
             brands = ['all']
           }
+          let providers = [];
+          if (data.providers[0] !== 'all') {
+            data.providers.forEach(name => {
+              providers.push(this.foundedProviders.find(item => item.name === name).id)
+            })
+          } else {
+            providers = ['all']
+          }
           if(data.categories[0] !== 0) {
             this.categoryOptions = [{
               id: 0,
@@ -482,6 +525,8 @@
           this.categories = data.categories;
           data.brands = brands;
           this.brands = data.brands;
+          data.providers = providers;
+          this.providers = data.providers;
           this.addWords = data.addWords;
           this.minusWords = data.minusWords;
           this.searchBtnHandler();
@@ -499,6 +544,15 @@
           })
         }
         _data["brands"] = brands
+
+        let providers = [...this.providers];
+        if (this.providers[0] !== 'all') {
+          providers = []
+          this.providers.forEach(id => {
+            providers.push(this.foundedProviders.find(item => item.id === id).name)
+          })
+        }
+        _data["providers"] = providers
 
         this[SHOW_MODAL_MUTATION]({component: SaveProject, data: _data});
       }
@@ -620,13 +674,20 @@
           }]
         }
       },
+      async loadProviders() {
+        const service = new BlackboxService();
+        const loadedProviders = await service.getProviders();
+          
+        this.loadedProviders = loadedProviders;
+      },
       ...
         mapMutations('modal', [SHOW_MODAL_MUTATION])
     },
     created() {
-      const myLocalFilters = this.$store.getters['blackbox/myLocalFilters']
+      const myLocalFilters = this.$store.getters['blackbox/myLocalFilters'];
       if(myLocalFilters) {
         this.brands = []
+        this.providers = []
         this.dataLoaded = true
         this.allCategories = []
         this.$nextTick(() => {
@@ -832,7 +893,7 @@
             display: flex;
             flex-direction: row;
             justify-content: flex-start;
-            width: calc(100% - (100% / 3) - 20px);
+            width: calc(100% - 20px);
             max-width: 100%;
             margin: 0px;
             & .filter-form__column-item {

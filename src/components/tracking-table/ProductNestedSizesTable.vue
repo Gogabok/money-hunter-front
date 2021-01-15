@@ -119,7 +119,6 @@
         const service = new TrackingService();
         const data = await service.getRatingAndSizes(this.groupPK, this.pk);
 
-        console.log(data)
         this.rating = data.rating_block || {};
         this.sizes = data.sizes_block || {};
       }
