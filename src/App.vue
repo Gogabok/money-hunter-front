@@ -82,6 +82,7 @@
 <style lang="scss">
   @import "assets/scss/variables";
   @import "assets/scss/media";
+  @import '~shepherd.js/dist/css/shepherd.css';
 
   *,
   *::before,
@@ -223,5 +224,113 @@
     .error-working-message {
       font-size: 16px;
     }
+  }
+
+  .tour-submit-btn {
+    background: #FFC700;
+    height: 2.85rem;
+    border-radius: 4px;
+    width: 100%;
+    color: black;
+    letter-spacing: .2px;
+    padding: 0 .92rem;
+    width: 270px;
+    max-width: 270px;
+    font-size: 13px;
+    font-weight: 500;
+    &:hover {
+      background: #FFC700 !important;
+      height: 2.85rem !important;
+      border-radius: 4px !important;
+      width: 100% !important;
+      font-weight: 500 !important;
+      color: black !important;
+      letter-spacing: .2px !important;
+      padding: 0 .92rem !important;
+      font-size: 13px !important;
+      font-weight: 500 !important;
+    }
+  }
+  .tour-cancel-btn {
+    border: 1px solid #DFE0EB;
+    border-radius: 4px;
+    color: #000;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    height: 2.57rem;
+    background: white;
+    max-width: 300px;
+    width: auto;
+    &:hover {
+      border: 1px solid #DFE0EB !important;
+      border-radius: 4px !important;
+      color: #000 !important;
+      padding-left: 1rem !important;
+      padding-right: 1rem !important;
+      height: 2.57rem !important;
+      background: white !important;
+    }
+  }
+  .tour-step .tour-submit-btn {
+    max-width: 100px;
+    width: 100px;
+    height: 2.57rem;
+    &:hover {
+      height: 2.57rem !important;
+    }
+  }
+  .tour-step .tour-cancel-btn {
+    max-width: 80px;
+    width: 80px;
+    height: 2.57rem;
+    &:hover {
+      height: 2.57rem !important;
+    }
+  }
+  .welcome-step {
+    max-width: 600px;
+    width: 100%;
+    & .shepherd-header {
+      background: $black !important;
+    }
+    & .shepherd-title {
+      color: #fff;
+      font-weight: 500;
+      font-size: 1.3rem;
+    }
+    & .shepherd-text {
+      color: #23242A;
+      font-weight: 400;
+      font-size: 1.1rem;
+      padding: 14px;
+    }
+  }
+
+  .shepherd-element.shepherd-has-title[data-popper-placement^=bottom]>.shepherd-arrow:before {
+    background-color: $black;
+  }
+
+  .tour-step {
+    max-width: 400px;
+    width: 100%;
+    & .shepherd-header {
+      background: $black !important;
+    }
+    & .shepherd-title {
+      color: #fff;
+      font-weight: 500;
+      font-size: 1.3rem;
+    }
+    & .shepherd-text {
+      color: #23242A;
+      font-weight: 400;
+      font-size: 1.3rem;
+      padding: 14px;
+    }
+  }
+
+  .shepherd-footer {
+    display: flex;
+    align-items: center;
   }
 </style>

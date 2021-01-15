@@ -153,6 +153,8 @@
           {name: 'currentFeedBackCount', label: 'Кол-во отзывов', clazz: 'width9 mw100'},
           {name: 'add', label: 'Добавить в мои товары', sortable: false, clazz: 'width9 mw150'}
         ],
+
+        BlackboxTour: null,
       }
     },
     computed: {
@@ -259,6 +261,10 @@
 
           this.$nextTick(() => {
             this.isLoading = false
+
+            if(this.BlackboxTour && this.BlackboxTour.getCurrentStep().id === 'tour-step-3') {
+              this.BlackboxTour.getCurrentStep().complete()
+            }
           })
 
           if(this.list.length <= 0) {
@@ -378,6 +384,139 @@
     },
     async mounted() {
       this.$initPaginationHandlers(this.prevHandler, this.nextHandler);
+      this.$nextTick(() => {
+        this.BlackboxTour = this.$shepherd({
+          useModalOverlay: true
+        });
+        this.BlackboxTour.addStep({
+          title: 'Приветствуем в сервисе Moneyhunter!',
+          text: `Мы хотим предложить Вам пройти короткий тур по нашему сервису`,
+          buttons: [
+            {
+              action() {
+                return this.cancel();
+              },
+              classes: 'tour-cancel-btn',
+              text: 'Мне не нужно обучение'
+            },
+            {
+              action() {
+                return this.next();
+              },
+              text: 'Да, я хочу познакомиться с сервисом',
+              classes: 'tour-submit-btn',
+            }
+          ],
+          id: 'welcome-step',
+          classes: 'welcome-step'
+        });
+        
+        this.BlackboxTour.addStep({
+          popperOptions: {
+            modifiers: [{ name: 'offset', options: { offset: [0, 14] } }]
+          },
+          title: `Область фильтров`,
+          text: `Позволит искать товары по вашим критериям`,
+          attachTo: {
+            element: '.filter',
+            on: 'bottom'
+          },
+          buttons: [
+            {
+              action() {
+                return this.back();
+              },
+              classes: 'tour-cancel-btn',
+              text: 'Назад'
+            },
+            {
+              action() {
+                return this.next();
+              },
+              text: 'Далее',
+              classes: 'tour-submit-btn',
+            }
+          ],
+          id: 'tour-step-1',
+          classes: 'tour-step'
+        });
+
+        this.BlackboxTour.addStep({
+          popperOptions: {
+            modifiers: [{ name: 'offset', options: { offset: [0, 14] } }]
+          },
+          title: `Период`,
+          text: `За который хотите получить информацию о товарах. Доступно только на тарифе "Бизнес"`,
+          attachTo: {
+            element: '.blackbox-days',
+            on: 'top-end'
+          },
+          buttons: [
+            {
+              action() {
+                return this.back();
+              },
+              classes: 'tour-cancel-btn',
+              text: 'Назад'
+            },
+            {
+              action() {
+                return this.next();
+              },
+              text: 'Далее',
+              classes: 'tour-submit-btn',
+            }
+          ],
+          id: 'tour-step-2',
+          classes: 'tour-step'
+        });
+
+        this.BlackboxTour.addStep({
+          popperOptions: {
+            modifiers: [{ name: 'offset', options: { offset: [0, 14] } }]
+          },
+          title: `Найти`,
+          text: `Показывает все товары, по вашим условиям. Попробуйте совершить свой первый поиск!`,
+          attachTo: {
+            element: '.filter-form__send',
+            on: 'bottom-end'
+          },
+          id: 'tour-step-3',
+          classes: 'tour-step'
+        });
+
+        this.BlackboxTour.addStep({
+          popperOptions: {
+            modifiers: [{ name: 'offset', options: { offset: [0, 14] } }]
+          },
+          title: `Период`,
+          text: `За который хотите получить информацию о товарах. Доступно только на тарифе "Бизнес"`,
+          attachTo: {
+            element: '.blackbox-days',
+            on: 'top-end'
+          },
+          buttons: [
+            {
+              action() {
+                return this.back();
+              },
+              classes: 'tour-cancel-btn',
+              text: 'Назад'
+            },
+            {
+              action() {
+                return this.next();
+              },
+              text: 'Далее',
+              classes: 'tour-submit-btn',
+            }
+          ],
+          id: 'tour-step-4',
+          classes: 'tour-step'
+        });
+
+        // this.BlackboxTour.start();
+      });
     },
     beforeDestroy() {
       const _data = {...this.$data}
