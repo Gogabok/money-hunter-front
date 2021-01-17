@@ -10,6 +10,7 @@ export class BlackboxService {
 
   public normalizeFilterData(data: GetSearchIDDataInterface): GetSearchIDDataInterface {
     const _data = {} as GetSearchIDDataInterface;
+    console.log(data)
     _data.feedbackRange = this.normalizeRangeData({data: data.feedbackRange, min: 0, max: 900000});
     _data.ordersRange = this.normalizeRangeData({ data: data.ordersRange, min: 0, max: 900000 });
     _data.priceRange = this.normalizeRangeData({ data: data.priceRange, min: 1, max: 900000 });
@@ -21,7 +22,8 @@ export class BlackboxService {
     _data.minusWords = [...data.minusWords];
     _data.days = data.days;
     _data.ids = data.ids;
-    _data.providers_ids = data.providers_ids;
+    _data.providers_ids = [...data.providers_ids];
+    _data.categoryOptions = data.categoryOptions ? [...data.categoryOptions] : null;
 
     return _data;
   }
@@ -130,6 +132,7 @@ export class BlackboxService {
       if(pk && !data.name) {
         data.name = name
       }
+      console.log(_data, data)
       const response = await this.service.refreshWrapper(pk ?
           this.repo.updateSearch.bind(this.repo, pk, data.name, _data) : this.repo.addSearch.bind(this.repo, name, _data));
       return response.status === 201 || response.status === 200 || 'Произошла ошибка';
@@ -166,6 +169,14 @@ export class BlackboxService {
     }
   }
 
+  async getCategory(payload: any) {
+    try {
+      return (await this.service.refreshWrapper(this.repo.getCategory.bind(this.repo, payload))).data;
+    } catch (e) {
+      return [];
+    }
+  }
+
   async getProviders() {
     try {
       const cached = localStorage.getItem('providers');
@@ -188,6 +199,14 @@ export class BlackboxService {
   async getCalculatorData(pk: number) {
     try {
       return (await this.service.refreshWrapper(this.repo.getCalculatorData.bind(this.repo, pk))).data;
+    } catch (e) {
+      return e.message;
+    }
+  }
+
+  async getCategoriesBySearch(name: string) {
+    try {
+      return (await this.service.refreshWrapper(this.repo.getCategoriesBySearch.bind(this.repo, name))).data;
     } catch (e) {
       return e.message;
     }

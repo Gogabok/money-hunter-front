@@ -17,6 +17,7 @@ export interface GetSearchIDDataInterface {
   name: string;
   ids: Array<string>;
   providers_ids: Array<string>;
+  categoryOptions: Array<number> | null;
 }
 
 export class BlackboxRepository {
@@ -29,11 +30,13 @@ export class BlackboxRepository {
   private getProductImagePathAndNameUrl = 'wb/blackbox/product/information/{articul}/';
   private getChartDataUrl = 'wb/blackbox/product/charts/{articul}/';
   private getCategoriesUrl = 'wb/blackbox/categories/';
+  private getCategoryUrl = 'wb/blackbox/category/';
   private deleteSearchUrl = 'wb/blackbox/user/searches/';
   private getAgregatedDataUrl = 'wb/blackbox/agregated/';
   private downloadSearchResultsUrl = 'wb/blackbox/download/';
   private getCalculatorDataUrl = 'wb/blackbox/calculator/{pk}';
   private getProvidersUrl = 'wb/blackbox/providers/'
+  private getCategoriesBySearchUrl = 'wb/blackbox/category/search/'
 
   getNewSearchID(data: GetSearchIDDataInterface) {
     return this.client.sendPost(this.getNewSearchIDUrl, data);
@@ -91,6 +94,18 @@ export class BlackboxRepository {
     return this.client.sendGet(this.getCategoriesUrl);
   }
 
+  getCategory(payload: any) {
+    const id = payload.id;
+    const children = payload.children;
+    console.log(payload)
+    if(id && children) {
+      return this.client.sendGet(queryStringBuilder(this.getCategoryUrl, { id, children }));
+    } else if (id && !children) {
+      return this.client.sendGet(queryStringBuilder(this.getCategoryUrl, { id }));
+    }
+    return this.client.sendGet(this.getCategoryUrl);
+  }
+
   getAgregatedData(searchID: any) {
     return this.client.sendGet(queryStringBuilder(this.getAgregatedDataUrl, { searchID }))
   }
@@ -101,5 +116,9 @@ export class BlackboxRepository {
 
   getProviders() {
     return this.client.sendGet(this.getProvidersUrl);
+  }
+
+  getCategoriesBySearch(name: string) {
+    return this.client.sendGet(queryStringBuilder(this.getCategoriesBySearchUrl, { name }));
   }
 }

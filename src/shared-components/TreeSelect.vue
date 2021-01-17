@@ -1,5 +1,5 @@
 <template>
-  <div @click="!searchWidthActivated ? chekingWidth() : false" class="select-field">
+  <div @click="chekingWidth()" class="select-field">
     <label for="" class="select-field__label">{{label}}</label>
     <span class="select-field__error" v-if="!!error">{{error}}</span>
     <VendorTreeSelect ref="treeselect"
@@ -7,7 +7,6 @@
                       :value="value"
                       v-on="listeners"
                       @open="searchChange"
-                      @search-change="searchChange"
                       class="select-field__select">
       <div slot="value-label" slot-scope="{ node }">{{ getValue(node) }}</div>
 
@@ -65,32 +64,41 @@
         return this.$refs.treeselect.getMenu();
       },
       searchChange(value) {
-        const rightConerOfField = document.querySelector(".select-field").getBoundingClientRect().right
-        const rightConerOfFilter = document.querySelector(".filter-form__columns").getBoundingClientRect().right - 10
+        return;
+        // const rightConerOfField = document.querySelector(".select-field").getBoundingClientRect().right
+        // const rightConerOfFilter = document.querySelector(".filter-form__columns").getBoundingClientRect().right - 10
         
-        const differentBetweenConers = rightConerOfFilter - rightConerOfField
-        const defaultWidth = document.querySelector(".filter .customWidthSelector .select-field").offsetWidth
-        if(value.length > 0 && document.querySelector(".filter .customWidthSelector .vue-treeselect__menu")) {
-          this.searchWidthActivated = true
-          document.querySelector(".filter .customWidthSelector .vue-treeselect__menu").style.width = `${defaultWidth + differentBetweenConers}px`
-        } else if (document.querySelector(".filter .customWidthSelector .vue-treeselect__menu") && value.length <= 0){
-          this.searchWidthActivated = false
-          document.querySelector(".filter .customWidthSelector .vue-treeselect__menu").style.width = `${defaultWidth}px`
-        }
+        // const differentBetweenConers = rightConerOfFilter - rightConerOfField
+        // const defaultWidth = document.querySelector(".filter .customWidthSelector .select-field").offsetWidth
+        // if(value.length > 0 && document.querySelector(".filter .customWidthSelector .vue-treeselect__menu")) {
+        //   this.searchWidthActivated = true
+        //   document.querySelector(".filter .customWidthSelector .vue-treeselect__menu").style.width = `${defaultWidth + differentBetweenConers}px`
+        // } else if (document.querySelector(".filter .customWidthSelector .vue-treeselect__menu") && value.length <= 0){
+        //   this.searchWidthActivated = false
+        //   document.querySelector(".filter .customWidthSelector .vue-treeselect__menu").style.width = `${defaultWidth}px`
+        // }
       },
       chekingWidth() {
         if(document.documentElement.offsetWidth > 768) {
-          const amountOfNodes = 10
-          const defaultWidth = document.querySelector(".select-field").offsetWidth
-          const extraWidthSize = 75
-          let extraWidth = 0
-          for(let i = 2; i < amountOfNodes; i++) {
-            if(document.querySelector(`.vue-treeselect__indent-level-${i}`)) {
-              extraWidth += extraWidthSize
-            }
-          }
+          // const amountOfNodes = 10
+          // const defaultWidth = document.querySelector(".select-field").offsetWidth
+          // const extraWidthSize = 75
+          // let extraWidth = 0
+          // for(let i = 2; i < amountOfNodes; i++) {
+          //   if(document.querySelector(`.vue-treeselect__indent-level-${i}`)) {
+          //     extraWidth += extraWidthSize
+          //   }
+          // }
+          // if(document.querySelector(".filter .customWidthSelector .vue-treeselect__menu")) {
+          //   document.querySelector(".filter .customWidthSelector .vue-treeselect__menu").style.width = `${defaultWidth + extraWidth}px`
+          // }
+          const rightConerOfField = document.querySelector(".select-field").getBoundingClientRect().right
+          const rightConerOfFilter = document.querySelector(".filter-form__columns").getBoundingClientRect().right - 10
+          
+          const differentBetweenConers = rightConerOfFilter - rightConerOfField
+          const defaultWidth = document.querySelector(".filter .customWidthSelector .select-field").offsetWidth
           if(document.querySelector(".filter .customWidthSelector .vue-treeselect__menu")) {
-            document.querySelector(".filter .customWidthSelector .vue-treeselect__menu").style.width = `${defaultWidth + extraWidth}px`
+            document.querySelector(".filter .customWidthSelector .vue-treeselect__menu").style.width = `${defaultWidth + differentBetweenConers}px`
           }
         }
       },

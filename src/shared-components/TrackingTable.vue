@@ -32,7 +32,7 @@
         </tr>
       </tbody>
     </table>
-    <table class="tracking-table" v-if="items.length>0" ref="BodyScroll" v-on:scroll="handleBodyScroll">
+    <table class="tracking-table" id="tracking-table" v-if="items.length>0" ref="BodyScroll" v-on:scroll="handleBodyScroll">
       <!-- {{ items[0].currentPrice.component_data.price }} -->
       <TrackingTableRow 
         :selectedItems="selectedItems" 

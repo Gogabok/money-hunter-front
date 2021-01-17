@@ -174,7 +174,7 @@
         {
           title: "Себестоимость товара",
           name: "productCost",
-          isDisabled: true,
+          isDisabled: false,
           symbol: "₽",
           value: 0,
         },

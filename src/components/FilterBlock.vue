@@ -15,10 +15,10 @@
                         :multiple="true"
                         :load-options="loadOptions"
                         @search-change="searchChange"
-                        @open="handleMenuOpen"
                         ref="CategoriesTreeselect"
                         :loadingText="'Загрузка категорий'"
-                        :dont-use-local-search="true"/>
+                        :dont-use-local-search="true"
+                        :flatten-search-results="true"/>
             </div>
             <div class="filter-form__column-item">
               <ValidationProvider class="brandsSelector" :rules="{required: true}" key="byBrandType">
@@ -52,7 +52,7 @@
             <div class="filter-form__column-item">
               <ValidationProvider class="providersSelector" :rules="{required: true}" key="byProvidersType">
                 <ProvidersSelector
-                  v-model="providers"
+                  v-model="providers_ids"
                   @providers="providersFinding"
                 />
               </ValidationProvider>
@@ -132,6 +132,8 @@
 
   import SearchImage from '../assets/img/ikons/search.svg';
 
+  import {debounce} from "lodash";
+
   import Btn from "@/shared-components/Btn";
   import {SHOW_MODAL_MUTATION} from "@/store/modules/modal/constants";
   import {mapMutations} from "vuex";
@@ -191,7 +193,7 @@
         
         foundedProviders: null,
 
-        providers: ['all'],
+        providers_ids: ['all'],
 
         isCategoriesLoading: false,
         
@@ -209,6 +211,12 @@
         categoriesPortionPage: 1,
         categoriesPortionSize: 30,
         categoriesSearchQuery: "",
+
+        savedCategories: null,
+        savedCategoriesOptions: null,
+        categoriesSelectorMode: 'branch',
+
+        categoriesSearchQueryDebounce: debounce(this.loadCategoriesQuery, 0),
 
         dataLoaded: false,
 
@@ -243,6 +251,9 @@
       if(this.categories.find(item => item === 0) === 0 || this.categories.length === 0) {
         this.categories = [0]
       }
+      if(this.savedCategoriesOptions) {
+        this.categoryOptions = this.savedCategoriesOptions
+      }
       this.$store.commit('blackbox/saveFiltersLocal', this.$data)
     },
     methods: {
@@ -269,49 +280,61 @@
       }
       ,
       searchChange(searchQuery) {
-        this.categories.forEach((item, idx) => {
-          if(item === 0) {
-            this.categories.splice(idx, 1)
-          }
-        })
-        this.$nextTick(() => {
-          if(searchQuery.length > 0) {
-            this.isCategoriesSearching = true
-            this.categoriesSearchQuery = searchQuery
-            const potentialItems = this.categories_list.filter(function(val) {
-              return val.name.toLowerCase().match(searchQuery.toLowerCase())
-            });
-            this.categoryOptions = [...potentialItems.slice(0, this.categoriesPortionSize)]
-          } else {
-            this.isCategoriesSearching = false
-            this.categoriesPortionPage = 1
-            this.categoriesPortionSize = 30
-            this.revertCategories()
-          }
-        })
-      },
-      handleMenuOpen() {
-        this.$nextTick(() => {
-          const menu = this.$refs.CategoriesTreeselect.getMenu();
-          menu.addEventListener('scroll', () => {
-            if(this.isCategoriesSearching) {
-              const hasReachedEnd = menu.scrollHeight - menu.scrollTop <= menu.clientHeight * 1.25;
-              if (hasReachedEnd) {
-                this.categoriesPortionPage += 1;
-                const fromIndex = (this.categoriesPortionPage - 1) * this.categoriesPortionSize + 1;
-                const toIndex = this.categoriesPortionPage * this.categoriesPortionSize;
-                this.loadCategoriesFromSearch(fromIndex, toIndex)
-              }
-            }
+        this.categoriesSearchQuery = searchQuery;
+
+        if(searchQuery.length > 0 && this.categoriesSelectorMode === 'branch') {
+          this.categoriesSelectorMode = 'flat';
+          this.categories = [...this.categories.filter(item => item > 0)];
+          this.savedCategoriesOptions = [...this.categoryOptions];
+        } else if (searchQuery.length <= 0 && this.categoriesSelectorMode === 'flat') {
+          this.categoriesSelectorMode = 'branch';
+          this.categoryOptions = [...this.savedCategoriesOptions];
+          this.categories.forEach(async category => {
+            await this.updateMyCategories(category)
           })
+          this.isCategoriesLoading = true
+          this.$nextTick(() => {
+            this.isCategoriesLoading = false
+          })
+          console.log('Переключение с поиска на обычный', this.savedCategoriesOptions)
+        }
+
+        if(searchQuery.length > 0 && this.categoriesSelectorMode === 'flat') {
+          this.loadCategoriesQuery();
+        }
+      },
+      async loadCategoriesQuery() {
+        const service = new BlackboxService();
+        console.log(this.categoriesSearchQuery)
+        const searchResults = await service.getCategoriesBySearch(this.categoriesSearchQuery);
+        const results = searchResults.results;
+        results.forEach(result => {
+          result['id'] = result.pk
+          result['children'] = false
         })
+        this.categoryOptions = [...results]
       },
-      loadCategoriesFromSearch(fromIndex, toIndex) {
-        const potentialItems = this.categories_list.filter((val) => {
-          return val.name.toLowerCase().match(this.categoriesSearchQuery.toLowerCase())
-        });
-        this.categoryOptions = potentialItems.splice(0, toIndex)
-      },
+      // handleMenuOpen() {
+      //   this.$nextTick(() => {
+      //     const menu = this.$refs.CategoriesTreeselect.getMenu();
+      //     menu.addEventListener('scroll', () => {
+      //       if(this.isCategoriesSearching) {
+      //         const hasReachedEnd = menu.scrollHeight - menu.scrollTop <= menu.clientHeight * 1.25;
+      //         if (hasReachedEnd) {
+      //           this.categoriesPortionPage += 1;
+      //           const fromIndex = (this.categoriesPortionPage - 1) * this.categoriesPortionSize + 1;
+      //           const toIndex = this.categoriesPortionPage * this.categoriesPortionSize;
+      //           this.loadCategoriesFromSearch(fromIndex, toIndex)
+      //         }
+      //       }
+      //     })
+      //   })
+      // },
+      // loadCategoriesFromSearch(fromIndex, toIndex) {
+      //   const potentialItems = this.categories_list.filter((val) => {
+      //     return val.name.toLowerCase().match(this.categoriesSearchQuery.toLowerCase())
+      //   });
+      // },
       getAgregatedData() {
         this.$store.dispatch(`blackbox/${GET_AGREGATED_DATA}`);
       },
@@ -321,6 +344,9 @@
         delete data.availableOptions;
         delete data.brands;
         delete data.categories;
+        delete data.providers_ids;
+        delete data.categoryOptions;
+
 
         data.days = this.days;
 
@@ -328,8 +354,8 @@
           this.brands = ['all']
         }
 
-        if(this.providers.length === 0) {
-          this.providers = ['all']
+        if(this.providers_ids.length === 0) {
+          this.providers_ids = ['all']
         }
 
         if(this.categories.length === 0) {
@@ -338,24 +364,9 @@
       
         const categories = []
         if(this.categories.find(item => item === 0)) {
-          this.categories = [0]
+          this.categories = [0];
         }
-        if(this.categories[0] !== 0) {
-          this.categories.forEach(category => {
-            const isIncluded = this.allCategories[0].children.find(item => item.id === category)
-            if(isIncluded) {
-              const childCategories = isIncluded.children_id
-              if(childCategories.length > 0) {
-                categories.push(...childCategories)
-              }
-            } else {
-              categories.push(category)
-            }
-          })
-          data.categories = categories
-        } else {
-          data.categories = [0]
-        }
+        data.categories = this.categories;
 
         let brands = [...this.brands];
         if (brands[0] !== 'all') {
@@ -366,10 +377,10 @@
         }
         data.brands = brands
 
-        let providers = [...this.providers];
+        let providers = [...this.providers_ids];
         if (providers[0] !== 'all') {
           providers = []
-          this.providers.forEach(id => {
+          this.providers_ids.forEach(id => {
             providers.push(this.foundedProviders.find(item => item.id === id).id)
           })
         } else if (providers[0] === 'all') {
@@ -386,6 +397,8 @@
         delete data.availableOptions;
         delete data.brands;
         delete data.categories;
+        delete data.providers_ids;
+        delete data.categoryOptions;
 
         data.days = this.days;
 
@@ -395,34 +408,20 @@
           this.brands = ['all']
         }
 
-        if(this.providers.length === 0) {
-          this.providers = ['all']
+        if(this.providers_ids.length === 0) {
+          this.providers_ids = ['all']
         }
 
         if(this.categories.length === 0) {
           this.categories = [0]
         }
       
-        const categories = []
+        const categories = [];
         if(this.categories.find(item => item === 0)) {
           this.categories = [0]
-        }
-        if(this.categories[0] !== 0) {
-          this.categories.forEach(category => {
-            const isIncluded = this.allCategories[0].children.find(item => item.id === category)
-            if(isIncluded) {
-              const childCategories = isIncluded.children_id
-              if(childCategories.length > 0) {
-                categories.push(...childCategories)
-              }
-            } else {
-              categories.push(category)
-            }
-          })
-          data.categories = categories
-        } else {
-          data.categories = [0]
-        }
+        } 
+        
+        data.categories = this.categories;
 
         let brands = [...this.brands];
         if (brands[0] !== 'all') {
@@ -433,10 +432,10 @@
         }
         data.brands = brands
 
-        let providers = [...this.providers];
+        let providers = [...this.providers_ids];
         if (providers[0] !== 'all') {
           providers = []
-          this.providers.forEach(id => {
+          this.providers_ids.forEach(id => {
             providers.push(this.foundedProviders.find(item => item.id === id).name)
           })
         } else if (providers[0] === 'all') {
@@ -457,7 +456,7 @@
         this.brands = ['all'];
         this.addWords = [];
         this.minusWords = [];
-        this.providers = ['all']
+        this.providers_ids = ['all']
       }
       ,
       loadProject() {
@@ -507,26 +506,21 @@
             brands = ['all']
           }
           let providers = [];
-          if (data.providers[0] !== 'all') {
-            data.providers.forEach(name => {
-              providers.push(this.foundedProviders.find(item => item.name === name).id)
+          if (data.providers_ids[0] !== 'all') {
+            data.providers_ids.forEach(id => {
+              providers.push(this.foundedProviders.find(item => item.id === id).id)
             })
           } else {
             providers = ['all']
           }
-          if(data.categories[0] !== 0) {
-            this.categoryOptions = [{
-              id: 0,
-              name: 'Все',
-              isDefaultExpanded: true,
-              children: this.allCategories[0].children
-            }]
+          if(this.categoryOptions[0].children) {
+            this.categoryOptions = data.categoryOptions
           }
           this.categories = data.categories;
           data.brands = brands;
           this.brands = data.brands;
           data.providers = providers;
-          this.providers = data.providers;
+          this.providers_ids = data.providers_ids;
           this.addWords = data.addWords;
           this.minusWords = data.minusWords;
           this.searchBtnHandler();
@@ -545,91 +539,54 @@
         }
         _data["brands"] = brands
 
-        let providers = [...this.providers];
-        if (this.providers[0] !== 'all') {
+        _data['days'] = this.days
+
+        let providers = [...this.providers_ids];
+        if (this.providers_ids[0] !== 'all') {
           providers = []
-          this.providers.forEach(id => {
+          this.providers_ids.forEach(id => {
             providers.push(this.foundedProviders.find(item => item.id === id).name)
           })
         }
         _data["providers"] = providers
 
         this[SHOW_MODAL_MUTATION]({component: SaveProject, data: _data});
-      }
-      ,
-      compareTime(dateString, now) {
-        const differentTime = 86400000
-        if(dateString + differentTime <= now) {
-          return true
-        } else {
-          return false
-        }
-      }
-      ,
+      },
       async loadCategories() {
-        let categories = null
-        const cachedCategories = JSON.parse(localStorage.getItem("categories"))
-        if(cachedCategories) {
-          categories = cachedCategories
-
-          this.isCategoriesLoading = true
-          this.$nextTick(() => {
-            this.isCategoriesLoading = false
-            const timestamp = cachedCategories.timestamp
-            const timeNow = new Date().getTime()
-            if(this.compareTime(Number.parseInt(timestamp), timeNow)) {
-              this.loadUpdatedCategories()
-            }
-          })
-        } else {
-          categories = await this.loadUpdatedCategories()
-          localStorage.setItem('isCategoriesUpdated', true)
-        }
-        this.categories = [0]
-        this.allCategories = categories.categories
-        this.categories_list = categories.categories_list
-        
-        const isCategoriesUpdated = JSON.parse(localStorage.getItem('isCategoriesUpdated'))
-        
-        if(!isCategoriesUpdated || !categories?.categories || !categories?.categories_list) {
-          this.isCategoriesLoading = true
-          await this.loadUpdatedCategories()
-          this.$nextTick(() => {
-            this.isCategoriesLoading = false
-            localStorage.setItem('isCategoriesUpdated', true)
-            
-            this.categories = [0]
-            this.allCategories = categories.categories
-            this.categories_list = categories.categories_list
-          })
-        }
-      }
-      ,
-      async loadUpdatedCategories () {
         const service = new BlackboxService();
+        const categories = await service.getCategory({id: 0, children: true});
 
-        const loadedCategories = await service.getCategories()
+        await categories.forEach(category => {
+          category['id'] = category.pk
+          category['children'] = null
+        })
 
-        this.allCategories = loadedCategories.categories
-        this.categories_list = loadedCategories.categories_list
+        this.categoryOptions = [{
+          id: 0,
+          name: "Все",
+          isDefaultExpanded: true,
+          children: categories
+        }]
 
-        localStorage.setItem("categories", JSON.stringify({categories: loadedCategories.categories, categories_list: loadedCategories.categories_list, timestamp: new Date().getTime().toString()}))
-        
         this.isCategoriesLoading = true
         this.$nextTick(() => {
           this.isCategoriesLoading = false
         })
-        return loadedCategories
-      }
-      ,
-      loadOptions({ action, parentNode, callback }) {
+      },
+      async loadOptions({ action, parentNode, callback }) {
         if(parentNode.id !== 0) {
           if (action === LOAD_CHILDREN_OPTIONS) {
-            if(parentNode.children_id.length > 0) {
-              const parentChildrens = this.allCategories[0].children.find(item => item.id === parentNode.id).children
-              parentNode.children = parentChildrens ? parentChildrens : false
-              callback()
-            }
+            const service = new BlackboxService();
+            const categories = await service.getCategory({id: parentNode.pk, children: true});
+
+            await categories.forEach(category => {
+              category['id'] = category.pk
+              category['children'] = category.children ? null : false
+            })
+
+            parentNode.children = categories;
+            callback()
+            console.log(this.categoryOptions)
           }
         }
       },
@@ -644,41 +601,70 @@
           this.filtersMode = 'byCommonFilters'
         }
       },
-      revertCategories() {
-        if(!this.dataLoaded) {
-          if(this.allCategories) {
-            const categories = this.allCategories
-            const newCats = []
-            categories[0].children.forEach(item => {
-              const cat = {
-                children_id: item.children_id,
-                id: item.id,
-                name: item.name
-              }
-              if(item.children_id.length > 0) {
-                cat['children'] = null
-              }
-              newCats.push(cat)
-            })
-            this.categoryOptions = [{
-              id: 0,
-              name: "Все",
-              isDefaultExpanded: true,
-              children: newCats
-            }]
-          } else this.categoryOptions = [{
-            id: 0,
-            name: 'Все',
-            isDefaultExpanded: true,
-            children: null
-          }]
-        }
-      },
       async loadProviders() {
         const service = new BlackboxService();
         const loadedProviders = await service.getProviders();
           
         this.loadedProviders = loadedProviders;
+      },
+      async updateMyCategories(category) {
+        const parentIds = [];
+        let firstlyCategory = category;
+        const service = new BlackboxService();
+        
+        const getParentCategory = ( async category => {
+          const loadedCategory = await service.getCategory({id: category, children: false});
+          if(firstlyCategory === category) {
+            firstlyCategory = loadedCategory[0];
+            firstlyCategory.children = loadedCategory[0].children ? null : false;
+            firstlyCategory['id'] = firstlyCategory.pk;
+          } else {
+            parentIds.push(loadedCategory[0])
+          }
+          if(loadedCategory[0].parent_id) {
+            getParentCategory(loadedCategory[0].parent_id)
+          } else {
+            for(let i = parentIds.length; i >= 0; i-- ) {
+              if(parentIds[i]) {
+                parentIds[i]['id'] = parentIds[i].pk;
+                const childrens = await service.getCategory({id: parentIds[i].pk, children: true});
+                childrens.forEach(child => {
+                  child['id'] = child.pk;
+                  child.children = child.children ? null : false;
+                })
+                parentIds[i]['children'] = childrens;
+              }
+            }
+            // parentIds[0].children.push(firstlyCategory)
+            for(let i = 0; i < parentIds.length - 1; i++) {
+              let int = i;
+              ++int
+              if(parentIds[int]) {
+                parentIds[int].children.find(child => child.pk === parentIds[i].pk).children = parentIds[i].children
+              }
+            }
+            const newCategoryOptions = [...this.categoryOptions[0].children];
+
+
+            const indexOfCategoryToChange = newCategoryOptions.findIndex(item => item.pk === parentIds[parentIds.length - 1].pk)
+            
+            newCategoryOptions[indexOfCategoryToChange] = {...parentIds[parentIds.length - 1]};
+
+            this.categoryOptions[0].children = null;
+
+            this.$nextTick(() => {
+              this.categoryOptions[0].children = [...newCategoryOptions];
+            })
+          }
+        })
+
+        getParentCategory(category)
+      },
+      async getParentCategory(childCategoryId) {
+        const service = new BlackboxService();
+        const loadedCategory = await service.getCategory({id: childCategoryId, children: false});
+
+        return loadedCategory.parent_id;
       },
       ...
         mapMutations('modal', [SHOW_MODAL_MUTATION])
@@ -687,29 +673,32 @@
       const myLocalFilters = this.$store.getters['blackbox/myLocalFilters'];
       if(myLocalFilters) {
         this.brands = []
-        this.providers = []
+        this.providers_ids = []
         this.dataLoaded = true
-        this.allCategories = []
         this.$nextTick(() => {
 
           Object.keys(this.$data).forEach(key => {
             this.$data[key] = myLocalFilters[key]
           })
 
-          if(this.categories.find(item => item === 0) !== 0) {
-            this.$nextTick(() => {
-              this.categoryOptions[0].children = this.allCategories[0].children
-            })
-          }
+          this.categories.forEach(async category => {
+            await this.updateMyCategories(category)
+          })
+
+          this.isCategoriesLoading = true
+          this.$nextTick(() => {
+            this.isCategoriesLoading = false
+          })
 
         })
+      } else {
+        this.loadCategories();
       }
-      this.loadCategories();
     },
     watch: {
       allCategories: {
         handler: function () {
-          this.revertCategories()
+          // this.revertCategories()
           // if(this.allCategories) {
           //   this.isCategoriesLoading = false
           // }

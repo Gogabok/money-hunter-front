@@ -22,6 +22,7 @@
     @close="handleMenuClose"
     @search-change="handleSearchChange"
     :loadingText="'Загрузится в течении 1 минуты'"
+    :disabled="userSubscription !== 'BUSINESS'"
   >
     <label slot="option-label" slot-scope="{ node, shouldShowCount, count, labelClassName, countClassName }" :class="labelClassName">
       {{ node.label }}1
@@ -57,6 +58,11 @@
         providersSearchQuery: '',
         converting: false
       }
+    },
+    computed: {
+      userSubscription() {
+        return this.$store.state.user.subscription?.subscriptionType;
+      },
     },
     watch: {
       value: {

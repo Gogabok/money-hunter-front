@@ -116,7 +116,7 @@
       max-width: 42.85rem;
     }
 
-    @media screen and (max-height: 740px) {
+    @media screen and (max-height: 855px) {
       & {
         padding: 15px 0px;
         top: 2%;
