@@ -46,6 +46,7 @@
   import TrackingTable from "@/shared-components/TrackingTable.vue";
   import AutosortImg from "@/assets/img/ikons/autosort.svg";
   import DownloadImg from "@/assets/img/ikons/download.svg";
+  import DownloadSearchModal from "@/components/tracking/DownloadSearchModal"
 
   import ProductContent from "@/components/tracking-table/ProductContent";
   import ProductPrice from "@/components/tracking-table/ProductPrice";
@@ -61,7 +62,6 @@
   import AddGoodsBtn from "@/shared-components/AddGoodsBtn";
   import {debounce} from "lodash";
   import {SHOW_MODAL_MUTATION} from "@/store/modules/modal/constants";
-  import DownloadSearchModal from "@/components/tracking/DownloadSearchModal"
   import DeleteProductFromTracking from "@/components/tracking/DeleteProductFromTracking";
   import AutoSort from "./AutoSort";
 
@@ -100,7 +100,7 @@
         subheaders: [],
         trackingActionList: [
           {
-            label: "Автоподсорт", img: AutosortImg, onClick: () => {
+            label: "Расчет поставок", img: AutosortImg, onClick: () => {
               this.$store.commit(`modal/${SHOW_MODAL_MUTATION}`, {
                 component: AutoSort,
                 data: {groupName: this.$route.params.name}
@@ -138,7 +138,9 @@
               content: ProductNestedSizesTable,
               articul: item.articul,
               groupName: this.$route.params.name,
-              priceWithDiscount: item.currentPrice
+              priceWithDiscount: item.currentPrice,
+              pk: item.pk,
+              groupPK: this.$store.state.tracking.groups.find(group => group.name === this.$route.params.name).pk,
             },
           }));
         } else {
@@ -213,7 +215,6 @@
           this.orderType = "currentPrice"
         }, 0);
       },
-
       getAgregatedData() {
         const renamedHeaders = [
           {
@@ -291,10 +292,16 @@
       async deleteProductFromTracking($event, articul) {
         $event.stopPropagation();
 
-        const groupName = this.$route.params.name;
+        const groupPK = this.$store.state.tracking.groups.find(group => group.name === this.$route.params.name).pk;
+        
         this.$store.commit(`modal/${SHOW_MODAL_MUTATION}`, {
           component: DeleteProductFromTracking,
-          data: {articul: [articul], groupName, callback: () => this.loadGoods()},
+          data: {
+            articul: [articul],
+            groupPK: groupPK, 
+            callback: () => this.loadGoods(), 
+            pk: this.tablePositions.find(item => item.nested.articul === articul).nested.pk
+          },
         });
       }
     },
@@ -455,6 +462,13 @@
       margin-left: 0px;
       justify-content: center;
       margin-top: 15px;
+    }
+  }
+
+  @media screen and (max-width: 450px){
+    .tracking-add-notification {
+      padding-left: 0px;
+      margin-top: 5px;
     }
   }
 </style>

@@ -28,7 +28,12 @@
         <!-- <template v-else>{{item.content}}</template> -->
         <template v-else>
            <div v-if="item.image" class="product-photo row-with-photo"><img :src="item.image" alt="">{{ formattingNum(item) }}</div>
-           <span v-else>{{ formattingNum(item) }}</span>
+           <span v-else>
+             {{ formattingNum(item) }}
+             <div class="tracking-table__cell-splicedPrice" v-if="item.name === 'currentPrice'">
+               <!-- (<span>{{ rowData.splicedPrice.firstPrice }}₽</span> | <span @click.stop="openCalculator">{{ rowData.splicedPrice.secondPrice }}₽</span>) -->
+             </div>
+           </span>
         </template>
       </td>
     </tr>
@@ -44,6 +49,7 @@
 
 <script>
   import {Fragment} from 'vue-fragment';
+  import {SHOW_MODAL_MUTATION} from "@/store/modules/modal/constants";
 
   export default {
     name: "TrackingTableRow",
@@ -69,6 +75,9 @@
       },
       selectedItems: {
         type: Array
+      },
+      openRowIndex: {
+        type: Number
       }
     },
     data() {
@@ -96,6 +105,9 @@
       open() {
         if (this.rowData.nested) {
           this.rowOpened = !this.rowOpened;
+          if(this.rowOpened) {
+            this.$emit('close-other-tabs', this.index)
+          }
         }
       },
       isCellOpen(idx) {
@@ -111,9 +123,12 @@
           return n.content
         }
       },
+      linkTo(articul) {
+        this.$router.push({name: 'trackingPositions.group', params: {name: articul}});
+      },
       selectItemsEmit() {
         this.$emit("selectItemsMethod", this.index)
-      }
+      },
     },
     watch: {
       selectedItems: function () {
@@ -122,6 +137,12 @@
         } else {
           this.checkbox = false
         }
+      },
+      openRowIndex: function () {
+        if(!this.openRowIndex) return;
+        if(this.openRowIndex === this.index) return;
+
+        this.rowOpened = false;
       }
     }
   }
@@ -189,28 +210,47 @@
     max-width: 50px;
   }
 
+  .underlined:hover {
+    text-decoration: underline;
+  }
+
   .tracking-table {
     // width: 100%;
   }
 
   .tracking-table__row {
     // width: 100%;
-    min-width: 910px;
-    width: 100%;
+    // min-width: 910px;
     display: flex;
+    width: 100%;
     align-items: center;
     justify-content: space-between;
-    border-top: 1px solid $drayDevider;
     position: relative;
+    border-top: 1px solid $drayDevider;
     @media screen and (max-width: 1400px) {
       & .tracking-table__cell {
         font-size: 12px;
       }
     }
+    @media screen and (max-width: 1420px) {
+      min-width: 1250px;
+      max-width: 1250px;
+    }
+   
   }
 
   .tracking-table__row_open {
     background: $gray3;
+    display: flex;
+    // justify-content: center;
+    // min-width: 1250px;
+    & .tracking-table-dropdown__item {
+      margin: 20px auto 0px auto;
+    }
+    @media screen and (max-width: 1420px) {
+      min-width: 1250px;
+      max-width: 1250px;
+    }
   }
 
   .positive {
@@ -230,18 +270,35 @@
     // padding: 15px 15px 15px 5px;
     padding: 15px 5px 15px 5px;
     text-align: right;
+    justify-content: flex-end;
     letter-spacing: .2px;
     box-sizing: border-box;
+    &-splicedPrice {
+      font-size: 12px;
+      margin-bottom: -16px;
+      @media screen and (max-width: 1400px) {
+        margin-bottom: -18px;
+      }
+      & span {
+        color: rgb(177, 138, 0);
+        cursor: pointer;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
     &.width5 {
       white-space: nowrap;
     }
     &.tracking-table__align-center {
       text-align: center;
+      justify-content: center;
       padding-left: 0;
       padding-right: 10px;
     }
     &.tracking-table__align-left {
       text-align: left;
+      justify-content: flex-start;
       padding-right: 10px;
       &.pl-35 {
         padding-left: 35px !important;

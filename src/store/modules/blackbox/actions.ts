@@ -5,7 +5,8 @@ import {
   SET_SEARCH_ID_MUTATION,
   GET_AGREGATED_DATA,
   SET_AGREGATED_MUTATION,
-  DOWNLOAD_SEARCH_RESULT
+  DOWNLOAD_SEARCH_RESULT,
+  GET_CALCULATOR_DATA,
 } from "@/store/modules/blackbox/constants";
 import {ActionContext} from "vuex";
 import {VuexBlackBoxStateInterface} from "@/store/modules/blackbox/index";
@@ -60,5 +61,9 @@ export default {
   },
   async [DOWNLOAD_SEARCH_RESULT](context: ActionContext<VuexBlackBoxStateInterface, any>) {
     console.log(context.state)
+  },
+  async [GET_CALCULATOR_DATA](pk: number) {
+    const service = new BlackboxService();
+    const response = await service.getCalculatorData(pk);
   }
 }

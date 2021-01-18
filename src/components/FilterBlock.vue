@@ -1,10 +1,11 @@
 <template>
   <div class="filter block_container">
     <form action="" class="filter-form">
-      <div class="filter-form__columns">
-        <div class="filter-form__column selectors">
-          <div class="filter-form__column-item customWidthSelector">
-            <TreeSelect label="Выберите категории"
+      <transition name="zoomOut" mode="out-in">
+        <div v-show="filtersMode === 'byCommonFilters'" class="filter-form__columns">
+          <div class="filter-form__column selectors">
+            <div class="filter-form__column-item customWidthSelector">
+              <TreeSelect label="Выберите категории"
                       v-if="!isCategoriesLoading"
                       v-model="categories"
                       :options="categoryOptions"
@@ -18,55 +19,72 @@
                       ref="CategoriesTreeselect"
                       :loadingText="'Загрузка категорий'"
                       :dont-use-local-search="true"/>
+            </div>
+            <div class="filter-form__column-item">
+              <ValidationProvider class="brandsSelector" :rules="{required: true}" key="byBrandType">
+                <BrandsSelector
+                  v-model="brands"
+                  @brands="brandsFinding"
+                />
+              </ValidationProvider>
+            </div>
           </div>
-          <div class="filter-form__column-item">
-            <ValidationProvider class="brandsSelector" :rules="{required: true}" key="byBrandType">
-              <BrandsSelector
-                v-model="brands"
-                @brands="brandsFinding"
-              />
+          <div class="filter-form__column column-fields-price">
+            <div class="filter-form__column-item">
+              <InputField label="Цена" range v-model="priceRange" :min="1" :max="900000"/>
+            </div>
+            <div class="filter-form__column-item">
+              <FindWords label="Плюс слова" :value="addWords" v-model="addWords"></FindWords>
+            </div>
+          </div>
+          <div class="filter-form__column column-fields-rating">
+            <div class="filter-form__column-item">
+              <InputField label="Рейтинг" range v-model="ratingRange" :min="0" :max="5"/>
+            </div>
+            <div class="filter-form__column-item">
+              <FindWords label="Минус слова" v-model="minusWords"></FindWords>
+            </div>
+          </div>
+          <div class="filter-form__column column-fields-last">
+            <div class="filter-form__column-item">
+              <InputField label="Отзывы" range v-model="feedbackRange" :min="0" :max="900000"/>
+            </div>
+            <div class="filter-form__column-item">
+              <ValidationProvider class="providersSelector" :rules="{required: true}" key="byProvidersType">
+                <ProvidersSelector
+                  v-model="providers_ids"
+                  @providers="providersFinding"
+                />
+              </ValidationProvider>
+            </div>
+          </div>
+          <div class="filter-form__column column-fields-last">
+            <div class="filter-form__column-item">
+              <InputField :label="revenueRangeLabel" range v-model="revenueRange" :min="0" :max="900000"/>
+            </div>
+            <div class="filter-form__column-item">
+              <InputField :label="ordersRangeLabel" range v-model="ordersRange" :min="0" :max="900000"/>
+            </div>
+          </div>
+        </div>
+      </transition>
+      <transition name="zoomOut" mode="out-in">
+        <div v-show="filtersMode === 'byArticul'" class="filter-form__byArticul">
+          <ValidationObserver>
+            <ValidationProvider
+                :rules="{required: true, is_type: 'object'}"
+                :custom-messages="{is_type: 'Не найдено'}"
+                v-slot="{errors}"
+                key="byArticul">
+                <FindProductModal 
+                  @selectedIds="selectedIds"
+                  :validation-error="$getValidationError(errors)"
+                  v-model="currentArticulesInInput"
+                />
             </ValidationProvider>
-          </div>
+          </ValidationObserver>
         </div>
-        <div class="filter-form__column column-fields-price">
-          <div class="filter-form__column-item">
-            <InputField label="Цена" range v-model="priceRange" :min="1" :max="900000"/>
-          </div>
-          <div class="filter-form__column-item">
-            <FindWords label="Плюс слова" :value="addWords" v-model="addWords"></FindWords>
-          </div>
-        </div>
-        <div class="filter-form__column column-fields-rating">
-          <div class="filter-form__column-item">
-            <InputField label="Рейтинг" range v-model="ratingRange" :min="0" :max="5"/>
-          </div>
-          <div class="filter-form__column-item">
-            <FindWords label="Минус слова" v-model="minusWords"></FindWords>
-          </div>
-        </div>
-        <div class="filter-form__column column-fields-last">
-          <div class="filter-form__column-item">
-            <InputField label="Отзывы" range v-model="feedbackRange" :min="0" :max="900000"/>
-          </div>
-          <div class="filter-form__column-item">
-            <TreeSelect label="Период, дней"
-                      :normalizer="node=>({...node, label: node.name})"
-                      v-model="days"
-                      :clearable="false"
-                      :class="userSubscription !== 'BUSINESS' ? 'disabled' : ''"
-                      :disabled="userSubscription !== 'BUSINESS'"
-                      :options="daysOptions"/>
-          </div>
-        </div>
-        <div class="filter-form__column column-fields-custom">
-          <div class="filter-form__column-item">
-            <InputField :label="revenueRangeLabel" range v-model="revenueRange" :min="0" :max="900000"/>
-          </div>
-          <div class="filter-form__column-item">
-            <InputField :label="ordersRangeLabel" range v-model="ordersRange" :min="0" :max="900000"/>
-          </div>
-        </div>
-      </div>
+      </transition>
       <div class="filter-form__actions">
         <div class="filter-form__searchs" v-if="userSubscription==='FREE'">
           <RowWithIcon :list="[{img: searchIcon, label: 'У вас осталось поисков:'}]"/>
@@ -74,10 +92,13 @@
         </div>
         <div class="filter-form__buttons">
           <Btn without-default-class
+               :label="filtersMode === 'byCommonFilters' ? 'Найти по артикулам' : 'Найти по обычным фильтрам'"
+               clazz="filter-form__action-button filter-form__action-button_clear"
+               @click="changeFilterMode"/>
+          <Btn without-default-class
                label="Загрузить фильтр"
                clazz="filter-form__action-button filter-form__action-button_download"
-               @click="loadProject"
-               />
+               @click="loadProject"/>
           <Btn without-default-class
                label="Сохранить фильтр"
                clazz="filter-form__action-button filter-form__action-button_save"
@@ -97,7 +118,8 @@
                @click="downloadSearchResults"/>
         </div>
         <div class="filter-form__send">
-          <Btn :loading="isLoading" label="Найти" clazz="button_save" @click="searchBtnHandler"/>
+          <Btn v-if="filtersMode === 'byCommonFilters'" :loading="isLoading" label="Найти" clazz="button_save" @click="searchBtnHandler"/>
+          <Btn :disabled="selectedArticulesInInput.length <= 0" v-if="filtersMode === 'byArticul'" :loading="isLoading" label="Найти" clazz="button_save" @click="searchBtnHandlerWithArticul"/>
         </div>
       </div>
     </form>
@@ -118,14 +140,16 @@
   import {CHECK_SEARCH_ID_ACTION, GET_AGREGATED_DATA} from "@/store/modules/blackbox/constants";
   import TreeSelect from "@/shared-components/TreeSelect";
   import {BlackboxService} from "../services/blackbox_service";
-  import {ValidationProvider} from 'vee-validate';
+  import {ValidationProvider, ValidationObserver} from 'vee-validate';
   import BrandsSelector from "@/shared-components/BrandsSelector";
+  import ProvidersSelector from "@/shared-components/ProvidersSelector";
   import FindWords from "@/shared-components/FindWords";
+  import FindProductModal from "@/shared-components/FindProductModal";
   import { LOAD_CHILDREN_OPTIONS } from '@riophae/vue-treeselect'
 
   export default {
     name: "FilterBlock",
-    components: {BrandsSelector, ValidationProvider, TreeSelect, Btn, InputField, RowWithIcon, FindWords},
+    components: {BrandsSelector, ProvidersSelector, ValidationProvider, ValidationObserver, TreeSelect, Btn, InputField, RowWithIcon, FindWords, FindProductModal},
     props: {
       searchHandler: {
         type: Function,
@@ -137,6 +161,14 @@
       },
       downloadBtnStatus: {
         type: [String, Boolean],
+        required: false
+      },
+      days: {
+        type: Number,
+        required: true,
+      },
+      isHaveToSearch: {
+        type: Boolean,
         required: false
       }
     },
@@ -151,12 +183,18 @@
         categories: [0],
         brands: ['all'],
 
+        selectedArticulesInInput: [],
+        currentArticulesInInput: null,
+
         allCategories: null,
 
         addWords: [],
         minusWords: [],
 
         foundedBrands: null,
+        foundedProviders: null,
+
+        providers_ids: ['all'],
 
         isCategoriesLoading: false,
         
@@ -177,21 +215,7 @@
 
         dataLoaded: false,
 
-        days: 7,
-        daysOptions: [
-          {
-            name: "7 дней",
-            id: 7
-          },
-          {
-            name: "14 дней",
-            id: 14
-          },
-          {
-            name: "30 дней",
-            id: 30
-          },
-        ]
+        filtersMode: 'byCommonFilters'
       }
     },
     computed: {
@@ -225,15 +249,34 @@
       this.$store.commit('blackbox/saveFiltersLocal', this.$data)
     },
     methods: {
+      selectedIds(ids) {
+        this.selectedArticulesInInput = ids.map(item => item.id)
+      },
+      changeFilterMode() {
+        if(this.filtersMode === 'byCommonFilters') {
+          this.filtersMode = 'byArticul'
+        } else if(this.filtersMode === 'byArticul') {
+          this.filtersMode = 'byCommonFilters'
+        }
+      },
       async searchBtnHandler() {
         await this.checkSearchID();
         this.searchHandler();
         this.getAgregatedData();
       }
       ,
+      async searchBtnHandlerWithArticul() {
+        await this.checkSearchIDWithArticul();
+        this.searchHandler();
+        this.getAgregatedData();
+      },
       brandsFinding(brands) {
-        this.foundedBrands = brands
-      } 
+        this.foundedBrands = brands;
+      }
+      ,
+      providersFinding(providers) {
+        this.foundedProviders = providers;
+      }
       ,
       searchChange(searchQuery) {
         this.categories.forEach((item, idx) => {
@@ -288,36 +331,24 @@
         delete data.availableOptions;
         delete data.brands;
         delete data.categories;
-
+        delete data.providers_ids;
+        delete data.categoryOptions;
+        data.days = this.days;
         if(this.brands.length === 0) {
           this.brands = ['all']
         }
-
+        if(this.providers_ids.length === 0) {
+          this.providers_ids = ['all']
+        }
         if(this.categories.length === 0) {
           this.categories = [0]
         }
       
         const categories = []
         if(this.categories.find(item => item === 0)) {
-          this.categories = [0]
+          this.categories = [0];
         }
-        if(this.categories[0] !== 0) {
-          this.categories.forEach(category => {
-            const isIncluded = this.allCategories[0].children.find(item => item.id === category)
-            if(isIncluded) {
-              const childCategories = isIncluded.children_id
-              if(childCategories.length > 0) {
-                categories.push(...childCategories)
-              }
-            } else {
-              categories.push(category)
-            }
-          })
-          data.categories = categories
-        } else {
-          data.categories = [0]
-        }
-
+        data.categories = this.categories;
         let brands = [...this.brands];
         if (brands[0] !== 'all') {
           brands = []
@@ -326,7 +357,63 @@
           })
         }
         data.brands = brands
-
+        let providers = [...this.providers_ids];
+        if (providers[0] !== 'all') {
+          providers = []
+          this.providers_ids.forEach(id => {
+            providers.push(this.foundedProviders.find(item => item.id === id).id)
+          })
+        } else if (providers[0] === 'all') {
+          providers = []
+        }
+        data.providers_ids = providers
+        await this.$store.dispatch(`blackbox/${CHECK_SEARCH_ID_ACTION}`, data);
+      }
+      ,
+      async checkSearchIDWithArticul() {
+        const data = {...this.$data};
+        delete data.searchIcon;
+        delete data.availableOptions;
+        delete data.brands;
+        delete data.categories;
+        delete data.providers_ids;
+        delete data.categoryOptions;
+        data.days = this.days;
+        data.ids = this.selectedArticulesInInput;
+        if(this.brands.length === 0) {
+          this.brands = ['all']
+        }
+        if(this.providers_ids.length === 0) {
+          this.providers_ids = ['all']
+        }
+        if(this.categories.length === 0) {
+          this.categories = [0]
+        }
+      
+        const categories = [];
+        if(this.categories.find(item => item === 0)) {
+          this.categories = [0]
+        } 
+        
+        data.categories = this.categories;
+        let brands = [...this.brands];
+        if (brands[0] !== 'all') {
+          brands = []
+          this.brands.forEach(id => {
+            brands.push(this.foundedBrands.find(item => item.id === id).id)
+          })
+        }
+        data.brands = brands
+        let providers = [...this.providers_ids];
+        if (providers[0] !== 'all') {
+          providers = []
+          this.providers_ids.forEach(id => {
+            providers.push(this.foundedProviders.find(item => item.id === id).name)
+          })
+        } else if (providers[0] === 'all') {
+          providers = []
+        }
+        data.providers_ids = providers
         await this.$store.dispatch(`blackbox/${CHECK_SEARCH_ID_ACTION}`, data);
       }
       ,
@@ -340,7 +427,7 @@
         this.brands = ['all'];
         this.addWords = [];
         this.minusWords = [];
-        this.days = 7
+        this.providers_ids = ['all']
       }
       ,
       loadProject() {
@@ -389,6 +476,14 @@
           } else {
             brands = ['all']
           }
+          let providers = [];
+          if (data.providers_ids[0] !== 'all') {
+            data.providers_ids.forEach(id => {
+              providers.push(this.foundedProviders.find(item => item.id === id).id)
+            })
+          } else {
+            providers = ['all']
+          }
           if(data.categories[0] !== 0) {
             this.categoryOptions = [{
               id: 0,
@@ -397,12 +492,16 @@
               children: this.allCategories[0].children
             }]
           }
+          if(this.categoryOptions[0].children) {
+            this.categoryOptions = data.categoryOptions
+          }
           this.categories = data.categories;
           data.brands = brands;
           this.brands = data.brands;
+          data.providers = providers;
+          this.providers_ids = data.providers_ids;
           this.addWords = data.addWords;
           this.minusWords = data.minusWords;
-          this.days = data.days;
           this.searchBtnHandler();
         })
       }
@@ -536,9 +635,10 @@
         mapMutations('modal', [SHOW_MODAL_MUTATION])
     },
     created() {
-      const myLocalFilters = this.$store.getters['blackbox/myLocalFilters']
+      const myLocalFilters = this.$store.getters['blackbox/myLocalFilters'];
       if(myLocalFilters) {
         this.brands = []
+        this.providers_ids = []
         this.dataLoaded = true
         this.allCategories = []
         this.$nextTick(() => {
@@ -554,8 +654,9 @@
           }
 
         })
+      } else {
+        this.loadCategories();
       }
-      this.loadCategories();
     },
     watch: {
       allCategories: {
@@ -575,8 +676,17 @@
         },
         deep: true
       },
-      days: function () {
-        this.$emit('daysChange', this.days)
+      isHaveToSearch: {
+        handler: function () {
+          if(this.filtersMode === 'byCommonFilters') {
+            this.searchBtnHandler()
+          } else if(
+            this.selectedArticulesInInput.length >= 0
+            && this.filtersMode === 'byArticul') {
+              this.searchBtnHandlerWithArticul()
+            }
+        },
+        deep: true
       }
     }
   }
@@ -629,6 +739,7 @@
     border-radius: 8px;
     background: white;
     border: 1px solid $drayDevider;
+    position: relative;
     &-form__columns {
       display: flex;
       & .filter-form__column {
@@ -645,8 +756,8 @@
         }
         &.column-fields-custom {
           flex-direction: row;
-          min-width: 300px;
-          width: 200%;
+          min-width: 250px;
+          width: 100%;
           & .filter-form__column-item {
             margin: 10px 0px;
             width: 100%;
@@ -742,18 +853,31 @@
           &.selectors {
             max-width: 250px;
           }
+          &.column-fields-last {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            width: calc(100% - 20px);
+            max-width: 100%;
+            margin: 0px;
+            & .filter-form__column-item {
+              width: calc(50% - 20px);
+              margin: 10px 10px;
+            }
+          }
           &.column-fields-custom {
             flex-direction: row;
-            min-width: 300px;
-            width: calc((100% / 1.5) - 20px);
+            min-width: 150px;
+            // width: calc((100% / 1.5) - 20px);
+            width: calc((100% / 3) - 20px);
             & .filter-form__column-item {
               margin: 10px 0px;
               width: 100%;
               &:nth-child(1) {
-                margin-right: 10px;
+                margin-right: 0px;
               }
               &:nth-child(2) {
-                margin-left: 10px;
+                margin-left: 0px;
               }
             }
           }
@@ -793,7 +917,7 @@
           }
           &.column-fields-custom {
             flex-direction: row;
-            min-width: 300px;
+            min-width: 150px;
             width: 100%;
             & .filter-form__column-item {
               width: 100%;
@@ -987,5 +1111,15 @@
         width: 170px;
       }
     }
+  }
+
+  .zoomOut-enter-active, .zoomOut-leave-active {
+    transition: transform .2s;
+  }
+  .zoomOut-enter, .zoomOut-leave-to {
+    transform: scale(0);
+    position: absolute;
+    left: 0;
+    top: 0;
   }
 </style>

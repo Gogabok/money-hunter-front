@@ -8,12 +8,11 @@ export class TrackingRepository {
   private getUserGroupsUrl = 'wb/tracking/user/groups/';
   private createUpdateGroup = 'wb/tracking/user/groups/';
   private groupDataUrl = 'wb/tracking/user/groups/{groupName}/';
-  private productDataUrl = 'wb/tracking/{groupName}/{articul}/';
   private getProductInfoByArticulUrl = 'wb/tracking/product/info/{articul}/';
   private getGroupInfoBySizeFileUrl = 'wb/tracking/user/groups/{groupName}/download/sizes/';
   private getGroupInfoByArticulFileUrl = 'wb/tracking/user/groups/{groupName}/download/products/';
-  private getGroupSortFileUrl = 'wb/tracking/user/groups/{groupName}/{days}/autosort/';
   private groupNotificationUrl = 'wb/tracking/group/notification/{notificationId}/';
+  private getGroupChartUrl = 'wb/tracking/group/charts/{groupPK}'
 
   getBrands() {
     return this.client.sendGet(this.getBrandsUrl);
@@ -52,13 +51,14 @@ export class TrackingRepository {
     return this.client.sendDelete(url);
   }
 
-  getRatingAndSizes(groupName: string, articul: string) {
-    const url = queryStringBuilder(this.productDataUrl, { groupName, articul });
+  getRatingAndSizes(groupPK: number, pk: number) {
+    const url = `wb/tracking/additional/${groupPK}/${pk}`
     return this.client.sendGet(url);
   }
 
-  deleteProductFromTracking(groupName: string, articul: string) {
-    const url = queryStringBuilder(this.productDataUrl, { groupName, articul });
+  deleteProductFromTracking(groupPK: number, pk: number) {
+    // const url = queryStringBuilder(this.productDataUrl, { groupName, articul });
+    const url = `wb/tracking/additional/${groupPK}/${pk}`
     return this.client.sendDelete(url);
   }
 
@@ -80,10 +80,7 @@ export class TrackingRepository {
     );
   }
 
-  getGroupSortFile(groupName: string, days: number) {
-    return this.client.sendGet(
-      queryStringBuilder(this.getGroupSortFileUrl, { groupName, days }),
-      { responseType: 'blob' }
-    )
-  }
+  getGroupChart(groupPK: number) {
+    return this.client.sendGet(queryStringBuilder(this.getGroupChartUrl, { groupPK }));
+  } 
 }

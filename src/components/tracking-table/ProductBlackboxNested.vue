@@ -17,6 +17,7 @@
 <script>
   import LineChart from "../../shared-components/LineChart";
   import {BlackboxService} from "../../services/blackbox_service";
+  import {TrackingService} from "../../services/tracking_service";
 
   export default {
     name: "ProductBlackboxNested",
@@ -24,12 +25,16 @@
     props: {
       articul: {
         type: String,
-        required: true,
+        required: false,
       },
       days: {
         type: Number,
         required: false,
         default: 7
+      },
+      groupPK: {
+        type: Number,
+        required: false
       }
     },
     data() {
@@ -215,59 +220,108 @@
     methods: {
       changeType(label) {
         this.currentType = label.class
+      },
+      async getChartsForProduct() {
+        let days = false
+        if(this.$route.name === 'tracking.group' && this.userSubscription === 'BUSINESS') {
+          days = 30
+        }
+        const blackboxService = new BlackboxService();
+        const productData = await blackboxService.getChartData(this.articul, days ? days : this.days);
+
+        const labels = productData.map(item => item.date);
+        const orders = productData.map(item => item.orders);
+        const qty = productData.map(item => item.qty);
+        const price = productData.map(item => item.price);
+        const rating = productData.map(item => item.rating);
+        const feedBackCount = productData.map(item => item.feedBackCount);
+        // const todaySales = productData.map(item => item.todaySales);
+        this.chartData.orders = {
+          labels,
+          datasets: [
+            {yAxisID: 'y-axis-1', data: orders, fill: false, borderColor: "#7E57C2", lineTension: 0, label: 'Заказы'},
+          ]
+        }
+        this.chartData.qty = {
+          labels,
+          datasets: [
+            {yAxisID: 'y-axis-1', data: qty, fill: false, borderColor: "#FFAB40", lineTension: 0, label: 'Остаток на складе'},
+          ]
+        }
+        this.chartData.price = {
+          labels,
+          datasets: [
+            {yAxisID: 'y-axis-1', data: price, fill: false, borderColor: "#1E88E5", lineTension: 0, label: 'Стоимость'},
+          ]
+        }
+        this.chartData.rating = {
+          labels,
+          datasets: [
+            {yAxisID: 'y-axis-1', data: rating, fill: false, borderColor: "#26A69A", lineTension: 0, label: 'Рейтинг'},
+          ]
+        }
+        this.chartData.feedBackCount = {
+          labels,
+          datasets: [
+            {yAxisID: 'y-axis-1', data: feedBackCount, fill: false, borderColor: "#D81B60", lineTension: 0, label: 'Отзывы'},
+          ]
+        }
+        // this.chartData.todaySales = {
+        //   labels,
+        //   datasets: [
+        //     {yAxisID: 'y-axis-1', data: todaySales, fill: false, borderColor: "#212121", lineTension: 0, label: 'Количество продаж'},
+        //   ]
+        // }
+      },
+      async getChartsForGroup() {
+        const trackingService = new TrackingService();
+        const result = await trackingService.getGroupChart(this.groupPK);
+        const groupData = result.data;
+        const labels = groupData.map(item => item.date);
+        const orders = groupData.map(item => item.orders_sum);
+        const price = groupData.map(item => item.price_avg);
+        const rating = groupData.map(item => item.rating_avg);
+        const feedBackCount = groupData.map(item => item.feedback_avg);
+        const qty = groupData.map(item => item.stocks_avg)
+
+        this.chartData.orders = {
+          labels,
+          datasets: [
+            {yAxisID: 'y-axis-1', data: orders, fill: false, borderColor: "#7E57C2", lineTension: 0, label: 'Заказы'},
+          ]
+        }
+        this.chartData.qty = {
+          labels,
+          datasets: [
+            {yAxisID: 'y-axis-1', data: qty, fill: false, borderColor: "#FFAB40", lineTension: 0, label: 'Остаток на складе'},
+          ]
+        }
+        this.chartData.price = {
+          labels,
+          datasets: [
+            {yAxisID: 'y-axis-1', data: price, fill: false, borderColor: "#1E88E5", lineTension: 0, label: 'Стоимость'},
+          ]
+        }
+        this.chartData.rating = {
+          labels,
+          datasets: [
+            {yAxisID: 'y-axis-1', data: rating, fill: false, borderColor: "#26A69A", lineTension: 0, label: 'Рейтинг'},
+          ]
+        }
+        this.chartData.feedBackCount = {
+          labels,
+          datasets: [
+            {yAxisID: 'y-axis-1', data: feedBackCount, fill: false, borderColor: "#D81B60", lineTension: 0, label: 'Отзывы'},
+          ]
+        }
       }
     },
     async created() {
-      let days = false
-      if(this.$route.name === 'tracking.group' && this.userSubscription === 'BUSINESS') {
-        days = 30
+      if(this.articul) {
+        this.getChartsForProduct()
+      } else if (this.groupPK) {
+        this.getChartsForGroup()
       }
-      const blackboxService = new BlackboxService();
-      const productData = await blackboxService.getChartData(this.articul, days ? days : this.days);
-
-      const labels = productData.map(item => item.date);
-      const orders = productData.map(item => item.orders);
-      const qty = productData.map(item => item.qty);
-      const price = productData.map(item => item.price);
-      const rating = productData.map(item => item.rating);
-      const feedBackCount = productData.map(item => item.feedBackCount);
-      // const todaySales = productData.map(item => item.todaySales);
-      this.chartData.orders = {
-        labels,
-        datasets: [
-          {yAxisID: 'y-axis-1', data: orders, fill: false, borderColor: "#7E57C2", lineTension: 0, label: 'Заказы'},
-        ]
-      }
-      this.chartData.qty = {
-        labels,
-        datasets: [
-          {yAxisID: 'y-axis-1', data: qty, fill: false, borderColor: "#FFAB40", lineTension: 0, label: 'Остаток на складе'},
-        ]
-      }
-      this.chartData.price = {
-        labels,
-        datasets: [
-          {yAxisID: 'y-axis-1', data: price, fill: false, borderColor: "#1E88E5", lineTension: 0, label: 'Стоимость'},
-        ]
-      }
-      this.chartData.rating = {
-        labels,
-        datasets: [
-          {yAxisID: 'y-axis-1', data: rating, fill: false, borderColor: "#26A69A", lineTension: 0, label: 'Рейтинг'},
-        ]
-      }
-      this.chartData.feedBackCount = {
-        labels,
-        datasets: [
-          {yAxisID: 'y-axis-1', data: feedBackCount, fill: false, borderColor: "#D81B60", lineTension: 0, label: 'Отзывы'},
-        ]
-      }
-      // this.chartData.todaySales = {
-      //   labels,
-      //   datasets: [
-      //     {yAxisID: 'y-axis-1', data: todaySales, fill: false, borderColor: "#212121", lineTension: 0, label: 'Количество продаж'},
-      //   ]
-      // }
     }
   }
 </script>
@@ -276,6 +330,7 @@
 .charts {
   flex-direction: column;
   justify-content: center;
+  margin: 0px auto;
 }
   .charts-labels {
     display: flex;

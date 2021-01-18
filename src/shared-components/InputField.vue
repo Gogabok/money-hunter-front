@@ -24,14 +24,18 @@
              @blur="$emit('input', maxTransformer())">
     </div>
 
-    <input v-else
-           :disabled="disabled"
+    <div v-else class="input-field__symbol-wrapper">
+      <input :disabled="disabled"
            :type="_type"
            :value="value"
            :class="`input-field__input ${!!error ? 'input-field__input_error ' : ''}`+clazz"
            :placeholder="placeholder"
            v-mask="mask"
            @input="$emit('input', $event.target.value)"/>
+      <div v-if="symbol" class="input-field__symbol">
+        {{ symbol }}
+      </div>
+    </div>
     <button
       v-if="buttonLabel"
       class="input-button"
@@ -99,6 +103,10 @@
       buttonLabel: {
         type: [String, Boolean],
         default: false
+      },
+      symbol: {
+        type: String,
+        default: ''
       }
     },
     data() {
@@ -162,6 +170,27 @@
   .input-field__error {
     color: $red;
     letter-spacing: .2px;
+  }
+
+  .input-field__symbol-wrapper {
+    position: relative;
+    & .input-field__symbol {
+      position: absolute;
+      right: 0px;
+      font-weight: 400;
+      top: 50%;
+      height: 100%;
+      min-width: 40px;
+      padding: 0px 5px;
+      border-left: 1px solid #DFE0EB;
+      background: rgba(223, 224, 235, .3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      transform: translate(0%, -50%);
+      user-select: none;
+    }
   }
 
   .input-field__input {

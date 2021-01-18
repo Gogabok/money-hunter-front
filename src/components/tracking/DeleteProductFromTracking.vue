@@ -35,7 +35,7 @@
     props: {
       groupName: {
         type: String,
-        required: true,
+        required: false,
       },
       articul: {
         type: Array,
@@ -44,6 +44,14 @@
       callback: {
         type: Function,
         required: false,
+      },
+      groupPK: {
+        type: Number,
+        required: true,
+      },
+      pk: {
+        type: Number,
+        required: true
       }
     },
     methods: {
@@ -52,7 +60,7 @@
         const service = new TrackingService();
         let result = false
         await Promise.all(this.articul.map(async (articul) => {
-          result = await service.deleteProductFromTracking(this.groupName, articul);
+          result = await service.deleteProductFromTracking(this.groupPK, this.pk);
         }));
         if (typeof result === 'boolean' && result) {
           this.callback();

@@ -1,7 +1,7 @@
 <template>
   <Fragment>
     <div class="overlay"></div>
-    <div class="modal modal_small">
+    <div class="modal" :class="clazz">
       <div class="close-modal" v-if="closable" @click="hideModal" v-on:click="closeModal"></div>
       <slot name="logo"><span/></slot>
       <div class="modal-title" v-html="title"></div>
@@ -27,6 +27,11 @@
       closable: {
         type: Boolean,
         default: false
+      },
+      clazz: {
+        type: String,
+        required: false,
+        default: 'modal_small',
       }
     },
     data() {
@@ -102,12 +107,16 @@
     &.modal_small {
       max-width: 39.28rem;
     }
+    &.large_modal {
+      max-width: 900px;
+      width: calc(100% - 20px);
+    }
 
     &.modal_big {
       max-width: 42.85rem;
     }
 
-    @media screen and (max-height: 740px) {
+    @media screen and (max-height: 855px) {
       & {
         padding: 15px 0px;
         top: 2%;
@@ -174,7 +183,13 @@
         overflow: visible;
       }
     }
+    @media screen and (max-width: 500px) {
+      & {
+        margin: 10px;
+      }
+    }
   }
+
 
   .modal-form__input-item {
 
@@ -240,7 +255,7 @@
   }
 
   .modal-form__save-project {
-    margin-top: 1.42rem;
+    // margin-top: 1.42rem;
 
     label {
       text-align: center;
@@ -291,6 +306,12 @@
     justify-content: space-between;
     position: relative;
     padding: 0 7.14rem;
+    @media screen and (max-width: 500px) {
+      & {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+    }
   }
 
   .modal-form-steps__line {
@@ -302,6 +323,11 @@
     top: 1.28rem;
     left: 50%;
     transform: translateX(-50%);
+     @media screen and (max-width: 500px) {
+      & {
+        width: 100%;
+      }
+    }
   }
 
   .modal-form-steps__item {

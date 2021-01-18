@@ -4,13 +4,24 @@
                  @downloadSearchResults="downloadSearchResults" 
                  :isLoading="isLoading" 
                  :searchHandler="searchHandler"
-                 @daysChange="daysChange"/>
+                 :days="days"
+                 :isHaveToSearch="isHaveToSearch"/>
     <TreeSelect label="Отображаемые колонки"
-                    v-model="columns"
-                    :multiple="true"
-                    :options="columnsItems"
-                    class="column-selector"/>
+                v-model="columns"
+                :multiple="true"
+                :options="columnsItems"
+                class="column-selector"/>
     <div class="blackbox">
+      <div class="blackbox-days">
+        <span 
+          v-for="day in daysOption"
+          :key="day.title"
+          :class="{'active': days === day.value, 'disabled': day.isDisabled}"
+          class="blackbox-days-item"
+          @click="daysChange(day)">
+            {{ day.title }}
+        </span>
+      </div>
       <TrackingTable v-if="!isLoading && tablePositions.length > 0 && !isLoadingAgregated"
                      :headers="tableHeaders"
                      :items="tablePositions"
@@ -27,7 +38,7 @@
         <p class="table-notFounded-text">Товары по заданным критериям не найдены</p>
       </div>
     </div>
-    <div class="block_container" v-if="!isLoading && tablePositions.length > 0 && !isLoadingAgregated">
+    <div class="block_container pagination_container" v-if="!isLoading && tablePositions.length > 0 && !isLoadingAgregated">
       <TrackingPagination :total-count="paginationData.totalCount"
                           :page="paginationData.page"
                           :per-page="paginationData.perPage"
@@ -81,7 +92,27 @@
 
         days: 7,
 
+        daysOption: [
+          {
+            title: '7 дн',
+            value: 7,
+            isDisabled: false,
+          },
+          {
+            title: '14 дн',
+            value: 14,
+            isDisabled: true,
+          },
+          {
+            title: '30 дн',
+            value: 30,
+            isDisabled: true,
+          },
+        ],
+
         columns: [],
+
+        isHaveToSearch: false,
 
         cachedSearchResults: null,
 
@@ -97,13 +128,17 @@
           {name: 'currentRating', label: 'Рейтинг', clazz: 'tracking-table__header-item_align-right width23 mw150'},
           {name: 'currentFeedBackCount', label: 'Кол-во отзывов', clazz: 'width9 mw100'},
           {name: 'add', label: 'Добавить в мои товары', sortable: false, clazz: 'width9 mw150'}
-        ]
+        ],
+
+        BlackboxTour: null,
       }
     },
     computed: {
       tablePositions() {
         return this.list.map(item => ({
           ...this.$mapItemListToTableItem(item),
+          splicedPrice: item.splicedPrice,
+          pk: item.pk,
           nested: {content: ProductBlackboxNested, articul: item.articul, clazz: 'tracking-table-dropdown__item-chart', days: this.days}
         }));
       },
@@ -125,14 +160,14 @@
       },
       agregatedData() {
         return this.$store.state.blackbox.agregated
-      }
+      },
+      userSubscription() {
+        return this.$store.state.user.subscription?.subscriptionType;
+      },
     },
     methods: {
       showModalAddToGroup(data) {
         this.$store.commit(`modal/${SHOW_MODAL_MUTATION}`, {component: AddToGroup, data})
-      },
-      daysChange(days) {
-        this.days = days
       },
       async searchHandler() {
         this.isLoading = true
@@ -163,6 +198,15 @@
         this.loadGoods();
       },
 
+      daysChange(day) {
+        if(!day.isDisabled) {
+          this.days = day.value;
+        }
+        if(this.list && this.list.length > 0) {
+          this.isHaveToSearch = !this.isHaveToSearch
+        }
+      },
+
       async loadGoods() {
         if (this.$store.state.blackbox.searchID) {
           this.list = [];
@@ -177,12 +221,28 @@
           );
     
           this.paginationData.totalCount = result.countAll;
+
+          // Временная разбивка цены, хардкод
+          result.products.forEach(product => {
+            product.splicedPrice = {
+              firstPrice: (product.currentPrice * 0.8).toFixed(),
+              secondPrice: (product.currentPrice * 0.2).toFixed()
+            }
+          })
+
           this.list = result.products;
 
           this.cachedSearchResults = result
 
           this.$nextTick(() => {
             this.isLoading = false
+            if(this.BlackboxTour) {
+              if(this.BlackboxTour.getCurrentStep().id === 'tour-step-4') {
+                setTimeout(() => {
+                  this.BlackboxTour.next()
+                }, 500);
+              }
+            }
           })
 
           if(this.list.length <= 0) {
@@ -327,6 +387,16 @@
         }
       }
 
+      if(this.userSubscription === 'BUSINESS') {
+        this.daysOption.forEach(day => {
+          if(day.value === 14) {
+            day.isDisabled = false
+          } else if(day.value === 30) {
+            day.isDisabled = false
+          }
+        })
+      }
+
       for(let i = 0; i < this.columnsItems.length; i++) {
         this.columns.push(this.columnsItems[i].id)
       }
@@ -387,12 +457,49 @@
   @import "../assets/scss/variables";
 
   .blackbox {
-    margin: 1.42rem 2.28rem 0;
+    margin: 2.28rem 2.28rem 0;
     background: white;
     border: 1px solid $drayDevider;
     flex: 1;
     position: relative;
     min-height: 200px;
+    &-days {
+      position: absolute;
+      right: 0px;
+      top: -25px;
+      // @media screen and(max-width: 450px) {
+      //   top: -70px;
+      // }
+      &-item {
+        margin: 0px 5px;
+        font-weight: bold;
+        color: #9FA2B4;
+        cursor: pointer;
+        user-select: none;
+        &.active {
+          border-bottom: 1px solid #9FA2B4;
+        }
+        &.disabled {
+          cursor: default;
+          color:rgba(159, 162, 180, .5);
+        }
+      }
+    }
+  }
+
+  .blackbox-navigation {
+    display: flex;
+    margin: 2.28rem 2.28rem 0;
+  }
+
+  .blackbox-navigation-wrapper {
+    overflow: auto hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .pagination_container {
+    margin-bottom: 5.71rem;
   }
 
   .column-selector {
@@ -442,8 +549,13 @@
   }
   @media screen and (max-width: 710px) {
     .blackbox {
-      margin: 10px;
+      margin-left: 10px;
+      margin-right: 10px;
       min-height: 140px;
+    }
+    .blackbox-navigation {
+      margin-left: 10px;
+      margin-right: 10px;
     }
   }
 </style>

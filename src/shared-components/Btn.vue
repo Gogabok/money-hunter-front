@@ -105,6 +105,7 @@
     &:disabled {
       background: #DFE0EB;
       cursor: default;
+      padding: 0 .92rem;
     }
     &.loading {
       background: #DFE0EB;

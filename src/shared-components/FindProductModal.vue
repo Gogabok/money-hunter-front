@@ -10,7 +10,7 @@
                   :error="validationError"/>
       </div>
     </div>
-    <template v-if="value!==null && lastProduct">
+    <template v-if="value!== null && lastProduct && showAllProductInfo">
       <div class="modal-form-search" v-if="typeof value==='string'">
         <!-- <div class="modal-form-search__not"><span>{{value}}</span></div> -->
       </div>
@@ -44,6 +44,10 @@
       validationError: {
         type: String,
         default: null
+      },
+      showAllProductInfo: {
+        type: Boolean,
+        default: true
       }
     },
     data() {
@@ -52,6 +56,7 @@
         inputedArticul: '',
         debouncedProductSearch: debounce(this.searchProduct, 500),
         products: [],
+        ids: [],
         lastProduct: false
       }
     },
@@ -65,6 +70,9 @@
           this.lastProduct = false
         }
         this.$emit('selectedProducts', this.products);
+      },
+      ids: function () {
+        this.$emit('selectedIds', this.ids)
       }
     },
     methods: {
@@ -84,6 +92,7 @@
         const result = await service.getProductInfoByArticul(this.inputedArticul);
 
         if(typeof result === 'object' && !this.products.find(i => i === this.inputedArticul)) {
+          this.ids.push({...result, articul: this.inputedArticul})
           this.products.push(this.inputedArticul)
           this.selectedArticul = ''
         }
@@ -91,7 +100,8 @@
         this.$emit('input', typeof result === 'object' ? {...result, articul: this.inputedArticul} : result);
       },
       removeProduct(i) {
-        this.products.splice(this.products.findIndex(item => item === i), 1)
+        this.products.splice(this.products.findIndex(item => item === i), 1);
+        this.ids.splice(this.ids.findIndex(item => item.articul === i), 1)
       },
     }
   }
