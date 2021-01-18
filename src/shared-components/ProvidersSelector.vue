@@ -23,6 +23,7 @@
     @search-change="handleSearchChange"
     :loadingText="'Загрузится в течении 1 минуты'"
     :disabled="userSubscription !== 'BUSINESS'"
+    :class="userSubscription !== 'BUSINESS' ? 'disabled' : ''"
   >
     <label slot="option-label" slot-scope="{ node, shouldShowCount, count, labelClassName, countClassName }" :class="labelClassName">
       {{ node.label }}1
@@ -162,7 +163,3 @@
     }
   }
 </script>
-
-<style scoped>
-
-</style>
