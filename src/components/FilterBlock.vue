@@ -17,7 +17,7 @@
                       @search-change="searchChange"
                       @open="handleMenuOpen"
                       ref="CategoriesTreeselect"
-                      :loadingText="'Загрузка категорий'"
+                      :loadingText="'Загрузится в течении 1 минуты'"
                       :dont-use-local-search="true"/>
             </div>
             <div class="filter-form__column-item">
