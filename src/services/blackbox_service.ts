@@ -15,7 +15,7 @@ export class BlackboxService {
     _data.ordersRange = this.normalizeRangeData({ data: data.ordersRange, min: 0, max: 900000 });
     _data.priceRange = this.normalizeRangeData({ data: data.priceRange, min: 1, max: 900000 });
     _data.ratingRange = this.normalizeRangeData({ data: data.ratingRange, min: 0, max: 5 });
-    _data.revenueRange = this.normalizeRangeData({ data: data.revenueRange, min: 0, max: 900000 });
+    _data.revenueRange = this.normalizeRangeData({ data: data.revenueRange, min: 0, max: 9999999 });
     _data.brands = [...data.brands];
     _data.categories = [...data.categories];
     _data.addWords = [...data.addWords];

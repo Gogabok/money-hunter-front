@@ -60,7 +60,7 @@
           </div>
           <div class="filter-form__column column-fields-last">
             <div class="filter-form__column-item">
-              <InputField :label="revenueRangeLabel" range v-model="revenueRange" :min="0" :max="900000"/>
+              <InputField :label="revenueRangeLabel" range v-model="revenueRange" :min="0" :max="9999999"/>
             </div>
             <div class="filter-form__column-item">
               <InputField :label="ordersRangeLabel" range v-model="ordersRange" :min="0" :max="900000"/>
@@ -464,7 +464,7 @@
           if(data.revenueRange[0] <= 0) {
             data.revenueRange[0] = ''
           } 
-          if(data.revenueRange[1] >= 900000) {
+          if(data.revenueRange[1] >= 9999999) {
             data.revenueRange[1] = ''
           } 
           this.revenueRange = data.revenueRange;
