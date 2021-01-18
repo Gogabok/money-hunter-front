@@ -349,9 +349,25 @@
       
         const categories = []
         if(this.categories.find(item => item === 0)) {
-          this.categories = [0];
+          this.categories = [0]
         }
-        data.categories = this.categories;
+        if(this.categories[0] !== 0) {
+          this.categories.forEach(category => {
+            const isIncluded = this.allCategories[0].children.find(item => item.id === category)
+            if(isIncluded) {
+              const childCategories = isIncluded.children_id
+              if(childCategories.length > 0) {
+                categories.push(...childCategories)
+              }
+            } else {
+              categories.push(category)
+            }
+          })
+          data.categories = categories
+        } else {
+          data.categories = [0]
+        }
+        
         let brands = [...this.brands];
         if (brands[0] !== 'all') {
           brands = []
