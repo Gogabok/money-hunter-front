@@ -517,10 +517,17 @@
           })
         }
         _data["brands"] = brands
-
+        _data['days'] = this.days
+        let providers = [...this.providers_ids];
+        if (this.providers_ids[0] !== 'all') {
+          providers = []
+          this.providers_ids.forEach(id => {
+            providers.push(this.foundedProviders.find(item => item.id === id).name)
+          })
+        }
+        _data["providers"] = providers
         this[SHOW_MODAL_MUTATION]({component: SaveProject, data: _data});
-      }
-      ,
+      },
       compareTime(dateString, now) {
         const differentTime = 86400000
         if(dateString + differentTime <= now) {
