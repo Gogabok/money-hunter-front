@@ -96,15 +96,18 @@
                clazz="filter-form__action-button filter-form__action-button_clear"
                @click="changeFilterMode"/>
           <Btn without-default-class
+               v-if="filtersMode === 'byCommonFilters'"
                label="Загрузить фильтр"
                clazz="filter-form__action-button filter-form__action-button_download"
                @click="loadProject"/>
           <Btn without-default-class
+               v-if="filtersMode === 'byCommonFilters'"
                label="Сохранить фильтр"
                clazz="filter-form__action-button filter-form__action-button_save"
                @click="saveProject"/>
           <Btn without-default-class
                @click="resetFilters"
+               v-if="filtersMode === 'byCommonFilters'"
                label="Очистить фильтры"
                type="reset"
                clazz="filter-form__action-button filter-form__action-button_clear"/>
