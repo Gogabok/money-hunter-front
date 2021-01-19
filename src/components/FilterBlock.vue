@@ -168,6 +168,10 @@
       days: {
         type: Number,
         required: true,
+      },
+      isHaveToSearch: {
+        type: Boolean,
+        required: false
       }
     },
     data() {
@@ -713,6 +717,18 @@
         },
         deep: true
       },
+      isHaveToSearch: {
+        handler: function () {
+          if(this.filtersMode === 'byCommonFilters') {
+            this.searchBtnHandler()
+          } else if(
+            this.selectedArticulesInInput.length >= 0
+            && this.filtersMode === 'byArticul') {
+              this.searchBtnHandlerWithArticul()
+            }
+        },
+        deep: true
+      }
     }
   }
 </script>

@@ -4,7 +4,8 @@
                  @downloadSearchResults="downloadSearchResults" 
                  :isLoading="isLoading" 
                  :searchHandler="searchHandler"
-                 :days="days"/>
+                 :days="days"
+                 :isHaveToSearch="isHaveToSearch"/>
     <TreeSelect label="Отображаемые колонки"
                 v-model="columns"
                 :multiple="true"
@@ -138,6 +139,8 @@
 
         columns: [],
 
+        isHaveToSearch: false,
+
         cachedSearchResults: null,
 
         loadedListError: false,
@@ -227,8 +230,11 @@
       },
 
       daysChange(day) {
-        if(!day.isDisabled) {
+        if(!day.isDisabled && this.days !== day.value) {
           this.days = day.value;
+          if(this.list && this.list.length > 0) {
+            this.isHaveToSearch = !this.isHaveToSearch
+          }
         }
       },
 
@@ -776,6 +782,26 @@
         &.disabled {
           cursor: default;
           color:rgba(159, 162, 180, .5);
+          position: relative;
+          &:after {
+            opacity: 0;
+            content: "Business";
+            border-radius: 12px;
+            background: #FFC700;
+            color: #000;
+            font-size: 12px;
+            padding: 4px 9px;
+            display: block;
+            top: -15px;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            position: absolute;
+            font-weight: 300;
+            text-transform: uppercase;
+          }
+          &:hover:after {
+            opacity: 1;
+          }
         }
       }
     }
