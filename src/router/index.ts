@@ -52,7 +52,7 @@ const routes: Array<RouteConfig> = [
     component: Tracking,
     redirect: {name: 'tracking.group_list'},
     meta: {
-      title: 'Отслеживание',
+      title: 'Избранное',
     },
     children: [
       {path: 'groups', name: 'tracking.group_list', component: GroupList},

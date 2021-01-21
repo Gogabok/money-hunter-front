@@ -42,7 +42,7 @@
       return {
         links: [
           {name: 'Поиск товаров', systemName: 'blackbox'},
-          {name: 'Отслеживание', systemName: 'tracking'},
+          {name: 'Избранное', systemName: 'tracking'},
           {name: 'Профиль', systemName: 'profile'},
         ],
         burgerMenuShowen: false
