@@ -73,13 +73,13 @@
           },
           {
             name: "BUSINESS",
-            oldPrice: 5000,
-            price: 3990,
-            priceSale: 2450,
-            saleInfo: {
-              saleAmount: "-51%",
-              saleDesc: "до 20.01.2020"
-            },
+            // oldPrice: 5000,
+            price: 4990,
+            // priceSale: 2450,
+            // saleInfo: {
+            //   saleAmount: "-51%",
+            //   saleDesc: "до 20.01.2020"
+            // },
             clazz: "tarif__item_fourth",
             isBuyable: true,
             id: 5,

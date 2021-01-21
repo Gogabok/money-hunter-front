@@ -88,6 +88,7 @@
       },
       expDate() {
         if(!this.$store.getters['user/getExpDate']) return '';
+        if(this.$store.getters['user/getExpDate'] === 'Бессрочно') return 'Бессрочно';
         const monthes = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
         const expDate = this.$store.getters['user/getExpDate'].split("-");
         const year = expDate[0];
