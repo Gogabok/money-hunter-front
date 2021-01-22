@@ -3,6 +3,7 @@ import VueRouter, {RouteConfig} from "vue-router";
 import Auth from '../views/Auth.vue';
 import Profile from '../views/Profile.vue';
 import Tracking from '../views/Tracking.vue';
+import Rates from '../views/Rates.vue';
 import TrackingPositions from '../views/TrackingPositions.vue';
 import Calculator from '../views/Calculator.vue';
 
@@ -69,6 +70,14 @@ const routes: Array<RouteConfig> = [
       { path: 'groups', name: 'tracking.group_list', component: GroupList },
       { path: 'group/:name', name: 'tracking.group', component: lazyLoad('components/tracking/Group') }
     ]
+  },
+  {
+    path: '/rates',
+    name: 'rates',
+    component: Rates,
+    meta: {
+      title: 'Тарифы',
+    },
   },
   // {
   //   path: '/calculator',

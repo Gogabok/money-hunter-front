@@ -41,6 +41,9 @@
       <div class="user-data-change">
         <Btn label="Изменить" clazz="button__change" @click="handleSubmit(postUser)"/>
       </div>
+      <div class="user-data-rates">
+        <Btn label="Тарифы" @click="handleRouteToTariffs"/>
+      </div>
     </ValidationObserver>
   </div>
 </template>
@@ -120,6 +123,9 @@
         payload[type] = value;
 
         this.$store.commit(`user/${SET_USER_MUTATION}`, payload);
+      },
+      handleRouteToTariffs() {
+        this.$router.push('/rates')
       },
       async setPromocode() {
         const service = AuthService.getInstance();
@@ -203,6 +209,11 @@
   .user-data-change {
     width: 12.14rem;
     margin: 2.14rem auto 0;
+  }
+  
+  .user-data-rates {
+    width: 12.14rem;
+    margin: 0.78rem auto 0;
   }
 
   .modal-form__promocod-done.input-field__input_error {
