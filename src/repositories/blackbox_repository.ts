@@ -118,7 +118,12 @@ export class BlackboxRepository {
     return this.client.sendGet(this.getProvidersUrl);
   }
 
-  getCategoriesBySearch(name: string) {
-    return this.client.sendGet(queryStringBuilder(this.getCategoriesBySearchUrl, { name }));
+  getCategoriesBySearch(name: string, page: number) {
+    console.log(page ? true : false)
+    if(page) {
+      return this.client.sendGet(queryStringBuilder(this.getCategoriesBySearchUrl, { name, page }));
+    } else {
+      return this.client.sendGet(queryStringBuilder(this.getCategoriesBySearchUrl, { name }));
+    }
   }
 }

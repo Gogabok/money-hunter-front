@@ -18,6 +18,7 @@
                         ref="CategoriesTreeselect"
                         :loadingText="'Загрузка категорий'"
                         :dont-use-local-search="true"
+                        @open="handleMenuOpen"
                         :flatten-search-results="true"/>
             </div>
             <div class="filter-form__column-item">
@@ -210,11 +211,9 @@
           children: null
         }],
 
-        isCategoriesSearching: false,
-
-        categoriesPortionPage: 1,
-        categoriesPortionSize: 30,
+        categoriesNextPageUrl: 1,
         categoriesSearchQuery: "",
+        categoriesSearchLoading: false,
 
         savedCategories: null,
         savedCategoriesOptions: null,
@@ -285,22 +284,23 @@
       ,
       searchChange(searchQuery) {
         this.categoriesSearchQuery = searchQuery;
+        this.categoriesSearchLoading = false;
+        this.categoriesPortionPage = 1;
 
         if(searchQuery.length > 0 && this.categoriesSelectorMode === 'branch') {
           this.categoriesSelectorMode = 'flat';
           this.categories = [...this.categories.filter(item => item > 0)];
           this.savedCategoriesOptions = [...this.categoryOptions];
         } else if (searchQuery.length <= 0 && this.categoriesSelectorMode === 'flat') {
+          this.isCategoriesLoading = true
           this.categoriesSelectorMode = 'branch';
           this.categoryOptions = [...this.savedCategoriesOptions];
           this.categories.forEach(async category => {
             await this.updateMyCategories(category)
           })
-          this.isCategoriesLoading = true
           this.$nextTick(() => {
             this.isCategoriesLoading = false
           })
-          console.log('Переключение с поиска на обычный', this.savedCategoriesOptions)
         }
 
         if(searchQuery.length > 0 && this.categoriesSelectorMode === 'flat') {
@@ -309,7 +309,6 @@
       },
       async loadCategoriesQuery() {
         const service = new BlackboxService();
-        console.log(this.categoriesSearchQuery)
         const searchResults = await service.getCategoriesBySearch(this.categoriesSearchQuery);
         const results = searchResults.results;
         results.forEach(result => {
@@ -318,22 +317,41 @@
         })
         this.categoryOptions = [...results]
       },
-      // handleMenuOpen() {
-      //   this.$nextTick(() => {
-      //     const menu = this.$refs.CategoriesTreeselect.getMenu();
-      //     menu.addEventListener('scroll', () => {
-      //       if(this.isCategoriesSearching) {
-      //         const hasReachedEnd = menu.scrollHeight - menu.scrollTop <= menu.clientHeight * 1.25;
-      //         if (hasReachedEnd) {
-      //           this.categoriesPortionPage += 1;
-      //           const fromIndex = (this.categoriesPortionPage - 1) * this.categoriesPortionSize + 1;
-      //           const toIndex = this.categoriesPortionPage * this.categoriesPortionSize;
-      //           this.loadCategoriesFromSearch(fromIndex, toIndex)
-      //         }
-      //       }
-      //     })
-      //   })
-      // },
+      handleMenuOpen() {
+        if(this.categoriesSearchQuery.length <= 0 && this.categoryOptions.length > 1) {
+          this.categoriesSelectorMode = 'branch';
+          this.categoryOptions = [...this.savedCategoriesOptions];
+          this.categories.forEach(async category => {
+            await this.updateMyCategories(category)
+          })
+        } else {
+          this.$nextTick(() => {
+            const menu = this.$refs.CategoriesTreeselect.getMenu();
+            menu.addEventListener('scroll', async () => {
+              if(this.categoriesSelectorMode === 'flat') {
+                const hasReachedEnd = menu.scrollHeight - menu.scrollTop <= menu.clientHeight * 1.25;
+                if (hasReachedEnd && !this.categoriesSearchLoading) {
+                  this.categoriesSearchLoading = true
+                  this.categoriesPortionPage += 1;
+                  const service = new BlackboxService();
+                  const searchResults = await service.getCategoriesBySearch(this.categoriesSearchQuery, this.categoriesPortionPage);
+                  const results = searchResults.results;
+
+                  if(!results) return;
+
+                  results.forEach(result => {
+                    result['id'] = result.pk
+                    result['children'] = false
+                  })
+                  this.categoryOptions.push(...results)
+                  this.categoriesSearchLoading = false;
+
+                }
+              }
+            })
+          })
+        }
+      },
       // loadCategoriesFromSearch(fromIndex, toIndex) {
       //   const potentialItems = this.categories_list.filter((val) => {
       //     return val.name.toLowerCase().match(this.categoriesSearchQuery.toLowerCase())
@@ -589,8 +607,8 @@
             })
 
             parentNode.children = categories;
+          
             callback()
-            console.log(this.categoryOptions)
           }
         }
       },
@@ -648,7 +666,6 @@
               }
             }
             const newCategoryOptions = [...this.categoryOptions[0].children];
-
 
             const indexOfCategoryToChange = newCategoryOptions.findIndex(item => item.pk === parentIds[parentIds.length - 1].pk)
             

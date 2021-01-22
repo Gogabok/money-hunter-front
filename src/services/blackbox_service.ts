@@ -204,9 +204,9 @@ export class BlackboxService {
     }
   }
 
-  async getCategoriesBySearch(name: string) {
+  async getCategoriesBySearch(name: string, page: number) {
     try {
-      return (await this.service.refreshWrapper(this.repo.getCategoriesBySearch.bind(this.repo, name))).data;
+      return (await this.service.refreshWrapper(this.repo.getCategoriesBySearch.bind(this.repo, name, page))).data;
     } catch (e) {
       return e.message;
     }

@@ -28,7 +28,7 @@
       ...mapGetters('trackingPositions', [POSITION_GETTER]),
       trackingNavList() {
         return [
-          {label: "Список ключевых слов", system: true},
+          {label: "Список товаров", system: true},
           ...this[POSITION_GETTER].map(name => ({label: name.articul, actions: false}))
         ]
       }

@@ -38,7 +38,7 @@
                      :subheaders="subheaders"
                      :select-all="true"
                      @show-modal="showModalAddToGroup"
-                     :after-selecting-title="`Добавить на отслеживание`"/>
+                     :after-selecting-title="`Добавить в избранное`"/>
       <div v-else-if="isLoading || isLoadingAgregated" class="loading-table">
         <img ondragstart="return false" src="../assets/img/loading.svg" alt="">
       </div>
@@ -154,7 +154,7 @@
           {name: 'avRevenue', label: 'Сумма заказов за неделю', clazz: 'width9 mw150'},
           {name: 'currentRating', label: 'Рейтинг', clazz: 'tracking-table__header-item_align-right width23 mw150'},
           {name: 'currentFeedBackCount', label: 'Кол-во отзывов', clazz: 'width9 mw100'},
-          {name: 'add', label: 'Добавить в мои товары', sortable: false, clazz: 'width9 mw150'}
+          {name: 'add', label: 'Добавить в избранное', sortable: false, clazz: 'width9 mw150'}
         ],
 
         BlackboxTour: null,
@@ -171,7 +171,7 @@
       },
       columnsItems() {
         const columnsItems = []
-        const nonDinamicColumns = ['Товар', 'Добавить в мои товары']
+        const nonDinamicColumns = ['Товар', 'Добавить в избранное']
         this.tableHeaders.forEach((column, idx) => {
           if(!nonDinamicColumns.find(item => item === column.label)) {
             columnsItems.push({
@@ -633,7 +633,7 @@
               modifiers: [{ name: 'offset', options: { offset: [0, 14] } }]
             },
             title: `Добавить товар`,
-            text: `Добавляйте товары в свои группы на отслеживание и следите за количеством продаж и необходимостью подвоза товара.`,
+            text: `Добавляйте товары в свои группы в избранное и следите за количеством продаж и необходимостью подвоза товара.`,
             attachTo: {
               element: '.tracking-table__cell.width9.mw150.tracking-table__align-right button',
               on: 'left'
@@ -733,7 +733,7 @@
         if(this.list.length > 0) {
           this.isLoading = true
         }
-        const nonDinamicColumns = ['Товар', 'Добавить в мои товары']
+        const nonDinamicColumns = ['Товар', 'Добавить в избранное']
         this.tableHeaders.forEach(column => {
           if(!nonDinamicColumns.find(item => item === column.label)) {
             column.status = 'hidden'
