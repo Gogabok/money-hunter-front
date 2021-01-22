@@ -24,6 +24,7 @@
     :loadingText="'Загрузится в течении 1 минуты'"
     :disabled="userSubscription !== 'BUSINESS'"
     :class="userSubscription !== 'BUSINESS' ? 'disabled' : ''"
+    :helper="helper"
   >
     <label slot="option-label" slot-scope="{ node, shouldShowCount, count, labelClassName, countClassName }" :class="labelClassName">
       {{ node.label }}1
@@ -47,6 +48,10 @@
       value: {
         type: Array,
         required: true
+      },
+      helper: {
+        type: String,
+        default: ''
       }
     },
     data() {

@@ -19,52 +19,99 @@
                         :loadingText="'Загрузка категорий'"
                         :dont-use-local-search="true"
                         @open="handleMenuOpen"
-                        :flatten-search-results="true"/>
+                        :flatten-search-results="true"
+                        :helper="'Lorem helper lorem helper lorem helper lorem helper lorem helper lorem helper'"/>
             </div>
             <div class="filter-form__column-item">
               <ValidationProvider class="brandsSelector" :rules="{required: true}" key="byBrandType">
                 <BrandsSelector
                   v-model="brands"
                   @brands="brandsFinding"
+                  :helper="'Lorem helper lorem helper lorem helper lorem helper lorem helper lorem helper'"
                 />
               </ValidationProvider>
             </div>
           </div>
           <div class="filter-form__column column-fields-price">
             <div class="filter-form__column-item">
-              <InputField label="Цена" range v-model="priceRange" :min="1" :max="900000"/>
+              <InputField 
+                label="Цена" 
+                range 
+                v-model="priceRange" 
+                :min="1" 
+                :max="900000"
+                :helper="'Lorem helper lorem helper lorem helper lorem helper lorem helper lorem helper'"
+              />
             </div>
             <div class="filter-form__column-item">
-              <FindWords label="Плюс слова" :value="addWords" v-model="addWords"></FindWords>
+              <FindWords 
+                label="Плюс слова" 
+                :value="addWords" 
+                v-model="addWords"
+                :helper="'Lorem helper lorem helper lorem helper lorem helper lorem helper lorem helper'"
+              ></FindWords>
             </div>
           </div>
           <div class="filter-form__column column-fields-rating">
             <div class="filter-form__column-item">
-              <InputField label="Рейтинг" range v-model="ratingRange" :min="0" :max="5"/>
+              <InputField 
+                label="Рейтинг" 
+                range 
+                v-model="ratingRange" 
+                :min="0" 
+                :max="5"
+                :helper="'Lorem helper lorem helper lorem helper lorem helper lorem helper lorem helper'"
+              />
             </div>
             <div class="filter-form__column-item">
-              <FindWords label="Минус слова" v-model="minusWords"></FindWords>
+              <FindWords 
+                label="Минус слова" 
+                v-model="minusWords"
+                :helper="'Lorem helper lorem helper lorem helper lorem helper lorem helper lorem helper'"
+              ></FindWords>
             </div>
           </div>
           <div class="filter-form__column column-fields-last">
             <div class="filter-form__column-item">
-              <InputField label="Отзывы" range v-model="feedbackRange" :min="0" :max="900000"/>
+              <InputField 
+                label="Отзывы" 
+                range 
+                v-model="feedbackRange" 
+                :min="0" 
+                :max="900000"
+                :helper="'Lorem helper lorem helper lorem helper lorem helper lorem helper lorem helper'"
+              />
             </div>
             <div class="filter-form__column-item">
               <ValidationProvider class="providersSelector" :rules="{required: true}" key="byProvidersType">
                 <ProvidersSelector
                   v-model="providers_ids"
                   @providers="providersFinding"
+                  :helper="'Lorem helper lorem helper lorem helper lorem helper lorem helper lorem helper'"
                 />
               </ValidationProvider>
             </div>
           </div>
           <div class="filter-form__column column-fields-last">
             <div class="filter-form__column-item">
-              <InputField :label="revenueRangeLabel" range v-model="revenueRange" :min="0" :max="900000"/>
+              <InputField 
+                :label="revenueRangeLabel" 
+                range 
+                v-model="revenueRange" 
+                :min="0" 
+                :max="900000"
+                :helper="'Lorem helper lorem helper lorem helper lorem helper lorem helper lorem helper'"
+              />
             </div>
             <div class="filter-form__column-item">
-              <InputField :label="ordersRangeLabel" range v-model="ordersRange" :min="0" :max="900000"/>
+              <InputField 
+                :label="ordersRangeLabel" 
+                range 
+                v-model="ordersRange" 
+                :min="0" 
+                :max="900000"
+                :helper="'Lorem helper lorem helper lorem helper lorem helper lorem helper lorem helper'"
+              />
             </div>
           </div>
         </div>
