@@ -1,5 +1,8 @@
 <template>
   <div class="filter block_container">
+    <span class="filter-title">
+      Настройки поиска
+    </span>
     <form action="" class="filter-form">
       <transition name="zoomOut" mode="out-in">
         <div v-show="filtersMode === 'byCommonFilters'" class="filter-form__columns">
@@ -157,7 +160,7 @@
                type="reset"
                clazz="filter-form__action-button filter-form__action-button_clear"/>
           <Btn without-default-class
-               label="Скачать поиск"
+               label="Экспорт в csv"
                :clazz="`filter-form__action-button 
                filter-form__action-button_saveSearchResult
                ${downloadBtnStatus}`"
@@ -845,6 +848,22 @@
     background: white;
     border: 1px solid $drayDevider;
     position: relative;
+    &-title {
+      padding: 3px 10px;
+      display: block;
+      background: #F7F8FC;
+      position: absolute;
+      left: 0px;
+      top: 0px;
+      font-weight: 500;
+      color: #9FA2B4;
+      font-size: 13px;
+      border-top-left-radius: 8px;
+      border-bottom-right-radius: 8px;
+      border-right: 1px solid #DFE0EB;
+      border-bottom: 1px solid #DFE0EB;
+      user-select: none;
+    }
     &-form__columns {
       display: flex;
       & .filter-form__column {

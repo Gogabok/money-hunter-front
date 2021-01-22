@@ -20,6 +20,9 @@
       </div>
     </div>
     <div class="blackbox">
+      <span class="blackbox-title">
+        Результаты поиска
+      </span>
       <div class="blackbox-days">
         <span 
           v-for="day in daysOption"
@@ -38,7 +41,8 @@
                      :subheaders="subheaders"
                      :select-all="true"
                      @show-modal="showModalAddToGroup"
-                     :after-selecting-title="`Добавить в избранное`"/>
+                     :after-selecting-title="`Добавить в избранное`"
+                     :title="'Результаты поиска'"/>
       <div v-else-if="isLoading || isLoadingAgregated" class="loading-table">
         <img ondragstart="return false" src="../assets/img/loading.svg" alt="">
       </div>
@@ -763,6 +767,21 @@
     flex: 1;
     position: relative;
     min-height: 200px;
+    &-title {
+      padding: 3px 10px;
+      display: block;
+      background: #F7F8FC;
+      position: absolute;
+      left: 0px;
+      top: 0px;
+      font-weight: 500;
+      color: #9FA2B4;
+      font-size: 13px;
+      border-bottom-right-radius: 8px;
+      border-right: 1px solid #DFE0EB;
+      border-bottom: 1px solid #DFE0EB;
+      user-select: none;
+    }
     &-days {
       position: absolute;
       right: 0px;
