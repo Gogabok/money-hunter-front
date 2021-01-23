@@ -558,7 +558,8 @@
       ,
       async loadCategories() {
         let categories = null
-        const cachedCategories = JSON.parse(localStorage.getItem("categories"))
+        // const cachedCategories = JSON.parse(localStorage.getItem("categories"))
+        const cachedCategories = false
         if(cachedCategories) {
           categories = cachedCategories
 
