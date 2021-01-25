@@ -410,6 +410,23 @@
       getAgregatedData() {
         this.$store.dispatch(`blackbox/${GET_AGREGATED_DATA}`);
       },
+      async getCategories() {
+        const service = new BlackboxService();
+        let categories = [];
+        if(this.categories.includes(0)) {
+          categories = [0];
+        } else {
+          await Promise.all(this.categories.map(async (category) => {
+            const foundedCategory = this.categoryOptions[0].children.find(obj => obj.id === category)
+            if(foundedCategory && foundedCategory.parent_id === null) {
+              const children_categories = await service.getCategory({id: foundedCategory.id, children: true});
+              children_categories.forEach(child => categories.push(child.pk))
+            }
+          }));
+        }
+
+        return categories;
+      },
       async checkSearchID() {
         const data = {...this.$data};
         delete data.searchIcon;
@@ -433,12 +450,8 @@
         if(this.categories.length === 0) {
           this.categories = [0]
         }
-      
-        const categories = []
-        if(this.categories.find(item => item === 0)) {
-          this.categories = [0];
-        }
-        data.categories = this.categories;
+
+        data.categories = await this.getCategories();
 
         let brands = [...this.brands];
         if (brands[0] !== 'all') {
@@ -467,53 +480,13 @@
         const data = {...this.$data};
         delete data.searchIcon;
         delete data.availableOptions;
-        delete data.brands;
-        delete data.categories;
-        delete data.providers_ids;
         delete data.categoryOptions;
-
+        delete data.brands;
+        data.providers_ids = [];
+        data.brands = ['all'];
         data.days = this.days;
-
         data.ids = this.selectedArticulesInInput;
-
-        if(this.brands.length === 0) {
-          this.brands = ['all']
-        }
-
-        if(this.providers_ids.length === 0) {
-          this.providers_ids = ['all']
-        }
-
-        if(this.categories.length === 0) {
-          this.categories = [0]
-        }
-      
-        const categories = [];
-        if(this.categories.find(item => item === 0)) {
-          this.categories = [0]
-        } 
-        
-        data.categories = this.categories;
-
-        let brands = [...this.brands];
-        if (brands[0] !== 'all') {
-          brands = []
-          this.brands.forEach(id => {
-            brands.push(this.foundedBrands.find(item => item.id === id).id)
-          })
-        }
-        data.brands = brands
-
-        let providers = [...this.providers_ids];
-        if (providers[0] !== 'all') {
-          providers = []
-          this.providers_ids.forEach(id => {
-            providers.push(this.foundedProviders.find(item => item.id === id).name)
-          })
-        } else if (providers[0] === 'all') {
-          providers = []
-        }
-        data.providers_ids = providers
+        this.$emit('setTableLoading', true)
 
         await this.$store.dispatch(`blackbox/${CHECK_SEARCH_ID_ACTION}`, data);
       }

@@ -2,6 +2,7 @@
   <Fragment>
     <FilterBlock :downloadBtnStatus="downloadBtnStatus" 
                  @downloadSearchResults="downloadSearchResults" 
+                 @setTableLoading="setTableLoading"
                  :isLoading="isLoading" 
                  :searchHandler="searchHandler"
                  :days="days"
@@ -204,8 +205,10 @@
       showModalAddToGroup(data) {
         this.$store.commit(`modal/${SHOW_MODAL_MUTATION}`, {component: AddToGroup, data})
       },
+      setTableLoading(payload) {
+        this.isLoading = payload;
+      },
       async searchHandler() {
-        this.isLoading = true
         this.tableHeaders.find(header => header.name === "avOrdersSpeed").label = this.days === 7 ? 'Заказов в неделю' : this.days === 14 ? 'Заказов за две недели' : 'Заказов в месяц';
         this.tableHeaders.find(header => header.name === "avRevenue").label = this.days === 7 ? 'Сумма заказов за неделю' : this.days === 14 ? 'Сумма заказов за две недели' : 'Сумма заказов за месяц';
         this.paginationData.page = 1;
@@ -226,8 +229,6 @@
         this.loadGoods();
       },
       nextHandler() {
-        this.isLoading = true
-
         this.paginationData.page += 1;
 
         this.loadGoods();
@@ -245,7 +246,6 @@
       async loadGoods() {
         if (this.$store.state.blackbox.searchID) {
           this.list = [];
-          this.isLoading = true
           const service = new BlackboxService();
 
           const result = await service.getGoodsBySearchID(
