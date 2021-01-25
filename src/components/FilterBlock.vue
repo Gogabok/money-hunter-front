@@ -159,14 +159,6 @@
                label="Очистить фильтры"
                type="reset"
                clazz="filter-form__action-button filter-form__action-button_clear"/>
-          <Btn without-default-class
-               label="Экспорт в csv"
-               :clazz="`filter-form__action-button 
-               filter-form__action-button_saveSearchResult
-               ${downloadBtnStatus}`"
-               :loading="downloadBtnStatus === 'loading'"
-               v-if="downloadBtnStatus !== 'hidden'"
-               @click="downloadSearchResults"/>
         </div>
         <div class="filter-form__send">
           <Btn v-if="filtersMode === 'byCommonFilters'" :loading="isLoading" label="Найти" clazz="button_save" @click="searchBtnHandler"/>
@@ -210,10 +202,6 @@
       },
       isLoading: {
         type: Boolean,
-        required: false
-      },
-      downloadBtnStatus: {
-        type: [String, Boolean],
         required: false
       },
       days: {
@@ -421,6 +409,8 @@
             if(foundedCategory && foundedCategory.parent_id === null) {
               const children_categories = await service.getCategory({id: foundedCategory.id, children: true});
               children_categories.forEach(child => categories.push(child.pk))
+            } else {
+              categories.push(category)
             }
           }));
         }
@@ -428,6 +418,7 @@
         return categories;
       },
       async checkSearchID() {
+        this.$emit('setTableLoading', true)
         const data = {...this.$data};
         delete data.searchIcon;
         delete data.availableOptions;
@@ -635,10 +626,6 @@
           }
         }
       },
-      downloadSearchResults() {
-        this.$emit('downloadSearchResults')
-      }
-      ,
       changeFilterMode() {
         if(this.filtersMode === 'byCommonFilters') {
           this.filtersMode = 'byArticul'

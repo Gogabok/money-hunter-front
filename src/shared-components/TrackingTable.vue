@@ -1,11 +1,11 @@
 <template>
   <div class="tracking-table-wrapper">
-    <tr v-if="subheaders" class="tracking-table__header tracking-table__header-subheader">
+    <tr v-if="subheaders && isLoadedAtLeastOnce" class="tracking-table__header tracking-table__header-subheader">
       <th v-for="item in subheaders" :key="item.name" class="tracking-table__header-item" :class="item.clazz || ''">
         <span v-if="item.subheader && item.subHeaderValue !== false" class="tracking-table__header-item-subheader">{{ item.subheader }}: <span>{{ item.subHeaderValue }}</span></span>
       </th>
     </tr>
-    <div v-if="selectAll" class="selectAll-folder" :class="isSelecting ? `allSelecting` : ''">
+    <div v-if="selectAll && isLoadedAtLeastOnce" class="selectAll-folder" :class="isSelecting ? `allSelecting` : ''">
       <input @input="selectAllCheckboxMethod" v-model="selectAllCheckbox" type="checkbox" :id="'allSelect'" class="cbx" style="display: none;">
       <label v-if="isSelecting" :for="'allSelect'" class="check">
         <svg width="18px" height="18px" viewBox="0 0 18 18">
@@ -13,9 +13,32 @@
           <polyline points="1 9 7 14 15 4"></polyline>
         </svg>
       </label>
-      <Btn @click="selectItems" style="max-width: 200px; margin: 5px;" :label="!isSelecting ? 'Выбрать товары' : afterSelectingTitle"/>
+      <Btn 
+        without-default-class
+        class="tracking-table-wrapper-button"
+        :class="isSelecting ? 'active' : ''" 
+        @click="selectItems"
+        :label="!isSelecting ? 'Выбрать товары' : afterSelectingTitle"
+      />
+      <Btn without-default-class
+           label="Экспорт в csv"
+           :clazz="`filter-form__action-button 
+           filter-form__action-button_saveSearchResult
+           ${downloadBtnStatus}`"
+           :loading="downloadBtnStatus === 'loading'"
+           v-if="downloadSearchCSV"
+           @click="$emit('downloadSearchResults')"/>
+
+      <TreeSelect v-if="columnsSelector"
+                @input="$emit('selectColumn', $event)"
+                :value="columns"
+                :multiple="true"
+                :options="columnsOptions"
+                :limit="3"
+                :limitText="count=>`и еще ${count}`"
+                class="column-selector"/>
     </div>
-    <table class="tracking-table tracking-table_sticky" ref="HeaderScroll" v-on:scroll="handleHeaderScroll">
+    <table v-if="isLoadedAtLeastOnce" class="tracking-table tracking-table_sticky" ref="HeaderScroll" v-on:scroll="handleHeaderScroll">
       <tbody class="tracking-table-tbody">
         <tr :class="isSelecting ? `selecting` : ''" class="tracking-table__header">
           <th v-for="item in headers" :key="item.name" class="tracking-table__header-item" :class="{[item.clazz]: item.clazz, [item.status]: item.status }|| ''">
@@ -32,7 +55,7 @@
         </tr>
       </tbody>
     </table>
-    <table class="tracking-table" id="tracking-table" v-if="items.length>0" ref="BodyScroll" v-on:scroll="handleBodyScroll">
+    <table class="tracking-table" id="tracking-table" v-if="items.length>0 && !isLoading && !isLoadingAgregated" ref="BodyScroll" v-on:scroll="handleBodyScroll">
       <!-- {{ items[0].currentPrice.component_data.price }} -->
       <TrackingTableRow 
         :selectedItems="selectedItems" 
@@ -48,16 +71,23 @@
         :openRowIndex="openRowIndex"
       />
     </table>
+    <div v-else-if="isLoading || isLoadingAgregated" class="loading-table">
+      <img ondragstart="return false" src="../assets/img/loading.svg" alt="">
+    </div>
+    <div v-else-if="isLoading === false && items.length <= 0 && isLoadingAgregated === false && loadedListError" class="table-notFounded">
+      <p class="table-notFounded-text">Товары по заданным критериям не найдены</p>
+    </div>
   </div>
 </template>
 
 <script>
   import Btn from "@/shared-components/Btn";
   import TrackingTableRow from "@/shared-components/TrackingTableRow";
+  import TreeSelect from "@/shared-components/TreeSelect";
 
   export default {
     name: "TrackingTable",
-    components: {TrackingTableRow, Btn},
+    components: {TrackingTableRow, Btn, TreeSelect},
     props: {
       headers: {
         type: Array,
@@ -84,6 +114,32 @@
       },
       afterSelectingTitle: {
         type: String
+      },
+      isLoading: {
+        type: Boolean
+      },
+      isLoadingAgregated: {
+        type: Boolean
+      },
+      downloadSearchCSV: {
+        type: Boolean,
+        default: false
+      },
+      downloadBtnStatus: {
+        type: [String, Boolean],
+        required: false
+      },
+      columnsSelector: {
+        type: Boolean,
+        default: false
+      },
+      columnsOptions: {
+        type: [Array, Boolean],
+        default: false
+      },
+      columns: {
+        type: [Array, Boolean],
+        default: false
       }
     },
     data() {
@@ -91,7 +147,9 @@
         isSelecting: false,
         selectedItems: [],
         selectAllCheckbox: false,
-        openRowIndex: null
+        openRowIndex: null,
+        isLoadedAtLeastOnce: false,
+        columnsModel: []
       }
     },
     computed: {
@@ -99,7 +157,27 @@
       //   return this.headers.filter(item => item.subheader)
       // }
     },
+    watch: {
+      isLoading: function () {
+        if(this.items.length > 0) {
+          this.isLoadedAtLeastOnce = true
+        }
+      },
+      columnsModel: function () {
+        if(this.columnsModel !== this.columns) {
+          this.$emit('selectColumn', this.columnsModel)
+        }
+      },
+      columns: function () {
+        if(this.columns !== this.columnsModel) {
+          this.columnsModel = this.columns
+        }
+      }
+    },
     methods: {
+      downloadSearchResults() {
+        this.$emit('downloadSearchResults')
+      },
       handleHeaderScroll() {
         this.$refs.BodyScroll.scrollLeft = this.$refs.HeaderScroll.scrollLeft
       },
@@ -230,6 +308,7 @@
   .tracking-table-wrapper {
     flex: 1;
     box-sizing: border-box;
+    position: relative;
     & * {
       box-sizing: border-box;
     }
@@ -543,5 +622,99 @@
     display: flex;
     align-items: center;
     position: relative;
+    border-bottom: 1px solid #DFE0EB;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .loading-table {
+    flex: 1;
+    background: rgba(255, 255, 255, .6);
+    box-sizing: border-box;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 3;
+  }
+
+  .loading-table img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .table-notFounded {
+    flex: 1;
+    background: #fff;
+    box-sizing: border-box;
+    width: 100%;
+  }
+
+  .table-notFounded-text {
+    font-size: 1.71rem;
+    font-weight: bold;
+    letter-spacing: .3px;
+    color: black;
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    @media screen and (max-width: 768px) {
+      font-size: 1.41rem;
+    }
+    @media screen and (max-width: 550px) {
+      font-size: 1.2rem;
+    }
+  }
+
+  .tracking-table-wrapper-button {
+    border: 1px solid $drayDevider;
+    border-radius: 4px;
+    color: #000;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    height: 2.57rem;
+    background: #fff;
+    max-width: 200px; 
+    margin: 5px;
+    &.active {
+      background: #FFC700;
+      border: none;
+    }
+  }
+
+  .filter-form__action-button {
+    border: 1px solid $drayDevider;
+    border-radius: 4px;
+    color: #000;
+    padding-left: 2.28rem;
+    padding-right: 1rem;
+    height: 2.57rem;
+
+    &.filter-form__action-button_download {
+      background: url("../assets/img/ikons/download2.svg") no-repeat .92rem center, white;
+    }
+
+    &.filter-form__action-button_saveSearchResult {
+      width: 140px;
+      background: url("../assets/img/ikons/save.svg") no-repeat .85rem center, white;
+      &.loading {
+        background: #fff;
+        padding-left: 0px;
+        padding-right: 0px;
+        cursor: default;
+      }
+    }
+  }
+
+  .column-selector {
+    margin-left: auto;
+    margin-right: 5px;
+    max-width: 500px;
   }
 </style>

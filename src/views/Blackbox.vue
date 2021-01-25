@@ -1,17 +1,15 @@
 <template>
   <Fragment>
-    <FilterBlock :downloadBtnStatus="downloadBtnStatus" 
-                 @downloadSearchResults="downloadSearchResults" 
-                 @setTableLoading="setTableLoading"
+    <FilterBlock @setTableLoading="setTableLoading"
                  :isLoading="isLoading" 
                  :searchHandler="searchHandler"
                  :days="days"
                  :isHaveToSearch="isHaveToSearch"/>
-    <TreeSelect label="Отображаемые колонки"
+    <!-- <TreeSelect label="Отображаемые колонки"
                 v-model="columns"
                 :multiple="true"
                 :options="columnsItems"
-                class="column-selector"/>
+                class="column-selector"/> -->
     <div class="blackbox-navigation">
       <div class="blackbox-navigation-wrapper">
         <BlackboxNav
@@ -34,8 +32,7 @@
             {{ day.title }}
         </span>
       </div>
-      <TrackingTable v-if="!isLoading && tablePositions.length > 0 && !isLoadingAgregated"
-                     :headers="tableHeaders"
+      <TrackingTable :headers="tableHeaders"
                      :items="tablePositions"
                      :order="orderType"
                      :order-handler="$orderHandler"
@@ -43,13 +40,22 @@
                      :select-all="true"
                      @show-modal="showModalAddToGroup"
                      :after-selecting-title="`Добавить в избранное`"
-                     :title="'Результаты поиска'"/>
-      <div v-else-if="isLoading || isLoadingAgregated" class="loading-table">
+                     :title="'Результаты поиска'"
+                     :isLoading="isLoading"
+                     :isLoadingAgregated="isLoadingAgregated"
+                     :downloadSearchCSV="true"
+                     :downloadBtnStatus="downloadBtnStatus" 
+                     @downloadSearchResults="downloadSearchResults"
+                     :columnsSelector="true"
+                     @selectColumn="selectColumn"
+                     :columnsOptions="columnsItems"
+                     :columns="columns"/>
+      <!-- <div v-else-if="isLoading || isLoadingAgregated" class="loading-table">
         <img ondragstart="return false" src="../assets/img/loading.svg" alt="">
       </div>
       <div v-else-if="isLoading === false && tablePositions.length <= 0 && isLoadingAgregated === false && loadedListError" class="table-notFounded">
         <p class="table-notFounded-text">Товары по заданным критериям не найдены</p>
-      </div>
+      </div> -->
     </div>
     <div class="block_container pagination_container" v-if="!isLoading && tablePositions.length > 0 && !isLoadingAgregated">
       <TrackingPagination :total-count="paginationData.totalCount"
@@ -79,14 +85,13 @@
   import {AmplitudeService} from "../services/amplitude_service";
   import PlusImage from '../assets/img/ikons/plus3.svg';
   import ImgBtn from "../shared-components/ImgBtn";
-  import TreeSelect from "@/shared-components/TreeSelect";
   import BlackboxNav from "@/components/BlackboxNav";
 
   const DEFAULT_ORDER_TYPE = '-avRevenue';
 
   export default {
     name: "Blackbox",
-    components: {TrackingPagination, TrackingTable, FilterBlock, Fragment, TreeSelect, BlackboxNav},
+    components: {TrackingPagination, TrackingTable, FilterBlock, Fragment, BlackboxNav},
     mixins: [tableMixins, paginationMixin],
     data() {
       return {
@@ -201,6 +206,10 @@
       navigateGroup(groupName) {
         this.blackboxNavList.forEach(item => item.isActive = false);
         this.blackboxNavList.find(item => item.systemName === groupName).isActive = true;
+      },
+      selectColumn(columns) {
+        console.log(columns)
+        this.columns = columns
       },
       showModalAddToGroup(data) {
         this.$store.commit(`modal/${SHOW_MODAL_MUTATION}`, {component: AddToGroup, data})
@@ -713,6 +722,7 @@
       },
       orderType: function () {
         AmplitudeService.blackBoxOrdering(this.orderType);
+        this.isLoading = true;
         this.debounceLoadGoods();
       },
       agregatedData: {
@@ -767,6 +777,9 @@
     flex: 1;
     position: relative;
     min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    padding-top: 25px;
     &-title {
       padding: 3px 10px;
       display: block;

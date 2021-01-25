@@ -1,6 +1,6 @@
 <template>
   <div @click="chekingWidth()" class="select-field">
-    <label for="" class="select-field__label">
+    <label for="" class="select-field__label" v-if="label">
       {{label}}
       <div v-if="helper" class="select-field__label-helper">
         <svg class="select-field__label-helper-icon" 
@@ -35,7 +35,7 @@
     props: {
       label: {
         type: String,
-        required: true,
+        required: false,
       },
       value: {
         required: true,
@@ -127,6 +127,7 @@
       }
     },
     mounted() {
+      console.log(123312)
       this.handleLocalSearch();
     }
   }
@@ -152,11 +153,11 @@
     display: flex;
     align-items: center;
     width: 100%;
+    margin-bottom: 5px;
   }
   .select-field__select {
     flex: 1 0 100%;
     display: block;
-    margin-top: 5px;
   }
   .categories__link {
     padding: 8px 14px;

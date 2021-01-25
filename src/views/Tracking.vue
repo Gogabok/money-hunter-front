@@ -59,6 +59,16 @@
     overflow: auto hidden;
     display: flex;
     flex-direction: column;
+    &::-webkit-scrollbar {
+      -webkit-appearance: none;
+      width: 7px;
+      height: 7px;
+    }
+    &::-webkit-scrollbar-thumb {
+      border-radius: 6px;
+      background-color: rgba(0,0,0,.5);
+      -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+    }
   }
 
   .tracking-add-category {
