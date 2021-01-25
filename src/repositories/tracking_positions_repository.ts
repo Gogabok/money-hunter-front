@@ -3,9 +3,9 @@ import { queryStringBuilder } from "@/helpers";
 
 export class TrackingPositionsRepository {
   private client = new ApiClient();
-  private getUserPositionsUrl = 'wb/positions_tracker/products/'
-  private getPositionUrl = 'wb/positions_tracker/products/'
-  private setPositionsUrl = 'wb/positions_tracker/products/'
+  private getUserPositionsUrl = 'wb/positions/products/'
+  private getPositionUrl = 'wb/positions/products/'
+  private setPositionsUrl = 'wb/positions/products/'
 
   getUserPositions() {
     return this.client.sendGet(this.getUserPositionsUrl);

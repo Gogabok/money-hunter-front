@@ -980,8 +980,8 @@
           &.column-fields-last {
             display: flex;
             flex-direction: row;
-            justify-content: flex-start;
-            width: calc(100% - 20px);
+            justify-content: space-between;
+            width: 100%;
             max-width: 100%;
             margin: 0px;
             & .filter-form__column-item {

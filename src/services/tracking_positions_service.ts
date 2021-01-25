@@ -33,7 +33,7 @@ export class TrackingPositionsService {
 
   async getUserPositions(): Promise<[VuexTrackingPositionsStateGroupItemInterface] | []> {
     try {
-      return (await this.authService.refreshWrapper(this.repo.getUserPositions.bind(this.repo))).data.detail;
+      return (await this.authService.refreshWrapper(this.repo.getUserPositions.bind(this.repo))).data;
     } catch (e) {
       return [];
     }

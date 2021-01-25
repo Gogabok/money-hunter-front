@@ -262,7 +262,7 @@
   @import "../../assets/scss/variables";
 
   .tracking-body {
-    background: white;
+    background: transparent;
     border: 1px solid $drayDevider;
     flex: 1;
     display: flex;

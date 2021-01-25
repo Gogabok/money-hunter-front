@@ -18,6 +18,8 @@ export const actions = {
 
     context.commit(CLEAR_POSITIONS_MUTATION);
 
+    console.log(positions)
+
     positions.forEach((item: any) => {
       context.commit(ADD_POSITIONS_MUTATION, item);
     })

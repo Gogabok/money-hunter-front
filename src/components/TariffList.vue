@@ -40,12 +40,15 @@
             list: [
               {text: "10 товаров на отслеживании", success: true},
               {text: "20 запросов к статистике по всем товарам", success: true},
-              {text: "Отображение данных за период 7 дней", success: true},
+              {text: "Данные за 7 дней", success: true},
+              {text: "Данные за 14, 30 дней", error: true},
               {text: "Скачивание отчётов", error: true},
               {text: "Расчёт поставок (beta)", error: true},
               {text: "Экспорт поисковой выдачи в XLS", error: true},
               {text: "Оповещения об изменениях остатков, цены, отзывов по email", error: true},
-              {text: "Ранний доступ к новому функционалу", error: true}
+              {text: "Ранний доступ к новому функционалу", error: true},
+              {text: "Скорость продаж по размерам", error: true},
+              {text: "Поиск по поставщику", error: true}
             ]
           },
           {
@@ -57,12 +60,15 @@
             list: [
               {text: "150 товаров на отслеживании", success: true},
               {text: "Безлимитные запрос к статистике по всем товарам", success: true},
-              {text: "Отображение данных за период 7 дней", success: true},
+              {text: "Данные за 7 дней", success: true},
+              {text: "Данные за 14, 30 дней", error: true},
               {text: "Скачивание отчётов", success: true},
               {text: "Расчёт поставок (beta)", success: true},
               {text: "Экспорт поисковой выдачи в XLS", success: true},
               {text: "Оповещения об изменениях остатков, цены, отзывов по email", error: true},
-              {text: "Ранний доступ к новому функционалу", error: true}
+              {text: "Ранний доступ к новому функционалу", error: true},
+              {text: "Скорость продаж по размерам", error: true},
+              {text: "Поиск по поставщику", error: true}
             ]
           },
           {
@@ -74,12 +80,15 @@
             list: [
               {text: "500 товаров на отслеживании", success: true},
               {text: "Безлимитные запрос к статистике по всем товарам", success: true},
-              {text: "Отображение данных за период 30 дней", success: true},
+              {text: "Данные за 7 дней", success: true},
+              {text: "Данные за 14, 30 дней", success: true},
               {text: "Скачивание отчетов", success: true},
               {text: "Расчёт поставок (beta)", success: true},
               {text: "Экспорт поисковой выдачи в XLS", success: true},
               {text: "Оповещения об изменениях остатков, цены, отзывов по email", success: true},
               {text: "Ранний доступ к новому функционалу", success: true},
+              {text: "Скорость продаж по размерам", success: true},
+              {text: "Поиск по поставщику", success: true}
             ]
           },
         ],

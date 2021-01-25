@@ -9,7 +9,7 @@
       </div>
     </div>
 
-    <TrackingTable v-if="tablePositions && loaded"
+    <TrackingPositionsTable v-if="tablePositions && loaded"
                    :headers="tableHeaders"
                    :items="tablePositions"
                    :order="orderType"
@@ -20,7 +20,7 @@
 
 <script>
   import RowWithIcon from "@/shared-components/RowWithIcon";
-  import TrackingTable from "@/shared-components/TrackingTable";
+  import TrackingPositionsTable from "@/shared-components/TrackingPositionsTable";
   // import ProductAction from "@/components/tracking-table/ProductAction";
   import {orderHandler} from "@/extenders/mixins/order_handler";
   // import ProductPrice from "@/components/tracking-table/ProductPrice";
@@ -30,28 +30,40 @@
   import AddGoodsPositionsBtn from "@/shared-components/AddGoodsPositionsBtn";
   import {LOAD_POSITIONS_ACTION} from "@/store/modules/trackingPositions/constants";
   import {BlackboxService} from "@/services/blackbox_service";
-  // import AddGoodsBtn from "@/shared-components/AddGoodsBtn";
-
-  // import {UserService} from "@/services/user_service";
 
   export default {
     name: "Groups",
-    // components: {AddGoodsBtn, RowWithIcon, TrackingTable},
-    components: {RowWithIcon, TrackingTable, AddGoodsPositionsBtn},
+    components: {RowWithIcon, TrackingPositionsTable, AddGoodsPositionsBtn},
+    // components: {RowWithIcon, AddGoodsPositionsBtn},
     mixins: [orderHandler, tableMixins],
     data() {
       return {
         tableHeaders: [
-          {name: 'name', label: 'Название', clazz: 'width23', sortable: false},
+          {name: 'name', label: 'Наименование товара', clazz: 'mw300', sortable: false},
           {
-            name: 'articul',
-            label: 'Артикул',
-            clazz: 'width23 tracking-table__header-item_align-right',
+            name: 'color',
+            label: 'Цвет',
+            clazz: 'mw200 tracking-table__header-item_align-left',
           },
           {
-            name: 'categories',
-            label: 'Кол-во категорий',
-            clazz: 'width23 tracking-table__header-item_align-center'
+            name: 'amountOfCategories',
+            label: 'Количество категорий',
+            clazz: 'mw200 tracking-table__header-item_align-left',
+          },
+          {
+            name: 'revenueOfGoods',
+            label: 'Сумма заказов/шт.',
+            clazz: 'mw200 tracking-table__header-item_align-center'
+          },
+          {
+            name: 'revenueOfGoodsPrice',
+            label: 'Сумма заказов/руб.',
+            clazz: 'mw200 tracking-table__header-item_align-center'
+          },
+          {
+            name: 'actions',
+            label: 'Действия',
+            clazz: 'mw200 tracking-table__header-item_align-right'
           },
         ],
 
@@ -72,7 +84,16 @@
         return this.$store.getters['user/getSubscription'].subscriptionType
       },
       positions() {
-        return this.$store.getters[`trackingPositions/${POSITION_GETTER}`]
+        const positionsByBrand = this.$store.getters[`trackingPositions/${POSITION_GETTER}`]
+        if(positionsByBrand.length <= 0) return [];
+        const brands = {}
+        positionsByBrand.forEach(item => {
+          if(!brands[item.brand]) {
+            brands[item.brand] = [];
+          }
+          brands[item.brand].push(item)
+        })
+        return brands;
       }
     },
     methods: {
@@ -87,31 +108,50 @@
     },
     mounted() {
       this.loaded = false
-      this.tablePositions = this.positions.map(item => {
-        return {
-          name: {
-            clazz: "tracking-table__align-left width23",
-            content: item.name,
-            linkTo: 'articul',
-            image: ''
-          },
-          articul: {
-            clazz: "tracking-table__align-right width23",
-            content: item.articul
-          },
-          categories: {
-            clazz: "tracking-table__align-center width23",
-            content: item.categories_count
-          },
-        }
-      })
-      this.loadImages()
-      this.loaded = true
-      // setTimeout(() => {
-      // }, 1);
-      this.$nextTick(() => {
-        this.orderType = '-articul'
-      })
+      const positions = [];
+          Object.keys(this.positions).forEach(brand => {
+            positions.push({
+              name: {
+                clazz: "tracking-table__align-left mw200",
+                content: brand,
+                image: ''
+              },
+            })
+
+            this.positions[brand].forEach(position => {
+              return  {
+                name: {
+                  clazz: "tracking-table__align-left mw200",
+                  content: position.name,
+                  image: ''
+                },
+                color: {
+                  clazz: "tracking-table__align-left mw200",
+                  content: 'В тесте',
+                },
+                amountOfCategories: {
+                  clazz: "tracking-table__align-left mw200",
+                  content: position.categories_count,
+                },
+                revenueOfGoods: {
+                  clazz: "tracking-table__align-left mw200",
+                  content: position.avOrdersSpeed,
+                },
+                revenueOfGoodsPrice: {
+                  clazz: "tracking-table__align-left mw200",
+                  content: position.avRevenue,
+                },
+                actions: {
+                  clazz: "tracking-table__align-left mw200",
+                  content: 'Действие',
+                },
+              }
+            })
+          })
+
+          this.tablePositions = positions;
+
+          this.loaded = true;
     },
     watch: {
       orderType: function () {
@@ -126,25 +166,49 @@
       positions: {
         handler: function () {
           this.loaded = false
-          this.tablePositions = this.positions.map(item => {
-            return {
+          const positions = [];
+          Object.keys(this.positions).forEach(brand => {
+            positions.push({
               name: {
-                clazz: "tracking-table__align-left width23",
-                content: item.name,
-                linkTo: 'articul',
+                clazz: "tracking-table__align-left mw200",
+                content: brand,
                 image: ''
               },
-              articul: {
-                clazz: "tracking-table__align-right width23",
-                content: item.articul
-              },
-              categories: {
-                clazz: "tracking-table__align-center width23",
-                content: item.categories_count
-              },
-            }
+            })
+
+            this.positions[brand].forEach(position => {
+              return  {
+                name: {
+                  clazz: "tracking-table__align-left mw200",
+                  content: position.name,
+                  image: ''
+                },
+                color: {
+                  clazz: "tracking-table__align-left mw200",
+                  content: 'В тесте',
+                },
+                amountOfCategories: {
+                  clazz: "tracking-table__align-left mw200",
+                  content: position.categories_count,
+                },
+                revenueOfGoods: {
+                  clazz: "tracking-table__align-left mw200",
+                  content: position.avOrdersSpeed,
+                },
+                revenueOfGoodsPrice: {
+                  clazz: "tracking-table__align-left mw200",
+                  content: position.avRevenue,
+                },
+                actions: {
+                  clazz: "tracking-table__align-left mw200",
+                  content: 'Действие',
+                },
+              }
+            })
           })
-          this.loadImages()
+
+          this.tablePositions = positions;
+          // this.loadImages()
           this.loaded = true
         },
         deep: true
@@ -158,8 +222,7 @@
   @import "../../assets/scss/variables";
 
   .tracking-body {
-    background: white;
-    border: 1px solid $drayDevider;
+    background: transparent;
     flex: 1;
     display: flex;
     flex-direction: column;

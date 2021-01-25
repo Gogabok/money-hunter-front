@@ -2,16 +2,16 @@
   <header class="header block_container">
     <h1 class="page-title" v-text="header"/>
     <div class="header-right">
-      <div v-if="isShowGoodsSearch || isShowGoodsFolowing" class="education" @click="showTraining">
+      <!-- <div v-if="isShowGoodsSearch || isShowGoodsFolowing" class="education" @click="showTraining">
         <img src="../assets/img/ikons/education.svg" alt="">
         <span class="education__text">Обучение</span>
-      </div>
-      <div class="notifications" >
-        <img src="../assets/img/ikons/notification.svg" alt="">
+      </div> -->
+      <!-- <div class="notifications" >
+        <img src="../assets/img/ikons/notification.svg" alt=""> -->
         <!-- <transition name="fade-notifications" mode="out-in">
           <div v-if="notification" class="notifications__circle"><span></span></div>
         </transition> -->
-      </div>
+      <!-- </div> -->
       <transition name="fade-notifications" mode="out-in">
         <div v-if="notification" class="alert" :class="notification.status">
           <span class="alert-dash"></span>

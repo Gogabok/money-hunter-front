@@ -62,7 +62,7 @@
         await Promise.all(this.articul.map(async (articul) => {
           result = await service.deleteProductFromTracking(this.groupPK, this.pk);
         }));
-        if (typeof result === 'boolean' && result) {
+        if (result === false) {
           this.callback();
           if(this.articul.length === 1) {
             this.$store.commit('notifications/ADD_NOTIFICATION', {text: `Товар ${this.articul[0]} удален`, status: 'success'})
