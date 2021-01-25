@@ -29,8 +29,8 @@
         </div>
         <div class="user-data__item">
           <template>
-            <InputField :label="`Промокод${codeText ? '. ' + codeText : ''}`" type="text" :clazz="`input-field__input ${codeStatus}`" placeholder="Введите промокод" v-model="promocode"/>
-            <button @click="setPromocode" class="modal-form__promocod-done" :class="codeStatus" type="button"/>
+            <InputField :buttonLabel="'Применить'" @button-event="setPromocode" :label="`Промокод${codeText ? '. ' + codeText : ''}`" type="text" :clazz="`input-field__input ${codeStatus}`" placeholder="Введите промокод" v-model="promocode"/>
+            <!-- <button @click="setPromocode" class="modal-form__promocod-done" :class="codeStatus" type="button"/> -->
           </template>
         </div>
         <div class="user-data__item">

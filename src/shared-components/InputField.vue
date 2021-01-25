@@ -254,8 +254,8 @@
 
   .input-button {
     position: absolute;
-    bottom: 0px;
-    right: 0px;
+    bottom: 1px;
+    right: 1px;
     transform: translate(0, 0);
     flex: 1 0 100%;
     display: inline-block;
@@ -265,7 +265,7 @@
     border-top-left-radius: 0px;
     border-bottom-left-radius: 0px;
     padding: 0 .92rem;
-    height: 2.85rem;
+    height: calc(2.85rem - 2px);
     letter-spacing: .2px;
     color: black;
     background: #FFC700;
