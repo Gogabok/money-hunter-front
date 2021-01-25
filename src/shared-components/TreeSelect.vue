@@ -127,7 +127,6 @@
       }
     },
     mounted() {
-      console.log(123312)
       this.handleLocalSearch();
     }
   }
