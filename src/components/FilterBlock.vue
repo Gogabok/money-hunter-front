@@ -327,7 +327,7 @@
           this.categories = [...this.categories.filter(item => item > 0)];
           this.savedCategoriesOptions = [...this.categoryOptions];
         } else if (searchQuery.length <= 0 && this.categoriesSelectorMode === 'flat') {
-          this.isCategoriesLoading = true
+          // this.isCategoriesLoading = true
           this.categoriesSelectorMode = 'branch';
           this.categoryOptions = [...this.savedCategoriesOptions];
           this.categories.forEach(async category => {
@@ -338,9 +338,9 @@
           })
         }
 
-        if(searchQuery.length > 0 && this.categoriesSelectorMode === 'flat') {
+        // if(searchQuery.length > 0 && this.categoriesSelectorMode === 'flat') {
           this.loadCategoriesQuery();
-        }
+        // }
       },
       async loadCategoriesQuery() {
         const service = new BlackboxService();
@@ -350,7 +350,9 @@
           result['id'] = result.pk
           result['children'] = false
         })
-        this.categoryOptions = [...results]
+        if(this.categoriesSearchQuery.length > 0 && this.categoriesSelectorMode === 'flat') {
+          this.categoryOptions = [...results]
+        }
       },
       handleMenuOpen() {
         if(this.categoriesSearchQuery.length <= 0 && this.categoryOptions.length > 1) {
@@ -678,11 +680,11 @@
             
             newCategoryOptions[indexOfCategoryToChange] = {...parentIds[parentIds.length - 1]};
 
-            this.categoryOptions[0].children = null;
+            // this.categoryOptions[0].children = null;
 
-            this.$nextTick(() => {
+            // this.$nextTick(() => {
               this.categoryOptions[0].children = [...newCategoryOptions];
-            })
+            // })
           }
         })
 
