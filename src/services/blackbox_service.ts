@@ -15,7 +15,7 @@ export class BlackboxService {
     _data.ordersRange = this.normalizeRangeData({ data: data.ordersRange, min: 0, max: 900000 });
     _data.priceRange = this.normalizeRangeData({ data: data.priceRange, min: 1, max: 900000 });
     _data.ratingRange = this.normalizeRangeData({ data: data.ratingRange, min: 0, max: 5 });
-    _data.revenueRange = this.normalizeRangeData({ data: data.revenueRange, min: 0, max: 9999999 });
+    _data.revenueRange = this.normalizeRangeData({ data: data.revenueRange, min: 0, max: 900000 });
     _data.brands = [...data.brands];
     _data.categories = [...data.categories];
     _data.addWords = [...data.addWords];
@@ -204,9 +204,9 @@ export class BlackboxService {
     }
   }
 
-  async getCategoriesBySearch(name: string) {
+  async getCategoriesBySearch(name: string, page: number) {
     try {
-      return (await this.service.refreshWrapper(this.repo.getCategoriesBySearch.bind(this.repo, name))).data;
+      return (await this.service.refreshWrapper(this.repo.getCategoriesBySearch.bind(this.repo, name, page))).data;
     } catch (e) {
       return e.message;
     }

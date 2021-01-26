@@ -6,64 +6,112 @@
           <div class="filter-form__column selectors">
             <div class="filter-form__column-item customWidthSelector">
               <TreeSelect label="Выберите категории"
-                      v-if="!isCategoriesLoading"
-                      v-model="categories"
-                      :options="categoryOptions"
-                      :normalizer="node=>({...node, label: node.name})"
-                      :limit="3"
-                      :limitText="count=>`и еще ${count}`"
-                      :multiple="true"
-                      :load-options="loadOptions"
-                      @search-change="searchChange"
-                      @open="handleMenuOpen"
-                      ref="CategoriesTreeselect"
-                      :loadingText="'Загрузится в течении 1 минуты'"
-                      :dont-use-local-search="true"/>
+                        v-if="!isCategoriesLoading"
+                        v-model="categories"
+                        :options="categoryOptions"
+                        :normalizer="node=>({...node, label: node.name})"
+                        :limit="3"
+                        :limitText="count=>`и еще ${count}`"
+                        :multiple="true"
+                        :load-options="loadOptions"
+                        @search-change="searchChange"
+                        ref="CategoriesTreeselect"
+                        :loadingText="'Загрузка категорий'"
+                        :dont-use-local-search="true"
+                        @open="handleMenuOpen"
+                        :flatten-search-results="true"
+                        :helper="'Lorem helper lorem helper lorem helper lorem helper lorem helper lorem helper'"/>
             </div>
             <div class="filter-form__column-item">
               <ValidationProvider class="brandsSelector" :rules="{required: true}" key="byBrandType">
                 <BrandsSelector
                   v-model="brands"
                   @brands="brandsFinding"
+                  :helper="'Lorem helper lorem helper lorem helper lorem helper lorem helper lorem helper'"
                 />
               </ValidationProvider>
             </div>
           </div>
           <div class="filter-form__column column-fields-price">
             <div class="filter-form__column-item">
-              <InputField label="Цена" range v-model="priceRange" :min="1" :max="900000"/>
+              <InputField 
+                label="Цена" 
+                range 
+                v-model="priceRange" 
+                :min="1" 
+                :max="900000"
+                :helper="'Lorem helper lorem helper lorem helper lorem helper lorem helper lorem helper'"
+              />
             </div>
             <div class="filter-form__column-item">
-              <FindWords label="Плюс слова" :value="addWords" v-model="addWords"></FindWords>
+              <FindWords 
+                label="Плюс слова" 
+                :value="addWords" 
+                v-model="addWords"
+                :helper="'Lorem helper lorem helper lorem helper lorem helper lorem helper lorem helper'"
+              ></FindWords>
             </div>
           </div>
           <div class="filter-form__column column-fields-rating">
             <div class="filter-form__column-item">
-              <InputField label="Рейтинг" range v-model="ratingRange" :min="0" :max="5"/>
+              <InputField 
+                label="Рейтинг" 
+                range 
+                v-model="ratingRange" 
+                :min="0" 
+                :max="5"
+                :helper="'Lorem helper lorem helper lorem helper lorem helper lorem helper lorem helper'"
+              />
             </div>
             <div class="filter-form__column-item">
-              <FindWords label="Минус слова" v-model="minusWords"></FindWords>
+              <FindWords 
+                label="Минус слова" 
+                v-model="minusWords"
+                :helper="'Lorem helper lorem helper lorem helper lorem helper lorem helper lorem helper'"
+              ></FindWords>
             </div>
           </div>
           <div class="filter-form__column column-fields-last">
             <div class="filter-form__column-item">
-              <InputField label="Отзывы" range v-model="feedbackRange" :min="0" :max="900000"/>
+              <InputField 
+                label="Отзывы" 
+                range 
+                v-model="feedbackRange" 
+                :min="0" 
+                :max="900000"
+                :helper="'Lorem helper lorem helper lorem helper lorem helper lorem helper lorem helper'"
+              />
             </div>
             <div class="filter-form__column-item">
               <ValidationProvider class="providersSelector" :rules="{required: true}" key="byProvidersType">
                 <ProvidersSelector
                   v-model="providers_ids"
                   @providers="providersFinding"
+                  :helper="'Lorem helper lorem helper lorem helper lorem helper lorem helper lorem helper'"
                 />
               </ValidationProvider>
             </div>
           </div>
           <div class="filter-form__column column-fields-last">
             <div class="filter-form__column-item">
-              <InputField :label="revenueRangeLabel" range v-model="revenueRange" :min="0" :max="9999999"/>
+              <InputField 
+                :label="revenueRangeLabel" 
+                range 
+                v-model="revenueRange" 
+                :min="0" 
+                :max="900000"
+                :helper="'Lorem helper lorem helper lorem helper lorem helper lorem helper lorem helper'"
+              />
             </div>
             <div class="filter-form__column-item">
-              <InputField :label="ordersRangeLabel" range v-model="ordersRange" :min="0" :max="900000"/>
+              <InputField 
+                :label="ordersRangeLabel" 
+                range 
+                v-model="ordersRange" 
+                :min="0" 
+                :max="900000"
+                :helper="'Lorem helper lorem helper lorem helper lorem helper lorem helper lorem helper'"
+              />
             </div>
           </div>
         </div>
@@ -96,29 +144,18 @@
                clazz="filter-form__action-button filter-form__action-button_clear"
                @click="changeFilterMode"/>
           <Btn without-default-class
-               v-if="filtersMode === 'byCommonFilters'"
                label="Загрузить фильтр"
                clazz="filter-form__action-button filter-form__action-button_download"
                @click="loadProject"/>
           <Btn without-default-class
-               v-if="filtersMode === 'byCommonFilters'"
                label="Сохранить фильтр"
                clazz="filter-form__action-button filter-form__action-button_save"
                @click="saveProject"/>
           <Btn without-default-class
                @click="resetFilters"
-               v-if="filtersMode === 'byCommonFilters'"
                label="Очистить фильтры"
                type="reset"
                clazz="filter-form__action-button filter-form__action-button_clear"/>
-          <Btn without-default-class
-               label="Скачать поиск"
-               :clazz="`filter-form__action-button 
-               filter-form__action-button_saveSearchResult
-               ${downloadBtnStatus}`"
-               :loading="downloadBtnStatus === 'loading'"
-               v-if="downloadBtnStatus !== 'hidden'"
-               @click="downloadSearchResults"/>
         </div>
         <div class="filter-form__send">
           <Btn v-if="filtersMode === 'byCommonFilters'" :loading="isLoading" label="Найти" clazz="button_save" @click="searchBtnHandler"/>
@@ -134,6 +171,8 @@
   import RowWithIcon from "../shared-components/RowWithIcon";
 
   import SearchImage from '../assets/img/ikons/search.svg';
+
+  import {debounce} from "lodash";
 
   import Btn from "@/shared-components/Btn";
   import {SHOW_MODAL_MUTATION} from "@/store/modules/modal/constants";
@@ -160,10 +199,6 @@
       },
       isLoading: {
         type: Boolean,
-        required: false
-      },
-      downloadBtnStatus: {
-        type: [String, Boolean],
         required: false
       },
       days: {
@@ -195,6 +230,7 @@
         minusWords: [],
 
         foundedBrands: null,
+        
         foundedProviders: null,
 
         providers_ids: ['all'],
@@ -210,11 +246,15 @@
           children: null
         }],
 
-        isCategoriesSearching: false,
-
-        categoriesPortionPage: 1,
-        categoriesPortionSize: 30,
+        categoriesNextPageUrl: 1,
         categoriesSearchQuery: "",
+        categoriesSearchLoading: false,
+
+        savedCategories: null,
+        savedCategoriesOptions: null,
+        categoriesSelectorMode: 'branch',
+
+        categoriesSearchQueryDebounce: debounce(this.loadCategoriesQuery, 0),
 
         dataLoaded: false,
 
@@ -249,18 +289,14 @@
       if(this.categories.find(item => item === 0) === 0 || this.categories.length === 0) {
         this.categories = [0]
       }
+      if(this.savedCategoriesOptions) {
+        this.categoryOptions = this.savedCategoriesOptions
+      }
       this.$store.commit('blackbox/saveFiltersLocal', this.$data)
     },
     methods: {
       selectedIds(ids) {
         this.selectedArticulesInInput = ids.map(item => item.id)
-      },
-      changeFilterMode() {
-        if(this.filtersMode === 'byCommonFilters') {
-          this.filtersMode = 'byArticul'
-        } else if(this.filtersMode === 'byArticul') {
-          this.filtersMode = 'byCommonFilters'
-        }
       },
       async searchBtnHandler() {
         await this.checkSearchID();
@@ -282,53 +318,104 @@
       }
       ,
       searchChange(searchQuery) {
-        this.categories.forEach((item, idx) => {
-          if(item === 0) {
-            this.categories.splice(idx, 1)
-          }
+        this.categoriesSearchQuery = searchQuery;
+        this.categoriesSearchLoading = false;
+        this.categoriesPortionPage = 1;
+
+        if(searchQuery.length > 0 && this.categoriesSelectorMode === 'branch') {
+          this.categoriesSelectorMode = 'flat';
+          this.categories = [...this.categories.filter(item => item > 0)];
+          this.savedCategoriesOptions = [...this.categoryOptions];
+        } else if (searchQuery.length <= 0 && this.categoriesSelectorMode === 'flat') {
+          this.isCategoriesLoading = true
+          this.categoriesSelectorMode = 'branch';
+          this.categoryOptions = [...this.savedCategoriesOptions];
+          this.categories.forEach(async category => {
+            await this.updateMyCategories(category)
+          })
+          this.$nextTick(() => {
+            this.isCategoriesLoading = false
+          })
+        }
+
+        if(searchQuery.length > 0 && this.categoriesSelectorMode === 'flat') {
+          this.loadCategoriesQuery();
+        }
+      },
+      async loadCategoriesQuery() {
+        const service = new BlackboxService();
+        const searchResults = await service.getCategoriesBySearch(this.categoriesSearchQuery);
+        const results = searchResults.results;
+        results.forEach(result => {
+          result['id'] = result.pk
+          result['children'] = false
         })
-        this.$nextTick(() => {
-          if(searchQuery.length > 0) {
-            this.isCategoriesSearching = true
-            this.categoriesSearchQuery = searchQuery
-            const potentialItems = this.categories_list.filter(function(val) {
-              return val.name.toLowerCase().match(searchQuery.toLowerCase())
-            });
-            this.categoryOptions = [...potentialItems.slice(0, this.categoriesPortionSize)]
-          } else {
-            this.isCategoriesSearching = false
-            this.categoriesPortionPage = 1
-            this.categoriesPortionSize = 30
-            this.revertCategories()
-          }
-        })
+        this.categoryOptions = [...results]
       },
       handleMenuOpen() {
-        this.$nextTick(() => {
-          const menu = this.$refs.CategoriesTreeselect.getMenu();
-          menu.addEventListener('scroll', () => {
-            if(this.isCategoriesSearching) {
-              const hasReachedEnd = menu.scrollHeight - menu.scrollTop <= menu.clientHeight * 1.25;
-              if (hasReachedEnd) {
-                this.categoriesPortionPage += 1;
-                const fromIndex = (this.categoriesPortionPage - 1) * this.categoriesPortionSize + 1;
-                const toIndex = this.categoriesPortionPage * this.categoriesPortionSize;
-                this.loadCategoriesFromSearch(fromIndex, toIndex)
-              }
-            }
+        if(this.categoriesSearchQuery.length <= 0 && this.categoryOptions.length > 1) {
+          this.categoriesSelectorMode = 'branch';
+          this.categoryOptions = [...this.savedCategoriesOptions];
+          this.categories.forEach(async category => {
+            await this.updateMyCategories(category)
           })
-        })
+        } else {
+          this.$nextTick(() => {
+            const menu = this.$refs.CategoriesTreeselect.getMenu();
+            menu.addEventListener('scroll', async () => {
+              if(this.categoriesSelectorMode === 'flat') {
+                const hasReachedEnd = menu.scrollHeight - menu.scrollTop <= menu.clientHeight * 1.25;
+                if (hasReachedEnd && !this.categoriesSearchLoading) {
+                  this.categoriesSearchLoading = true
+                  this.categoriesPortionPage += 1;
+                  const service = new BlackboxService();
+                  const searchResults = await service.getCategoriesBySearch(this.categoriesSearchQuery, this.categoriesPortionPage);
+                  const results = searchResults.results;
+
+                  if(!results) return;
+
+                  results.forEach(result => {
+                    result['id'] = result.pk
+                    result['children'] = false
+                  })
+                  this.categoryOptions.push(...results)
+                  this.categoriesSearchLoading = false;
+
+                }
+              }
+            })
+          })
+        }
       },
-      loadCategoriesFromSearch(fromIndex, toIndex) {
-        const potentialItems = this.categories_list.filter((val) => {
-          return val.name.toLowerCase().match(this.categoriesSearchQuery.toLowerCase())
-        });
-        this.categoryOptions = potentialItems.splice(0, toIndex)
-      },
+      // loadCategoriesFromSearch(fromIndex, toIndex) {
+      //   const potentialItems = this.categories_list.filter((val) => {
+      //     return val.name.toLowerCase().match(this.categoriesSearchQuery.toLowerCase())
+      //   });
+      // },
       getAgregatedData() {
         this.$store.dispatch(`blackbox/${GET_AGREGATED_DATA}`);
       },
+      async getCategories() {
+        const service = new BlackboxService();
+        let categories = [];
+        if(this.categories.includes(0)) {
+          categories = [0];
+        } else {
+          await Promise.all(this.categories.map(async (category) => {
+            const foundedCategory = this.categoryOptions[0].children.find(obj => obj.id === category)
+            if(foundedCategory && foundedCategory.parent_id === null) {
+              const children_categories = await service.getCategory({id: foundedCategory.id, children: true});
+              children_categories.forEach(child => categories.push(child.pk))
+            } else {
+              categories.push(category)
+            }
+          }));
+        }
+
+        return categories;
+      },
       async checkSearchID() {
+        this.$emit('setTableLoading', true)
         const data = {...this.$data};
         delete data.searchIcon;
         delete data.availableOptions;
@@ -336,38 +423,24 @@
         delete data.categories;
         delete data.providers_ids;
         delete data.categoryOptions;
+
+
         data.days = this.days;
+
         if(this.brands.length === 0) {
           this.brands = ['all']
         }
+
         if(this.providers_ids.length === 0) {
           this.providers_ids = ['all']
         }
+
         if(this.categories.length === 0) {
           this.categories = [0]
         }
-      
-        const categories = []
-        if(this.categories.find(item => item === 0)) {
-          this.categories = [0]
-        }
-        if(this.categories[0] !== 0) {
-          this.categories.forEach(category => {
-            const isIncluded = this.allCategories[0].children.find(item => item.id === category)
-            if(isIncluded) {
-              const childCategories = isIncluded.children_id
-              if(childCategories.length > 0) {
-                categories.push(...childCategories)
-              }
-            } else {
-              categories.push(category)
-            }
-          })
-          data.categories = categories
-        } else {
-          data.categories = [0]
-        }
-        
+
+        data.categories = await this.getCategories();
+
         let brands = [...this.brands];
         if (brands[0] !== 'all') {
           brands = []
@@ -376,6 +449,7 @@
           })
         }
         data.brands = brands
+
         let providers = [...this.providers_ids];
         if (providers[0] !== 'all') {
           providers = []
@@ -386,6 +460,7 @@
           providers = []
         }
         data.providers_ids = providers
+
         await this.$store.dispatch(`blackbox/${CHECK_SEARCH_ID_ACTION}`, data);
       }
       ,
@@ -393,46 +468,14 @@
         const data = {...this.$data};
         delete data.searchIcon;
         delete data.availableOptions;
-        delete data.brands;
-        delete data.categories;
-        delete data.providers_ids;
         delete data.categoryOptions;
+        delete data.brands;
+        data.providers_ids = [];
+        data.brands = ['all'];
         data.days = this.days;
         data.ids = this.selectedArticulesInInput;
-        if(this.brands.length === 0) {
-          this.brands = ['all']
-        }
-        if(this.providers_ids.length === 0) {
-          this.providers_ids = ['all']
-        }
-        if(this.categories.length === 0) {
-          this.categories = [0]
-        }
-      
-        const categories = [];
-        if(this.categories.find(item => item === 0)) {
-          this.categories = [0]
-        } 
-        
-        data.categories = this.categories;
-        let brands = [...this.brands];
-        if (brands[0] !== 'all') {
-          brands = []
-          this.brands.forEach(id => {
-            brands.push(this.foundedBrands.find(item => item.id === id).id)
-          })
-        }
-        data.brands = brands
-        let providers = [...this.providers_ids];
-        if (providers[0] !== 'all') {
-          providers = []
-          this.providers_ids.forEach(id => {
-            providers.push(this.foundedProviders.find(item => item.id === id).name)
-          })
-        } else if (providers[0] === 'all') {
-          providers = []
-        }
-        data.providers_ids = providers
+        this.$emit('setTableLoading', true)
+
         await this.$store.dispatch(`blackbox/${CHECK_SEARCH_ID_ACTION}`, data);
       }
       ,
@@ -483,7 +526,7 @@
           if(data.revenueRange[0] <= 0) {
             data.revenueRange[0] = ''
           } 
-          if(data.revenueRange[1] >= 9999999) {
+          if(data.revenueRange[1] >= 900000) {
             data.revenueRange[1] = ''
           } 
           this.revenueRange = data.revenueRange;
@@ -502,14 +545,6 @@
             })
           } else {
             providers = ['all']
-          }
-          if(data.categories[0] !== 0) {
-            this.categoryOptions = [{
-              id: 0,
-              name: 'Все',
-              isDefaultExpanded: true,
-              children: this.allCategories[0].children
-            }]
           }
           if(this.categoryOptions[0].children) {
             this.categoryOptions = data.categoryOptions
@@ -536,7 +571,9 @@
           })
         }
         _data["brands"] = brands
+
         _data['days'] = this.days
+
         let providers = [...this.providers_ids];
         if (this.providers_ids[0] !== 'all') {
           providers = []
@@ -545,118 +582,117 @@
           })
         }
         _data["providers"] = providers
+
         this[SHOW_MODAL_MUTATION]({component: SaveProject, data: _data});
       },
-      compareTime(dateString, now) {
-        const differentTime = 86400000
-        if(dateString + differentTime <= now) {
-          return true
-        } else {
-          return false
-        }
-      }
-      ,
       async loadCategories() {
-        let categories = null
-        // const cachedCategories = JSON.parse(localStorage.getItem("categories"))
-        const cachedCategories = false
-        if(cachedCategories) {
-          categories = cachedCategories
-
-          this.isCategoriesLoading = true
-          this.$nextTick(() => {
-            this.isCategoriesLoading = false
-            const timestamp = cachedCategories.timestamp
-            const timeNow = new Date().getTime()
-            if(this.compareTime(Number.parseInt(timestamp), timeNow)) {
-              this.loadUpdatedCategories()
-            }
-          })
-        } else {
-          categories = await this.loadUpdatedCategories()
-          localStorage.setItem('isCategoriesUpdated', true)
-        }
-        this.categories = [0]
-        this.allCategories = categories.categories
-        this.categories_list = categories.categories_list
-        
-        const isCategoriesUpdated = JSON.parse(localStorage.getItem('isCategoriesUpdated'))
-        
-        if(!isCategoriesUpdated || !categories?.categories || !categories?.categories_list) {
-          this.isCategoriesLoading = true
-          await this.loadUpdatedCategories()
-          this.$nextTick(() => {
-            this.isCategoriesLoading = false
-            localStorage.setItem('isCategoriesUpdated', true)
-            
-            this.categories = [0]
-            this.allCategories = categories.categories
-            this.categories_list = categories.categories_list
-          })
-        }
-      }
-      ,
-      async loadUpdatedCategories () {
         const service = new BlackboxService();
+        const categories = await service.getCategory({id: 0, children: true});
 
-        const loadedCategories = await service.getCategories()
+        await categories.forEach(category => {
+          category['id'] = category.pk
+          category['children'] = null
+        })
 
-        this.allCategories = loadedCategories.categories
-        this.categories_list = loadedCategories.categories_list
+        this.categoryOptions = [{
+          id: 0,
+          name: "Все",
+          isDefaultExpanded: true,
+          children: categories
+        }]
 
-        localStorage.setItem("categories", JSON.stringify({categories: loadedCategories.categories, categories_list: loadedCategories.categories_list, timestamp: new Date().getTime().toString()}))
-        
         this.isCategoriesLoading = true
         this.$nextTick(() => {
           this.isCategoriesLoading = false
         })
-        return loadedCategories
-      }
-      ,
-      loadOptions({ action, parentNode, callback }) {
+      },
+      async loadOptions({ action, parentNode, callback }) {
         if(parentNode.id !== 0) {
           if (action === LOAD_CHILDREN_OPTIONS) {
-            if(parentNode.children_id.length > 0) {
-              const parentChildrens = this.allCategories[0].children.find(item => item.id === parentNode.id).children
-              parentNode.children = parentChildrens ? parentChildrens : false
-              callback()
-            }
+            const service = new BlackboxService();
+            const categories = await service.getCategory({id: parentNode.pk, children: true});
+
+            await categories.forEach(category => {
+              category['id'] = category.pk
+              category['children'] = category.children ? null : false
+            })
+
+            parentNode.children = categories;
+          
+            callback()
           }
         }
       },
-      downloadSearchResults() {
-        this.$emit('downloadSearchResults')
-      }
-      ,
-      revertCategories() {
-        if(!this.dataLoaded) {
-          if(this.allCategories) {
-            const categories = this.allCategories
-            const newCats = []
-            categories[0].children.forEach(item => {
-              const cat = {
-                children_id: item.children_id,
-                id: item.id,
-                name: item.name
-              }
-              if(item.children_id.length > 0) {
-                cat['children'] = null
-              }
-              newCats.push(cat)
-            })
-            this.categoryOptions = [{
-              id: 0,
-              name: "Все",
-              isDefaultExpanded: true,
-              children: newCats
-            }]
-          } else this.categoryOptions = [{
-            id: 0,
-            name: 'Все',
-            isDefaultExpanded: true,
-            children: null
-          }]
+      changeFilterMode() {
+        if(this.filtersMode === 'byCommonFilters') {
+          this.filtersMode = 'byArticul'
+        } else if(this.filtersMode === 'byArticul') {
+          this.filtersMode = 'byCommonFilters'
         }
+      },
+      async loadProviders() {
+        const service = new BlackboxService();
+        const loadedProviders = await service.getProviders();
+          
+        this.loadedProviders = loadedProviders;
+      },
+      async updateMyCategories(category) {
+        const parentIds = [];
+        let firstlyCategory = category;
+        const service = new BlackboxService();
+        
+        const getParentCategory = ( async category => {
+          const loadedCategory = await service.getCategory({id: category, children: false});
+          if(firstlyCategory === category) {
+            firstlyCategory = loadedCategory[0];
+            firstlyCategory.children = loadedCategory[0].children ? null : false;
+            firstlyCategory['id'] = firstlyCategory.pk;
+          } else {
+            parentIds.push(loadedCategory[0])
+          }
+          if(loadedCategory[0].parent_id) {
+            getParentCategory(loadedCategory[0].parent_id)
+          } else {
+            for(let i = parentIds.length; i >= 0; i-- ) {
+              if(parentIds[i]) {
+                parentIds[i]['id'] = parentIds[i].pk;
+                const childrens = await service.getCategory({id: parentIds[i].pk, children: true});
+                childrens.forEach(child => {
+                  child['id'] = child.pk;
+                  child.children = child.children ? null : false;
+                })
+                parentIds[i]['children'] = childrens;
+              }
+            }
+            // parentIds[0].children.push(firstlyCategory)
+            for(let i = 0; i < parentIds.length - 1; i++) {
+              let int = i;
+              ++int
+              if(parentIds[int]) {
+                parentIds[int].children.find(child => child.pk === parentIds[i].pk).children = parentIds[i].children
+              }
+            }
+            const newCategoryOptions = [...this.categoryOptions[0].children];
+
+            const indexOfCategoryToChange = newCategoryOptions.findIndex(item => item.pk === parentIds[parentIds.length - 1].pk)
+            
+            newCategoryOptions[indexOfCategoryToChange] = {...parentIds[parentIds.length - 1]};
+
+            this.categoryOptions[0].children = null;
+
+            this.$nextTick(() => {
+              this.categoryOptions[0].children = [...newCategoryOptions];
+            })
+          }
+        })
+
+        getParentCategory(category)
+      },
+      async getParentCategory(childCategoryId) {
+        const service = new BlackboxService();
+        const loadedCategory = await service.getCategory({id: childCategoryId, children: false});
+
+        return loadedCategory.parent_id;
       },
       ...
         mapMutations('modal', [SHOW_MODAL_MUTATION])
@@ -667,18 +703,20 @@
         this.brands = []
         this.providers_ids = []
         this.dataLoaded = true
-        this.allCategories = []
         this.$nextTick(() => {
 
           Object.keys(this.$data).forEach(key => {
             this.$data[key] = myLocalFilters[key]
           })
 
-          if(this.categories.find(item => item === 0) !== 0) {
-            this.$nextTick(() => {
-              this.categoryOptions[0].children = this.allCategories[0].children
-            })
-          }
+          this.categories.forEach(async category => {
+            await this.updateMyCategories(category)
+          })
+
+          this.isCategoriesLoading = true
+          this.$nextTick(() => {
+            this.isCategoriesLoading = false
+          })
 
         })
       } else {
@@ -688,7 +726,7 @@
     watch: {
       allCategories: {
         handler: function () {
-          this.revertCategories()
+          // this.revertCategories()
           // if(this.allCategories) {
           //   this.isCategoriesLoading = false
           // }
@@ -767,6 +805,22 @@
     background: white;
     border: 1px solid $drayDevider;
     position: relative;
+    &-title {
+      padding: 3px 10px;
+      display: block;
+      background: #F7F8FC;
+      position: absolute;
+      left: 0px;
+      top: 0px;
+      font-weight: 500;
+      color: #9FA2B4;
+      font-size: 13px;
+      border-top-left-radius: 8px;
+      border-bottom-right-radius: 8px;
+      border-right: 1px solid #DFE0EB;
+      border-bottom: 1px solid #DFE0EB;
+      user-select: none;
+    }
     &-form__columns {
       display: flex;
       & .filter-form__column {
@@ -883,8 +937,8 @@
           &.column-fields-last {
             display: flex;
             flex-direction: row;
-            justify-content: flex-start;
-            width: calc(100% - 20px);
+            justify-content: space-between;
+            width: 100%;
             max-width: 100%;
             margin: 0px;
             & .filter-form__column-item {
