@@ -526,7 +526,7 @@
           if(data.revenueRange[0] <= 0) {
             data.revenueRange[0] = ''
           } 
-          if(data.revenueRange[1] >= 900000) {
+          if(data.revenueRange[1] >= 999999999) {
             data.revenueRange[1] = ''
           } 
           this.revenueRange = data.revenueRange;
