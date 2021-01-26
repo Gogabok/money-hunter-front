@@ -1,14 +1,14 @@
 <template>
   <div class="tarif__item" :class="clazz">
     <div class="tarif__name">{{name}}</div>
-    <template v-if="isBuyable">
+    <template>
       <div class="tariff-price"> 
-        <span class='tariff-price-actual'>{{price}} ₽</span>
-        <div class="tariff-price-desc">
+        <span v-if="isBuyable" class='tariff-price-actual'>{{price}} ₽</span>
+        <div v-if="isBuyable" class="tariff-price-desc">
           <span class="tariff-price-desc-oldPrice" v-if="oldPrice > 0">{{ oldPrice }} ₽</span>
           <div class="tariff-price-desc-at">в месяц</div>
         </div>
-        <div class="tariff-price-saleInfo" v-if="saleInfo">
+        <div class="tariff-price-saleInfo" v-if="saleInfo && isBuyable">
           <span class="tariff-price-saleInfo-saleAmount">{{ saleInfo.saleAmount }}</span>
           <div class="tariff-price-saleInfo-saleDesc">{{ saleInfo.saleDesc }}</div>
         </div>
@@ -261,6 +261,7 @@
     align-items: center;
     // justify-content: center;
     margin: 1.61rem 0;
+    height: 30px;
     &-actual {
       display: flex;
       flex-direction: column;

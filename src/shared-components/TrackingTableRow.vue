@@ -30,9 +30,9 @@
            <div v-if="item.image" class="product-photo row-with-photo"><img :src="item.image" alt="">{{ formattingNum(item) }}</div>
            <span v-else>
              {{ formattingNum(item) }}
-             <div class="tracking-table__cell-splicedPrice" v-if="item.name === 'currentPrice'">
+             <!-- <div class="tracking-table__cell-splicedPrice" v-if="item.name === 'currentPrice'"> -->
                <!-- (<span>{{ rowData.splicedPrice.firstPrice }}₽</span> | <span @click.stop="openCalculator">{{ rowData.splicedPrice.secondPrice }}₽</span>) -->
-             </div>
+             <!-- </div> -->
            </span>
         </template>
       </td>
