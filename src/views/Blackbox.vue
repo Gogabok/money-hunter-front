@@ -406,9 +406,9 @@
     },
     async mounted() {
       this.$initPaginationHandlers(this.prevHandler, this.nextHandler);
-      if(localStorage.getItem('isTutorialCompleted')) {
-        return;
-      } else {
+      // if(localStorage.getItem('isTutorialCompleted')) {
+      //   return;
+      // } else {
         this.$nextTick(() => {
           this.BlackboxTour = this.$shepherd({
             useModalOverlay: true
@@ -672,9 +672,11 @@
             classes: 'tour-step'
           });
 
-          this.BlackboxTour.start();
+          setTimeout(() => {
+            this.BlackboxTour.start();
+          }, 500);
         });
-      }
+      // }
     },
     beforeDestroy() {
       const _data = {...this.$data}

@@ -4,17 +4,19 @@
       <form action="" class="user-data-form">
         <div class="user-data__item">
           <ValidationProvider :rules="{required: true}" v-slot="{errors}">
-            <InputField label="ФИО" v-model="userName" :error="$getValidationError(errors)"/>
+            <InputField @button-event="handleSubmit(postUser)" :buttonLabel="oldUserName !== userName ? 'Сохранить' : false" label="ФИО" v-model="userName" :error="$getValidationError(errors)"/>
           </ValidationProvider>
         </div>
         <div class="user-data__item">
           <ValidationProvider :rules="{required: true}" v-slot="{errors}">
-            <InputField label="Компания" v-model="companyName" :error="$getValidationError(errors)"/>
+            <InputField @button-event="handleSubmit(postUser)" :buttonLabel="oldCompanyName !== companyName ? 'Сохранить' : false" label="Компания" v-model="companyName" :error="$getValidationError(errors)"/>
           </ValidationProvider>
         </div>
         <div class="user-data__item">
           <ValidationProvider :rules="{required: true, phonenumber: true}" v-slot="{errors}">
             <InputField label="Телефонный номер"
+                        @button-event="handleSubmit(postUser)"
+                        :buttonLabel="oldPhoneNumber !== phoneNumber ? 'Сохранить' : false"
                         v-model="phoneNumber"
                         placeholder="8 (___) ___-__-__"
                         :mask="'8 (###) ###-##-##'"
@@ -29,7 +31,7 @@
         </div>
         <div class="user-data__item">
           <template>
-            <InputField :buttonLabel="'Применить'" @button-event="setPromocode" :label="`Промокод${codeText ? '. ' + codeText : ''}`" type="text" :clazz="`input-field__input ${codeStatus}`" placeholder="Введите промокод" v-model="promocode"/>
+            <InputField :buttonLabel="promocode.length > 0 ? 'Применить' : false" @button-event="setPromocode" :label="`Промокод${codeText ? '. ' + codeText : ''}`" type="text" :clazz="`input-field__input ${codeStatus}`" placeholder="Введите промокод" v-model="promocode"/>
             <!-- <button @click="setPromocode" class="modal-form__promocod-done" :class="codeStatus" type="button"/> -->
           </template>
         </div>
@@ -38,19 +40,18 @@
         </div>
       </form>
 
-      <div class="user-data-change">
+      <!-- <div class="user-data-change">
         <Btn label="Изменить" clazz="button__change" @click="handleSubmit(postUser)"/>
       </div>
       <div class="user-data-rates">
         <Btn label="Тарифы" @click="handleRouteToTariffs"/>
-      </div>
+      </div> -->
     </ValidationObserver>
   </div>
 </template>
 
 <script>
   import InputField from "../shared-components/InputField";
-  import Btn from "../shared-components/Btn";
   import {ValidationObserver, ValidationProvider} from 'vee-validate';
   import {POST_USER_ACTION, SET_USER_MUTATION} from "@/store/modules/user/constants";
   import {SHOW_MODAL_MUTATION, SET_MODAL_RESPONSE_MUTATION} from "@/store/modules/modal/constants";
@@ -62,11 +63,14 @@
 
   export default {
     name: "UserData",
-    components: {InputField, Btn, ValidationObserver, ValidationProvider, TelegramNotificationInput},
+    components: {InputField, ValidationObserver, ValidationProvider, TelegramNotificationInput},
     data: () => ({
       promocode: '',
       codeStatus: '',
-      codeText: ''
+      codeText: '',
+      oldUserName: null,
+      oldCompanyName: null,
+      oldPhoneNumber: null,
     }),
     computed: {
       user() {
@@ -110,11 +114,19 @@
         return this.$store.getters['user/isReccurent']
       },
     },
+    mounted() {
+      this.oldUserName = this.userName;
+      this.oldCompanyName = this.companyName;
+      this.oldPhoneNumber = this.phoneNumber;
+    },
     methods: {
       async postUser() {
         const result = await this.$store.dispatch(`user/${POST_USER_ACTION}`);
         if (result) {
           this.$store.commit('notifications/ADD_NOTIFICATION', {text: 'Информация сохранена', status: 'success'})
+          this.oldUserName = this.userName;
+          this.oldCompanyName = this.companyName;
+          this.oldPhoneNumber = this.phoneNumber;
         }
       },
       setUserData(type, value) {

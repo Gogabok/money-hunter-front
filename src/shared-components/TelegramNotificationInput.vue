@@ -2,8 +2,8 @@
     <div class="TelegramNotificationInput">
         <span class="TelegramNotificationInput-title">
             {{ !isRegistered 
-               ? 'Подключить уведомления в Telegram'
-               : 'Уведомления через Telegram подключены' }}
+               ? 'Подключить уведомления Telegram'
+               : 'Уведомления Telegram подключены' }}
         </span>
         <Btn
             @click="FindMeWithTelegram"
@@ -15,7 +15,7 @@
 
 <script>
 import Btn from "@/shared-components/Btn"
-import UserRegistrationViaTelegramModal from "@/components/telegram-notifications/UserRegistrationViaTelegramModal.vue";
+// import UserRegistrationViaTelegramModal from "@/components/telegram-notifications/UserRegistrationViaTelegramModal.vue";
 import axios from "axios";
 export default {
     name: "TelegramNotificationInput",

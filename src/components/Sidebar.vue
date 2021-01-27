@@ -43,7 +43,8 @@
         links: [
           {name: 'Поиск товаров', systemName: 'blackbox'},
           {name: 'Избранное', systemName: 'tracking'},
-          {name: 'Профиль', systemName: 'profile'},
+          // {name: 'Профиль', systemName: 'profile'},
+          {name: 'Тарифы', systemName: 'rates'},
           {name: 'Отслеживание позиций', systemName: 'trackingPositions'},
           // {name: 'Калькулятор', systemName: 'calculator'},
         ],
@@ -160,11 +161,11 @@
     }
 
     &:nth-child(3) {
-      background: url("../assets/img/ikons/nav-ikon_3.svg") no-repeat;
+      background: url("../assets/img/ikons/nav-ikon_5.svg") no-repeat;
       background-position: 2.28rem center;
 
       &.sidebar-navigation-item_active {
-        background: url("../assets/img/ikons/nav-ikon_3_active.svg") no-repeat, rgba(159, 162, 180, .08);
+        background: url("../assets/img/ikons/nav-ikon_5_active.svg") no-repeat, rgba(159, 162, 180, .08);
         background-position: calc(2.28rem - 3px) center;
       }
     }
