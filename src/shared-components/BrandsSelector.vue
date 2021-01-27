@@ -8,12 +8,11 @@
     :multiple="true"
     :limit="3"
     :limitText="count=>`и еще ${count}`"
-    :load-options="loadBrands"
     :options="[{
       id: 'all',
       name: 'Все',
       isDefaultExpanded: true,
-      children: brandOptions
+      children: brandOptions ? brandOptions : null
     }]"
     :clear-on-select="true"
     :normalizer="brandsNormalizer"
@@ -22,6 +21,7 @@
     @close="handleMenuClose"
     @search-change="handleSearchChange"
     :loadingText="'Загрузится в течении 1 минуты'"
+    v-if="!loading"
   >
     <label slot="option-label" slot-scope="{ node, shouldShowCount, count, labelClassName, countClassName }" :class="labelClassName">
       {{ node.label }}1
@@ -55,7 +55,8 @@
         brandsPortionPage: 1,
         brandsPortionSize: 30,
         brandsSearchQuery: '',
-        converting: false
+        converting: false,
+        loading: false
       }
     },
     watch: {
@@ -76,6 +77,9 @@
         deep: true
       }
     },
+    created() {
+      this.loadBrands()
+    },
     methods: {
       emitting(data) {
         if(data.length > 0) {
@@ -84,6 +88,8 @@
         this.$emit('input', data)
       },
       async loadBrands() {
+        console.log('загрузил')
+        this.loading = true
         const service = new TrackingService();
         this.loadedBrands = await service.getBrands();
         setTimeout(() => {
@@ -95,8 +101,8 @@
             })
           })
           this.loadedBrands = brands
-          this.$emit('brands', this.loadedBrands)
           this.brandOptions = brands.slice(0, this.brandsPortionSize);
+          this.loading = false
         }, 0)
       },
       brandsNormalizer: node=>({...node, label: node.name}),
