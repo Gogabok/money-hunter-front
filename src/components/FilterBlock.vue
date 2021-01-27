@@ -635,8 +635,10 @@
       async loadProviders() {
         const service = new BlackboxService();
         const loadedProviders = await service.getProviders();
-          
-        this.loadedProviders = loadedProviders;
+
+        setTimeout(() => {
+          this.loadedProviders = loadedProviders;
+        }, 0)
       },
       async updateMyCategories(category) {
         const parentIds = [];
