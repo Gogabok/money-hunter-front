@@ -89,9 +89,9 @@
       },
       async loadBrands() {
         console.log('загрузил')
-        this.loading = true
         const service = new TrackingService();
         this.loadedBrands = await service.getBrands();
+        this.loading = true
         setTimeout(() => {
           const brands = []
           this.loadedBrands.forEach((item, index) => {
