@@ -86,16 +86,18 @@
       async loadBrands() {
         const service = new TrackingService();
         this.loadedBrands = await service.getBrands();
-        const brands = []
-        this.loadedBrands.forEach((item, index) => {
-          brands.push({
-            id: index,
-            name: item.brand
+        setTimeout(() => {
+          const brands = []
+          this.loadedBrands.forEach((item, index) => {
+            brands.push({
+              id: index,
+              name: item.brand
+            })
           })
-        })
-        this.loadedBrands = brands
-        this.$emit('brands', this.loadedBrands)
-        this.brandOptions = brands.slice(0, this.brandsPortionSize);
+          this.loadedBrands = brands
+          this.$emit('brands', this.loadedBrands)
+          this.brandOptions = brands.slice(0, this.brandsPortionSize);
+        }, 0)
       },
       brandsNormalizer: node=>({...node, label: node.name}),
       handleMenuOpen() {
