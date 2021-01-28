@@ -12,16 +12,18 @@
       id: 'all',
       name: 'Все',
       isDefaultExpanded: true,
-      children: brandOptions ? brandOptions : null
+      children: brandOptions
     }]"
     :clear-on-select="true"
     :normalizer="brandsNormalizer"
     :dont-use-local-search="true"
+    :load-options="loadOptions"
     @open="handleMenuOpen"
     @close="handleMenuClose"
     @search-change="handleSearchChange"
     :loadingText="'Загрузится в течении 1 минуты'"
     v-if="!loading"
+    :noChildrenText="'Нет доступных брендов'"
   >
     <label slot="option-label" slot-scope="{ node, shouldShowCount, count, labelClassName, countClassName }" :class="labelClassName">
       {{ node.label }}1
@@ -87,10 +89,14 @@
         }
         this.$emit('input', data)
       },
+      loadOptions() {
+        console.log('loadOptions')
+      },
       async loadBrands() {
         console.log('загрузил')
         const service = new TrackingService();
         this.loadedBrands = await service.getBrands();
+        console.log('загрузил 2')
         this.loading = true
         setTimeout(() => {
           const brands = []
@@ -107,38 +113,42 @@
       },
       brandsNormalizer: node=>({...node, label: node.name}),
       handleMenuOpen() {
-        this.$nextTick(() => {
-          const menu = this.$refs.brandsSelector.getMenu();
+        if(this.brandOptions) {
+          this.$nextTick(() => {
+            const menu = this.$refs.brandsSelector.getMenu();
 
-          menu.addEventListener('scroll', () => {
-            const hasReachedEnd = menu.scrollHeight - menu.scrollTop <= menu.clientHeight * 1.25;
+            menu.addEventListener('scroll', () => {
+              const hasReachedEnd = menu.scrollHeight - menu.scrollTop <= menu.clientHeight * 1.25;
 
-            if (hasReachedEnd) {
-              this.brandsPortionPage += 1;
+              if (hasReachedEnd) {
+                this.brandsPortionPage += 1;
 
-              const fromIndex = (this.brandsPortionPage - 1) * this.brandsPortionSize + 1;
-              const toIndex = this.brandsPortionPage * this.brandsPortionSize;
+                const fromIndex = (this.brandsPortionPage - 1) * this.brandsPortionSize + 1;
+                const toIndex = this.brandsPortionPage * this.brandsPortionSize;
 
-              if (this.brandsSearchQuery) {
-                this.brandOptions.push(...this.handleBrandsSearch(fromIndex))
-                this.$emit('brands', this.loadedBrands)
-              } else {
-                this.brandOptions.push(
-                  ...this
-                    .loadedBrands
-                    .slice(fromIndex, toIndex)
-                );
-                this.$emit('brands', this.loadedBrands)
+                if (this.brandsSearchQuery) {
+                  this.brandOptions.push(...this.handleBrandsSearch(fromIndex))
+                  this.$emit('brands', this.loadedBrands)
+                } else {
+                  this.brandOptions.push(
+                    ...this
+                      .loadedBrands
+                      .slice(fromIndex, toIndex)
+                  );
+                  this.$emit('brands', this.loadedBrands)
+                }
               }
-            }
-          });
-        })
+            });
+          })
+        }
       },
       handleMenuClose() {
         this.$nextTick(() => {
-          this.brandOptions = this.loadedBrands.slice(0, this.brandsPortionSize);
-          this.brandsPortionPage = 1;
-          this.$emit('brands', this.loadedBrands)
+          if(this.brandOptions) {
+            this.brandOptions = this.loadedBrands.slice(0, this.brandsPortionSize);
+            this.brandsPortionPage = 1;
+            this.$emit('brands', this.loadedBrands)
+          }
         })
       },
       handleBrandsSearch(fromIndex = 0) {

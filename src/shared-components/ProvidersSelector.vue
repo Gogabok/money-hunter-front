@@ -24,6 +24,7 @@
     :loadingText="'Загрузится в течении 1 минуты'"
     :disabled="userSubscription !== 'BUSINESS'"
     :class="userSubscription !== 'BUSINESS' ? 'disabled' : ''"
+    :noChildrenText="'Нет доступных поставщиков'"
   >
     <label slot="option-label" slot-scope="{ node, shouldShowCount, count, labelClassName, countClassName }" :class="labelClassName">
       {{ node.label }}1

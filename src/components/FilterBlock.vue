@@ -20,7 +20,8 @@
                         :dont-use-local-search="true"
                         @open="handleMenuOpen"
                         :flatten-search-results="true"
-                        :helper="'Lorem helper lorem helper lorem helper lorem helper lorem helper lorem helper'"/>
+                        :helper="'Lorem helper lorem helper lorem helper lorem helper lorem helper lorem helper'"
+                        :noChildrenText="'Нет доступных категорий'"/>
             </div>
             <div class="filter-form__column-item">
               <ValidationProvider class="brandsSelector" :rules="{required: true}" key="byBrandType">
