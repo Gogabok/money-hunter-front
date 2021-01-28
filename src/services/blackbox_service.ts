@@ -182,7 +182,7 @@ export class BlackboxService {
       const cached = localStorage.getItem('providers');
       const cached_moment = moment.utc(localStorage.getItem('providers_ts'));
       const now = moment.utc();
-      if (cached && Array.isArray(JSON.parse(cached)) && JSON.parse(cached).length > 0 && cached_moment.isValid() && now.diff(cached_moment, 'hours') < 24) {
+      if (cached && cached !== 'undefined' && Array.isArray(JSON.parse(cached)) && JSON.parse(cached) && JSON.parse(cached).length > 0 && cached_moment.isValid() && now.diff(cached_moment, 'hours') < 24) {
         return JSON.parse(cached);
       } else {
         const data = (await this.service.refreshWrapper(this.repo.getProviders.bind(this.repo))).data;
