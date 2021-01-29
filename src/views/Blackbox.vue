@@ -4,7 +4,8 @@
                  :isLoading="isLoading" 
                  :searchHandler="searchHandler"
                  :days="days"
-                 :isHaveToSearch="isHaveToSearch"/>
+                 :isHaveToSearch="isHaveToSearch"
+                 :activeNavigateGroup="activeNavigateGroup"/>
     <!-- <TreeSelect label="Отображаемые колонки"
                 v-model="columns"
                 :multiple="true"
@@ -32,7 +33,7 @@
             {{ day.title }}
         </span>
       </div>
-      <TrackingTable :headers="tableHeaders"
+      <TrackingTable :headers="headersForTable"
                      :items="tablePositions"
                      :order="orderType"
                      :order-handler="$orderHandler"
@@ -113,6 +114,8 @@
           },
         ],
 
+        searchedBy: null,
+
         list: [],
 
         orderType: DEFAULT_ORDER_TYPE,
@@ -167,22 +170,83 @@
           {name: 'add', label: 'Добавить в избранное', sortable: false, clazz: 'width9 mw150'}
         ],
 
+        tableHeadersByBrands: [
+          {name: 'brand', label: 'Бренд', clazz: 'width30 mw300', sortable: false},
+          {name: 'products_count', label: 'Кол-во товаров', clazz: 'width9 mw100', isOnlyAscSorting: true},
+          {name: 'avg_price', label: 'Средняя цена', clazz: 'width5 mw100'},
+          {name: 'stocks', label: 'Сумма остатков', clazz: 'width9 mw100'},
+          {name: 'orders', label: 'Сумма заказов', clazz: 'width9 mw100'},
+          {name: 'revenue', label: 'Сумма оборота', clazz: 'width9 mw150'},
+          {name: 'avg_receipt', label: 'Средний чек', clazz: 'tracking-table__header-item_align-right width23 mw150'},
+          {name: 'articul_revenue', label: 'Средний чек на артикул', clazz: 'width9 mw100'},
+          {name: 'avg_rating', label: 'Средний рейтинг', clazz: 'width9 mw100'},
+          {name: 'avg_feedback', label: 'Среднее кол-во отзывов', clazz: 'width9 mw100'},
+          {name: 'revenue_percent', label: 'Процент от общего дохода', clazz: 'width9 mw100'},
+        ],
+
+        tableHeadersByProviders: [
+          {name: 'provider__name', label: 'Продавец', clazz: 'width30 mw300', sortable: false},
+          {name: 'products_count', label: 'Кол-во товаров', clazz: 'width9 mw100', isOnlyAscSorting: true},
+          {name: 'avg_price', label: 'Средняя цена', clazz: 'width5 mw100'},
+          {name: 'stocks', label: 'Сумма остатков', clazz: 'width9 mw100'},
+          {name: 'orders', label: 'Сумма заказов', clazz: 'width9 mw100'},
+          {name: 'revenue', label: 'Сумма оборота', clazz: 'width9 mw150'},
+          {name: 'avg_receipt', label: 'Средний чек', clazz: 'tracking-table__header-item_align-right width23 mw150'},
+          {name: 'articul_revenue', label: 'Средний чек на артикул', clazz: 'width9 mw100'},
+          {name: 'avg_rating', label: 'Средний рейтинг', clazz: 'width9 mw100'},
+          {name: 'avg_feedback', label: 'Среднее кол-во отзывов', clazz: 'width9 mw100'},
+          {name: 'revenue_percent', label: 'Процент от общего дохода', clazz: 'width9 mw100'},
+        ],
+
         BlackboxTour: null,
       }
     },
     computed: {
+      headersForTable() {
+        if(this.activeNavigateGroup === 'byBrands') {
+          return this.tableHeadersByBrands;
+        } else if(this.activeNavigateGroup === 'bySellers') {
+          return this.tableHeadersByProviders;
+        } else {
+          return this.tableHeaders;
+        }
+      },
       tablePositions() {
-        return this.list.map(item => ({
-          ...this.$mapItemListToTableItem(item),
-          splicedPrice: item.splicedPrice,
-          pk: item.pk,
-          nested: {content: ProductBlackboxNested, articul: item.articul, clazz: 'tracking-table-dropdown__item-chart', days: this.days}
-        }));
+        if(this.activeNavigateGroup === 'byBrands' && this.searchedBy === 'brand') {
+          const list = []
+          this.list.forEach(item => {
+            const row = {}
+            Object.keys(item).forEach(key => {
+              row[key] = this[`map_${key}`](item)
+            })
+            list.push(row)
+          })
+          return list;
+        } else if(this.activeNavigateGroup === 'bySellers' && this.searchedBy === 'providers') {
+          const list = []
+          this.list.forEach(item => {
+            const row = {}
+            Object.keys(item).forEach(key => {
+              row[key] = this[`map_${key}`](item)
+            })
+            list.push(row)
+          })
+          return list
+        } else if(this.searchedBy === 'common') {
+          return this.list.map(item => ({
+            ...this.$mapItemListToTableItem(item),
+            splicedPrice: item.splicedPrice,
+            pk: item.pk,
+            nested: {content: ProductBlackboxNested, articul: item.articul, clazz: 'tracking-table-dropdown__item-chart', days: this.days}
+          }));
+        } else {
+          return []
+        }
       },
       columnsItems() {
         const columnsItems = []
-        const nonDinamicColumns = ['Товар', 'Добавить в избранное']
-        this.tableHeaders.forEach((column, idx) => {
+        const nonDinamicColumns = ['Товар', 'Бренд', 'Продавец', 'Добавить в избранное']
+        this.headersForTable.forEach((column, idx) => {
           if(!nonDinamicColumns.find(item => item === column.label)) {
             columnsItems.push({
               label: column.label,
@@ -201,14 +265,19 @@
       userSubscription() {
         return this.$store.state.user.subscription?.subscriptionType;
       },
+      activeNavigateGroup() {
+        return this.blackboxNavList.find(group => group.isActive).systemName
+      }
     },
     methods: {
       navigateGroup(groupName) {
         this.blackboxNavList.forEach(item => item.isActive = false);
         this.blackboxNavList.find(item => item.systemName === groupName).isActive = true;
+        if(this.list && this.list.length > 0) {
+          this.isHaveToSearch = !this.isHaveToSearch
+        }
       },
       selectColumn(columns) {
-        console.log(columns)
         this.columns = columns
       },
       showModalAddToGroup(data) {
@@ -252,8 +321,64 @@
         }
       },
 
+      async loadGoodsByBrands() {
+        this.list = [];
+        const service = new BlackboxService();
+        const result = await service.getGoodsBySearchIDAgregate(
+          this.$store.state.blackbox.searchID,
+          'avg_price',
+          'brand',
+          this.paginationData.page,
+        );
+        
+        this.searchedBy = 'brand'
+  
+        this.paginationData.totalCount = result.pages;
+        this.list = result.data;
+        this.cachedSearchResults = result
+        this.$nextTick(() => {
+          this.isLoading = false
+        });
+        if(this.list.length <= 0) {
+          this.loadedListError = true
+        } else {
+          this.loadedListError = false
+        }
+      },
+
+      async loadGoodsByProviders() {
+        this.list = [];
+        const service = new BlackboxService();
+        const result = await service.getGoodsBySearchIDAgregate(
+          this.$store.state.blackbox.searchID,
+          'avg_price',
+          'provider__name',
+          this.paginationData.page,
+        );
+        this.searchedBy = 'providers'
+  
+        this.paginationData.totalCount = result.pages;
+        this.list = result.data;
+        this.cachedSearchResults = result
+        this.$nextTick(() => {
+          this.isLoading = false
+        });
+        if(this.list.length <= 0) {
+          this.loadedListError = true
+        } else {
+          this.loadedListError = false
+        }
+      },
+
       async loadGoods() {
         if (this.$store.state.blackbox.searchID) {
+          if(this.activeNavigateGroup === 'byBrands') {
+            this.loadGoodsByBrands()
+            return;
+          } else if(this.activeNavigateGroup === 'bySellers') {
+            this.loadGoodsByProviders()
+            return;
+          }
           this.list = [];
           const service = new BlackboxService();
 
@@ -277,6 +402,8 @@
           this.list = result.products;
 
           this.cachedSearchResults = result
+
+          this.searchedBy = 'common'
 
           this.$nextTick(() => {
             this.isLoading = false
@@ -400,21 +527,36 @@
           }, clazz: 'tracking-table__align-right width9'
         }
       },
+      map_brand(item) {
+        return {
+          content: item.brand,
+          clazz: 'width23 pl-35 tracking-table__align-left',
+        }
+      },
+      map_provider__name(item) {
+        return {
+          content: item.provider__name,
+          clazz: 'width23 pl-35 tracking-table__align-left',
+        }
+      },
+      map_products_count: item => ({content: item.products_count, clazz: 'tracking-table__align-right width23'}),
+      map_avg_price: item => ({content: !Number.isInteger(item.avg_price, 1) ? item.avg_price.toFixed(1) : item.avg_price, clazz: 'tracking-table__align-right width23'}),
+      map_stocks: item => ({content: item.stocks, clazz: 'tracking-table__align-right width23'}),
+      map_orders: item => ({content: item.orders, clazz: 'tracking-table__align-right width23'}),
+      map_revenue: item => ({content: item.revenue, clazz: 'tracking-table__align-right width23'}),
+      map_avg_receipt: item => ({content: item.avg_receipt, clazz: 'tracking-table__align-right width23'}),
+      map_articul_revenue: item => ({content: item.articul_revenue, clazz: 'tracking-table__align-right width23'}),
+      map_avg_rating: item => ({content: !Number.isInteger(item.avg_rating, 1) ? item.avg_rating.toFixed(1) : item.avg_rating, clazz: 'tracking-table__align-right width23'}),
+      map_avg_feedback: item => ({content: !Number.isInteger(item.avg_feedback, 1) ? item.avg_feedback.toFixed(1) : item.avg_feedback, clazz: 'tracking-table__align-right width23'}),
+      map_revenue_percent: item => ({content: item.revenue_percent, clazz: 'tracking-table__align-right width23'}),
       addGoodsPositionHandler(item) {
         this.$store.commit(`modal/${SHOW_MODAL_MUTATION}`, {component: AddToGroup, data: {articul: item.articul}})
-      }
-    },
-    async mounted() {
-      this.$initPaginationHandlers(this.prevHandler, this.nextHandler);
-      // if(localStorage.getItem('isTutorialCompleted')) {
-      //   return;
-      // } else {
-        this.$nextTick(() => {
-          this.BlackboxTour = this.$shepherd({
+      },
+      setTutorialSteps() {
+        this.BlackboxTour = this.$shepherd({
             useModalOverlay: true
           });
-          this.BlackboxTour.addStep({
-            scrollTo: true,
+          this.BlackboxTour.addStep({ 
             title: 'Приветствуем в сервисе Moneyhunter!',
             text: `Мы хотим предложить Вам пройти короткий тур по нашему сервису`,
             buttons: [
@@ -671,12 +813,10 @@
             id: 'tour-step-8',
             classes: 'tour-step'
           });
-
-          setTimeout(() => {
-            this.BlackboxTour.start();
-          }, 500);
-        });
-      // }
+      }
+    },
+    async mounted() {
+      this.$initPaginationHandlers(this.prevHandler, this.nextHandler);
     },
     beforeDestroy() {
       const _data = {...this.$data}
@@ -685,6 +825,7 @@
     },
     created() {
       const myLocalSearchResults = this.$store.getters['blackbox/myLocalSearchResults']
+      this.setTutorialSteps()
       if(myLocalSearchResults) {
         Object.keys(myLocalSearchResults).forEach(key => {
           if(key !== 'paginationData') {

@@ -84,6 +84,18 @@ export class BlackboxService {
     }
   }
 
+  async getGoodsBySearchIDAgregate(searchID: string, order_by: string, value: string, page = 1) {
+    try {
+      const closure = this.repo.getGoodsBySearchIDAgregate.bind(this.repo, searchID, order_by, value, page);
+      return (await this.service.refreshWrapper(closure)).data;
+    } catch (e) {
+      return {
+        countAll: 0,
+        products: [],
+      }
+    }
+  }
+
   async downloadSearchResults(searchID: string, orderType: string) {
     try {
       const closure = this.repo.downloadSearchResults.bind(this.repo, searchID, orderType);

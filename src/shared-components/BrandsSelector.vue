@@ -23,6 +23,7 @@
     @search-change="handleSearchChange"
     :loadingText="'Загрузится в течении 1 минуты'"
     :helper="helper"
+    :noChildrenText="'Нет доступных брендов'"
   >
     <label slot="option-label" slot-scope="{ node, shouldShowCount, count, labelClassName, countClassName }" :class="labelClassName">
       {{ node.label }}1

@@ -25,6 +25,7 @@ export class BlackboxRepository {
 
   private getNewSearchIDUrl = 'wb/blackbox/search/token/';
   private getGoodsBySearchIDUrl = 'wb/blackbox/search/';
+  private getGoodsBySearchIDAgregateUrl = 'wb/blackbox/search/aggregate/';
   private findSearchIDByNameUrl = 'wb/blackbox/user/searches/{name}/';
   private searchesUrl = 'wb/blackbox/user/searches/';
   private getProductImagePathAndNameUrl = 'wb/blackbox/product/information/{articul}/';
@@ -51,6 +52,22 @@ export class BlackboxRepository {
     const paramsString = queryParamsBuilder(params);
 
     return this.client.sendGet(`${this.getGoodsBySearchIDUrl}?${paramsString}`);
+  }
+//   searchID - тут понятно
+// order_by - Тип сортировки
+// value - Тип агрегации.brand по бренду.provider__name по поставщику
+// page - страница
+  getGoodsBySearchIDAgregate(searchID: string, order_by: string, value: string, page: number) {
+    const params = { 
+      searchID,
+      order_by,
+      value,
+      page
+    } as any;
+    // const params = { searchID, order_by, value, page } as any;
+    const paramsString = queryParamsBuilder(params);
+
+    return this.client.sendGet(`${this.getGoodsBySearchIDAgregateUrl}?${paramsString}`);
   }
 
   downloadSearchResults(searchID: string, orderType: string) {

@@ -23,6 +23,7 @@
                         :dont-use-local-search="true"
                         @open="handleMenuOpen"
                         :flatten-search-results="true"
+                        :noChildrenText="'Нет доступных категорий'"
                         :helper="'Lorem helper lorem helper lorem helper lorem helper lorem helper lorem helper'"/>
             </div>
             <div class="filter-form__column-item">
@@ -210,6 +211,10 @@
       },
       isHaveToSearch: {
         type: Boolean,
+        required: false
+      },
+      activeNavigateGroup: {
+        type: String,
         required: false
       }
     },
@@ -417,8 +422,21 @@
 
         return categories;
       },
+      // async checkSearchIDByBrands() {
+      //   console.log('searchIdByBrands')
+      // },
+      // async checkSearchIDByProviders() {
+      //   console.log('searchIdByProviders')
+      // },
       async checkSearchID() {
         this.$emit('setTableLoading', true)
+        // if(this.activeNavigateGroup === 'byBrands') {
+        //   this.checkSearchIDByBrands()
+        //   return;
+        // } else if(this.activeNavigateGroup === 'byProviders') {
+        //   this.checkSearchIDByProviders()
+        //   return;
+        // }
         const data = {...this.$data};
         delete data.searchIcon;
         delete data.availableOptions;

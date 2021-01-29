@@ -174,6 +174,9 @@
         }
       }
     },
+    created() {
+      console.log(this.items[0])
+    },
     methods: {
       downloadSearchResults() {
         this.$emit('downloadSearchResults')
